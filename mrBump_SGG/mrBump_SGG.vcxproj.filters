@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{92bb6825-2bd0-428c-bdff-cf5fb0808f73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{b6ba30c5-94dc-44d8-949a-4728280c5f4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ImGui">
+      <UniqueIdentifier>{1b03f83d-b8e4-44c0-b117-c0979f984af4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ImGui">
+      <UniqueIdentifier>{295a3eab-5b0a-4037-ab91-229d6c97a11f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Main">
+      <UniqueIdentifier>{dbe708d0-e6dc-4add-aae4-07d1ea303e9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Main">
+      <UniqueIdentifier>{d0292faf-8209-4e8c-8b7c-e481da3df6b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SDK">
+      <UniqueIdentifier>{fbb2a3f7-c5cc-4248-94c2-7d47a046a79f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Settings">
+      <UniqueIdentifier>{44dc4b5c-13c4-4262-a2c0-dc68c745251b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{8bcf64b4-2568-40e8-a764-87c17008c971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ViewMatrixManager">
+      <UniqueIdentifier>{7e8fddeb-912c-4a89-b5b9-752f3a215fc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ViewMatrixManager">
+      <UniqueIdentifier>{6b34d122-d8ee-4880-98e6-21529ac5f7fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{f37bbb36-4577-42f5-89ef-2fa3d8184243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{db254c2e-45b4-4c82-9715-050752c6fc24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ActorName">
+      <UniqueIdentifier>{f46ca193-c06b-4393-a27b-6e407d50128d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PrecompiledHeader">
+      <UniqueIdentifier>{45649bdc-fc0c-4e54-8fd2-6a4bc6e11b32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PrecompiledHeader">
+      <UniqueIdentifier>{b0718154-69a3-4d6d-9292-02ef3a9b105a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MemoryManager">
+      <UniqueIdentifier>{4cee2912-6c3f-4427-8c47-b3891518226f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MemoryManager">
+      <UniqueIdentifier>{940c797a-aeb2-4fb1-9374-2cbf9faed954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ProcessManager">
+      <UniqueIdentifier>{a1fcc21c-346e-4331-81e5-c2f7f4998b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ProcessManager">
+      <UniqueIdentifier>{45db4f28-14fa-4395-a349-8f087898ff78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ActorName">
+      <UniqueIdentifier>{31218e3a-b8f6-4b2e-9af5-9906ee1a566b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Feature">
+      <UniqueIdentifier>{8694061c-19dc-4e1f-81c7-54995d090ea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Feature\Aimbot">
+      <UniqueIdentifier>{108a63c7-a3b2-4223-8f37-856a5931e879}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Feature">
+      <UniqueIdentifier>{96913460-2bb3-4374-89f7-d60d5b24be0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Feature\Aimbot">
+      <UniqueIdentifier>{0b1c1689-6ce8-4ad3-8ab0-a11b33a3f1d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Feature\ESP">
+      <UniqueIdentifier>{443f0a2f-dae0-4048-ad58-11afa52c16db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Feature\ESP">
+      <UniqueIdentifier>{0bd219d6-8b62-43d5-8a42-029f4d94f486}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\D3D">
+      <UniqueIdentifier>{e798a110-e3fa-4688-becc-bf751d23a418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\D3D">
+      <UniqueIdentifier>{e9697c19-cfdb-46d7-a4cc-edf9971815a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Offset">
+      <UniqueIdentifier>{cb0ab3cb-52bd-4ffe-9bdf-84e33f001c3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Offset">
+      <UniqueIdentifier>{f0480cca-f40e-42c1-9982-597909ee802c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D3D.cpp">
+      <Filter>Source Files\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryManager.cpp">
+      <Filter>Source Files\MemoryManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessManager.cpp">
+      <Filter>Source Files\ProcessManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewMatrixManager.cpp">
+      <Filter>Source Files\ViewMatrixManager</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files\PrecompiledHeader</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorName.cpp">
+      <Filter>Source Files\ActorName</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_widgets.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_dx9.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_tables.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="mrBump_SGG.cpp">
+      <Filter>Source Files\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="ESP.cpp">
+      <Filter>Source Files\Feature\ESP</Filter>
+    </ClCompile>
+    <ClCompile Include="Aimbot.cpp">
+      <Filter>Source Files\Feature\Aimbot</Filter>
+    </ClCompile>
+    <ClCompile Include="Offset.cpp">
+      <Filter>Source Files\Offset</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ESP.h">
+      <Filter>Header Files\Feature\ESP</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK_classes.h">
+      <Filter>Header Files\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK_structs.h">
+      <Filter>Header Files\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_dx9.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_win32.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_rectpack.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_textedit.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_truetype.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Datatype.h">
+      <Filter>Header Files\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Header Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewMatrixManager.h">
+      <Filter>Header Files\ViewMatrixManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorName.h">
+      <Filter>Header Files\ActorName</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files\PrecompiledHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryManager.h">
+      <Filter>Header Files\MemoryManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessManager.h">
+      <Filter>Header Files\ProcessManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Colors.h">
+      <Filter>Header Files\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D.h">
+      <Filter>Header Files\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Aimbot.h">
+      <Filter>Header Files\Feature\Aimbot</Filter>
+    </ClInclude>
+    <ClInclude Include="mrBump_SGG.h">
+      <Filter>Header Files\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Offset.h">
+      <Filter>Header Files\Offset</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
