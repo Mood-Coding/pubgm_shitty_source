@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "Utils.h"
 #include "Colors.h"
@@ -18,7 +18,8 @@
 
 template <class T> void SafeRelease(T** ppT)
 {
-	if (*ppT) {
+	if (*ppT)
+	{
 		(*ppT)->Release();
 		*ppT = NULL;
 	}
@@ -31,11 +32,13 @@ private:
 	LPD3DXLINE pD3DLine = nullptr;
 	LPD3DXSPRITE pSprite = nullptr;
 	WNDCLASSEX wc{};
-	
+
 public:
-	HWND gameHWND;
-	HWND gameHWND0;
-	HWND overlayHWND;
+	D3D() {}
+
+	HWND gameHWND = NULL;
+	HWND gameHWND0 = NULL;
+	HWND overlayHWND = NULL;
 	int screenW = 0, screenH = 0;
 
 	ImFont* font;
@@ -84,6 +87,6 @@ public:
 
 extern D3D* g_pD3D;
 
-//#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE)  //FVF�����ʽ#pragma once
+//#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE)  //FVFÁé»î¶¥µã¸ñÊ½#pragma once
 
 

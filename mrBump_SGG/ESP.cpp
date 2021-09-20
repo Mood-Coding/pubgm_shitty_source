@@ -459,10 +459,20 @@ bool ESP::IsAirdrop(const std::string& actorName)
 
 bool ESP::IsLootbox(const std::string& actorName)
 {
+	// AirDropListWrapperActor
 	if (actorName == "PickUpListWrapperActor" || actorName == "BP_AirDropBox_C")
 	{
 		return true;
 	}
 
 	return false;
+}
+
+std::string BoxItemIDToDisplayName()
+{
+	std::string result{};
+
+
+
+	return result;
 }

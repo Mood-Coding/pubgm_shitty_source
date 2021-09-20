@@ -3,16 +3,8 @@
 
 D3D* g_pD3D = new D3D();
 
-D3D::D3D()
+D3D::~D3D()
 {
-	gameHWND = NULL;
-	overlayHWND = NULL;
-}
-
-D3D::~D3D() {
-	SafeRelease(&pD3D);
-	SafeRelease(&pD3DDevice);
-	SafeRelease(&pD3DLine);
 }
 
 bool D3D::InitD3D()
@@ -61,10 +53,10 @@ bool D3D::InitD3D()
 	}
 
 	//Tạo font chữ
-	for (int i = 1; i <= 50; ++i)
+	/*for (int i = 1; i <= 50; ++i)
 	{
 		D3DXCreateFont(pD3DDevice, i, 0, FW_REGULAR, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Lato"), &pFontSimSun[i]);
-	}
+	}*/
 
 	//AddFontResourceEx(TEXT("msyhl.ttf"), FR_PRIVATE, NULL);
 
@@ -77,8 +69,8 @@ bool D3D::InitD3D()
 	D3DXCreateFontA(pDevice, 20, 0, FW_REGULAR, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, "Verdana", &pFont2);
 	*/
 
-	D3DXCreateLine(pD3DDevice, &pD3DLine);
-	D3DXCreateSprite(pD3DDevice, &pSprite);
+	/*D3DXCreateLine(pD3DDevice, &pD3DLine);
+	D3DXCreateSprite(pD3DDevice, &pSprite);*/
 
 	return 1;
 }
@@ -169,7 +161,6 @@ bool D3D::SetupHWND(HWND processHWND)
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
-		//io.Fonts->AddFontFromFileTTF("Lato-Regular.ttf", 16);
 		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 16);
 
 		ImGuiStyle* style = &ImGui::GetStyle();
@@ -265,11 +256,15 @@ void D3D::DrawCircle(int x, int y, int radius, unsigned int Color)
 
 void D3D::CleanupDeviceD3D()
 {
-	pD3DDevice->Release();
-	pD3DDevice = NULL;
+	SafeRelease(&pD3D);
+	SafeRelease(&pD3DDevice);
+	//SafeRelease(&pD3DLine);
 
-	pD3D->Release();
-	pD3D = NULL;
+	/*pD3DDevice->Release();
+	pD3DDevice = NULL;*/
+
+	/*pD3D->Release();
+	pD3D = NULL;*/
 
 	::DestroyWindow(overlayHWND);
 	::UnregisterClass(wc.lpszClassName, wc.hInstance);
