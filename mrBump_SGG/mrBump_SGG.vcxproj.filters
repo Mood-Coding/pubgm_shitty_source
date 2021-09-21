@@ -97,6 +97,9 @@
     <Filter Include="Source Files\ImGui\Font">
       <UniqueIdentifier>{bd05c07f-032b-44aa-a3ed-cd3a103d6d94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ImGui\Font">
+      <UniqueIdentifier>{6aa663bd-3786-4bdf-9274-992d76de6547}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D.cpp">
@@ -152,9 +155,6 @@
     </ClCompile>
     <ClCompile Include="Offset.cpp">
       <Filter>Source Files\Offset</Filter>
-    </ClCompile>
-    <ClCompile Include="msyhl.cpp">
-      <Filter>Source Files\ImGui\Font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,5 +230,8 @@
     <ClInclude Include="Offset.h">
       <Filter>Header Files\Offset</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="msyhl.ttf" />
   </ItemGroup>
 </Project>

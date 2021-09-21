@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 
 #include "Offset.h"
-
 #include "D3D.h"
 #include "ESP.h"
 #include "Aimbot.h"
@@ -27,97 +26,6 @@ void DumpActorName()
 
 	std::cout << "[Debug] Dump actor name done!" << std::endl;
 }
-
-////create new gui
-//GUI gui = GUI(0, 0, RED(255), BLACK(150), 80, 30);
-//setupGUI(gui);
-//void setupGUI(GUI &gui)
-//{
-//	//Add 2 new Sidebar button
-//	gui.tabs.push_back(Containers::Tab("ESP", 20, ORANGE(255)));
-//	gui.tabs.push_back(Containers::Tab("Debug", 20, RED(255)));
-//
-//	//Init the sidebar
-//	gui.calcSidebarButtonCoord();
-//	gui.CalcSidebarShape();
-//
-//	//Add new groupbox to tab ESP
-//	gui.tabs[0].groupboxes.push_back(new Containers::Groupbox(gui.gBackColor, gui.gBorderColor));
-//	{
-//		GroupboxLine toggle;
-//		toggle.push_back(new Components::Checkbox("Player ESP", 15, WHITE(255), 15, 15, WHITE(255), &Settings::PlayerESP::bToggle));
-//		
-//		GroupboxLine playerInfo;
-//		playerInfo.push_back(new Components::Checkbox("Player distance", 15, WHITE(255), 15, 15, WHITE(255), &Settings::PlayerESP::bDistance));
-//		playerInfo.push_back(new Components::Checkbox("Player name", 15, WHITE(255), 15, 15, WHITE(255), &Settings::PlayerESP::bName));
-//		playerInfo.push_back(new Components::Checkbox("Player hp", 15, WHITE(255), 15, 15, WHITE(255), &Settings::PlayerESP::bHp));
-//
-//		GroupboxLine boneESP;
-//		boneESP.push_back(new Components::Checkbox("Bone ESP", 15, WHITE(255), 15, 15, WHITE(255), &Settings::PlayerESP::BoneESP::bToggle));
-//
-//		GroupboxLine lineESP;
-//		lineESP.push_back(new Components::Checkbox("Line ESP", 15, WHITE(255), 15, 15, WHITE(255), &Settings::PlayerESP::LineESP::bToggle));
-//
-//		//add new line to groupbox
-//		gui.tabs[0].groupboxes[0]->lineLayout.push_back(toggle);
-//		gui.tabs[0].groupboxes[0]->lineLayout.push_back(playerInfo);
-//		gui.tabs[0].groupboxes[0]->lineLayout.push_back(boneESP);
-//		gui.tabs[0].groupboxes[0]->lineLayout.push_back(lineESP);
-//	}
-//
-//	//Add another groupbox to tab ESP
-//	gui.tabs[0].groupboxes.push_back(new Containers::Groupbox(gui.gBackColor, gui.gBorderColor));
-//	{
-//		GroupboxLine carESP;
-//		carESP.push_back(new Components::Checkbox("Vehicle ESP", 15, WHITE(255), 15, 15, WHITE(255), &Settings::VehicleESP::bToggle));
-//		
-//		GroupboxLine carESP2;
-//		carESP2.push_back(new Components::Checkbox("Vehicle name", 15, WHITE(255), 15, 15, WHITE(255), &Settings::VehicleESP::bName));
-//		carESP2.push_back(new Components::Checkbox("Vehicle distance", 15, WHITE(255), 15, 15, WHITE(255), &Settings::VehicleESP::bDistance));
-//		carESP2.push_back(new Components::Checkbox("Vehicle fuel", 15, WHITE(255), 15, 15, WHITE(255), &Settings::VehicleESP::bFuel));
-//		carESP2.push_back(new Components::Checkbox("Vehicle hp", 15, WHITE(255), 15, 15, WHITE(255), &Settings::VehicleESP::bHp));
-//
-//		gui.tabs[0].groupboxes[1]->lineLayout.push_back(carESP);
-//		gui.tabs[0].groupboxes[1]->lineLayout.push_back(carESP2);
-//	}
-//
-//	//Add another groupbox to tab ESP
-//	gui.tabs[0].groupboxes.push_back(new Containers::Groupbox(gui.gBackColor, gui.gBorderColor));
-//	{
-//		GroupboxLine itemESP;
-//		itemESP.push_back(new Components::Checkbox("Item ESP", 15, WHITE(255), 15, 15, WHITE(255), &Settings::ItemESP::bToggle));
-//		
-//		GroupboxLine itemESP2;
-//		itemESP2.push_back(new Components::Checkbox("Item name", 15, WHITE(255), 15, 15, WHITE(255), &Settings::ItemESP::bName));
-//		itemESP2.push_back(new Components::Checkbox("Item distance", 15, WHITE(255), 15, 15, WHITE(255), &Settings::ItemESP::bDistance));
-//
-//		gui.tabs[0].groupboxes[2]->lineLayout.push_back(itemESP);
-//		gui.tabs[0].groupboxes[2]->lineLayout.push_back(itemESP2);
-//	}
-//
-//	//Add a groupbox to Debug tab
-//	gui.tabs[1].groupboxes.push_back(new Containers::Groupbox(gui.gBackColor, gui.gBorderColor));
-//	{
-//		GroupboxLine debug;
-//		debug.push_back(new Components::Button(&DumpActorName, "Dump Actor name", 15, BLUE(255), 125, 15, BLACK(255)));
-//		debug.push_back(new Components::Button(&OutputUnusedActorName, "Output unused Actor name", 15, BLUE(255), 200, 15, BLACK(255)));
-//
-//		gui.tabs[1].groupboxes[0]->lineLayout.push_back(debug);
-//	}
-//
-//	gui.CalcBodyWidthHeight();
-//
-//	gui.UpdateTabWidthHeight();
-//
-//	gui.tabs[0].updateGroupboxesWidth();
-//	gui.tabs[1].updateGroupboxesWidth();
-//
-//	gui.tabs[0].updateGroupboxesPos(gui.Sidebar.width, gui.x, gui.y);
-//	gui.tabs[0].updateComponentPos();
-//
-//	gui.tabs[1].updateGroupboxesPos(gui.Sidebar.width, gui.x, gui.y);
-//	gui.tabs[1].updateComponentPos();
-//}
 
 void ChangeClickability(bool canclick, HWND hwnd)
 {
@@ -167,10 +75,6 @@ void UpdateValue()
 			continue;
 
 		DWORD NetDriver = g_pMM->read<DWORD>(g_pESP->UWorld + NETDRIVER);
-
-		/*system("cls");
-		std::cout << "UWorld " << g_pESP->UWorld << '\n';
-		std::cout << "NetDriver " << NetDriver << '\n';*/
 		
 		// If player is in a match, NetDriver != 0 
 		if (NetDriver != 0)
@@ -201,7 +105,7 @@ void UpdateValue()
 
 		g_tmpCharacterCount = 0;
 
-		// Get my player address
+		// Get my character address
 		DWORD NetConnection = g_pMM->read<DWORD>(NetDriver + SERVERCONNECTION);
 		DWORD PlayerController = g_pMM->read<DWORD>(NetConnection + PLAYERCONTROLLER);
 		g_pESP->Pawn = g_pMM->read<DWORD>(PlayerController + ACKNOWLEDGEDPAWN);

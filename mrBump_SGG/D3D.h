@@ -5,8 +5,6 @@
 #include "Colors.h"
 #include "Settings.h"
 
-#include "msyhl.cpp"
-
 #pragma warning( push )
 #pragma warning( disable : 4820)
 #pragma warning( disable : 4514)
@@ -16,8 +14,6 @@
 #pragma warning( pop ) 
 
 #define M_PI 3.14159265358979323846264338327950288419716939937510
-
-#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }      
 
 template <class T> void SafeRelease(T** ppT)
 {
@@ -38,7 +34,6 @@ private:
 
 public:
 	D3D() {}
-	~D3D();
 
 	HWND gameHWND = NULL;
 	HWND gameHWND0 = NULL;
@@ -88,7 +83,5 @@ public:
 };
 
 extern D3D* g_pD3D;
-
-//#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE)  //FVFÁé»î¶¥µã¸ñÊ½#pragma once
 
 

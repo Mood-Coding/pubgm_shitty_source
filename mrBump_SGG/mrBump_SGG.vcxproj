@@ -80,11 +80,13 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>G:\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>G:\Microsoft DirectX SDK (June 2010)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>G:\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>G:\Microsoft DirectX SDK (June 2010)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -127,6 +129,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <AdditionalOptions>/Zm1000 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,6 +148,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <AdditionalOptions>/Zm1000 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,7 +189,6 @@
     </ClCompile>
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="mrBump_SGG.cpp" />
-    <ClCompile Include="msyhl.cpp" />
     <ClCompile Include="Offset.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -221,6 +224,12 @@
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="ViewMatrixManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="msyhl.ttf">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </Font>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

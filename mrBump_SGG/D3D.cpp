@@ -1,10 +1,105 @@
 ﻿#include "pch.h"
+
 #include "D3D.h"
 
 D3D* g_pD3D = new D3D();
 
-D3D::~D3D()
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (true && ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+	{
+		return true;
+	}
+
+	switch (msg)
+	{
+	case WM_PAINT:
+		break;
+	case WM_SYSCOMMAND:
+		if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+			return 0;
+		break;
+	case WM_DESTROY:
+		::PostQuitMessage(0); // We need to use this to exit a message loop
+		break;
+	}
+
+	return ::DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+bool D3D::SetupHWND(HWND processHWND)
+{
+	std::cout << "[D3D]\n";
+
+	if (processHWND == NULL)
+	{
+		std::cout << "<!> Invalid target process window HWND\n";
+		return 0;
+	}
+
+	gameHWND = processHWND;
+	std::cout << "Target process window HWND: " << std::hex << gameHWND << '\n';
+
+	GetWindowRect(gameHWND, &gameScreenRct);
+	screenW = gameScreenRct.right - gameScreenRct.left;
+	screenH = gameScreenRct.bottom - gameScreenRct.top;
+
+	// Create overlay window
+	{
+		// Random class name, window name
+		std::string str = Utils::RandomString(8);
+		std::wstring stemp = std::wstring(str.begin(), str.end());
+		LPCWSTR sw = stemp.c_str();
+
+		wc = WNDCLASSEX();
+		ZeroMemory(&wc, sizeof(WNDCLASSEX));
+		wc.cbSize = sizeof(WNDCLASSEX);
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.lpfnWndProc = WindowProc;
+		wc.hInstance = GetModuleHandle(NULL);
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hIcon = LoadIcon(0, IDI_APPLICATION);
+		wc.hIconSm = LoadIcon(0, IDI_APPLICATION);
+		wc.hbrBackground = (HBRUSH)RGB(0, 0, 0);
+		wc.lpszMenuName = sw;
+		wc.lpszClassName = sw;
+		RegisterClassEx(&wc);
+
+		overlayHWND = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE, wc.lpszClassName, wc.lpszMenuName, WS_POPUP, gameScreenRct.left, gameScreenRct.top, screenW, screenH, NULL, NULL, NULL, NULL);
+
+		std::cout << "Overlay HWND: " << overlayHWND << std::endl;
+
+		InitD3D();
+
+		SetLayeredWindowAttributes(overlayHWND, 0, 1.0f, LWA_ALPHA);
+		SetLayeredWindowAttributes(overlayHWND, 0, RGB(0, 0, 0), LWA_COLORKEY);
+		MARGINS margin = { -1, -1, -1, -1 };
+		DwmExtendFrameIntoClientArea(overlayHWND, &margin);
+
+		//SetForegroundWindow(overlayHWND);
+		ShowWindow(overlayHWND, SW_SHOW);
+		UpdateWindow(overlayHWND);
+	}
+
+	// Setup Dear ImGui context
+	{
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 16);
+
+		ImGuiStyle* style = &ImGui::GetStyle();
+		style->Colors[ImGuiCol_WindowBg] = ImColor(0, 0, 0, 255);
+		/*style->WindowMinSize = ImVec2(437,371) */
+
+		// Setup Platform/Renderer backends
+		ImGui_ImplWin32_Init(overlayHWND);
+		ImGui_ImplDX9_Init(pD3DDevice);
+	}
+
+	return true;
 }
 
 bool D3D::InitD3D()
@@ -58,8 +153,6 @@ bool D3D::InitD3D()
 		D3DXCreateFont(pD3DDevice, i, 0, FW_REGULAR, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Lato"), &pFontSimSun[i]);
 	}*/
 
-	//AddFontResourceEx(TEXT("msyhl.ttf"), FR_PRIVATE, NULL);
-
 	D3DXCreateFont(pD3DDevice, 18, 0, FW_REGULAR, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Microsoft Yahei"), &pPlayerNameFont);
 
 	/*D3DXCreateFontA(pDevice, 10, 0, FW_MEDIUM, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "simsun", &pFont);
@@ -75,106 +168,13 @@ bool D3D::InitD3D()
 	return 1;
 }
 
-// Forward declare message handler from imgui_impl_win32.cpp
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+void D3D::CleanupDeviceD3D()
 {
-	if (true && ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
-	{
-		return true;
-	}
-		
-	switch (msg)
-	{
-		case WM_PAINT:
-			break;
-		case WM_SYSCOMMAND:
-			if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
-				return 0;
-			break;
-		case WM_DESTROY:
-			::PostQuitMessage(0); // We need to use this to exit a message loop
-			break;
-	}
+	SafeRelease(&pD3D);
+	SafeRelease(&pD3DDevice);
 
-	return ::DefWindowProc(hWnd, msg, wParam, lParam);
-}
-
-bool D3D::SetupHWND(HWND processHWND)
-{
-	std::cout << "[D3D]\n";
-
-	if (processHWND == NULL)
-	{
-		std::cout << "Invalid target process HWND" << std::endl;
-		return 0;
-	}
-
-	gameHWND = processHWND;
-	std::cout << "Target process HWND: " << std::hex << gameHWND << '\n';
-
-	GetWindowRect(gameHWND, &gameScreenRct);
-	screenW = gameScreenRct.right - gameScreenRct.left;
-	screenH = gameScreenRct.bottom - gameScreenRct.top;
-
-	// Create overlay window
-	{
-		// Random class name, window name
-		std::string str = Utils::RandomString(8);
-		std::wstring stemp = std::wstring(str.begin(), str.end());
-		LPCWSTR sw = stemp.c_str();
-
-		wc = WNDCLASSEX();
-		ZeroMemory(&wc, sizeof(WNDCLASSEX));
-		wc.cbSize = sizeof(WNDCLASSEX);
-		wc.style = CS_HREDRAW | CS_VREDRAW;
-		wc.lpfnWndProc = WindowProc;
-		wc.hInstance = GetModuleHandle(NULL);
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hIcon = LoadIcon(0, IDI_APPLICATION);
-		wc.hIconSm = LoadIcon(0, IDI_APPLICATION);
-		wc.hbrBackground = (HBRUSH)RGB(0, 0, 0);
-		wc.lpszMenuName = sw;
-		wc.lpszClassName = sw;
-		RegisterClassEx(&wc);
-
-		overlayHWND = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE, wc.lpszClassName, wc.lpszMenuName, WS_POPUP, gameScreenRct.left, gameScreenRct.top, screenW, screenH, NULL, NULL, NULL, NULL);
-
-		std::cout << "Overlay HWND: " << overlayHWND << std::endl;
-
-		InitD3D();
-
-		SetLayeredWindowAttributes(overlayHWND, 0, 1.0f, LWA_ALPHA);
-		SetLayeredWindowAttributes(overlayHWND, 0, RGB(0, 0, 0), LWA_COLORKEY);
-		MARGINS margin = { -1, -1, -1, -1 };
-		DwmExtendFrameIntoClientArea(overlayHWND, &margin);
-
-		//SetForegroundWindow(overlayHWND);
-		ShowWindow(overlayHWND, SW_SHOW);
-		UpdateWindow(overlayHWND);
-		
-	}
-
-	// Setup Dear ImGui context
-	{
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO();
-		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 16);
-		io.Fonts->AddFontFromMemoryCompressedBase85TTF()
-
-		ImGuiStyle* style = &ImGui::GetStyle();
-		style->Colors[ImGuiCol_WindowBg] = ImColor(0, 0, 0, 255);
-		/*style->WindowMinSize = ImVec2(437,371) */
-
-		// Setup Platform/Renderer backends
-		ImGui_ImplWin32_Init(overlayHWND);
-		ImGui_ImplDX9_Init(pD3DDevice);
-	}
-	
-
-	return true;
+	::DestroyWindow(overlayHWND);
+	::UnregisterClass(wc.lpszClassName, wc.hInstance);
 }
 
 void D3D::DrawLine(float x1, float y1, float x2, float y2, unsigned int color)
@@ -254,22 +254,6 @@ void D3D::DrawString(int x, int y, unsigned int color, std::wstring& txt, bool b
 void D3D::DrawCircle(int x, int y, int radius, unsigned int Color)
 {
 	ImGui::GetBackgroundDrawList()->AddCircle(ImVec2(x, y), radius, Color);
-}
-
-void D3D::CleanupDeviceD3D()
-{
-	SafeRelease(&pD3D);
-	SafeRelease(&pD3DDevice);
-	//SafeRelease(&pD3DLine);
-
-	/*pD3DDevice->Release();
-	pD3DDevice = NULL;*/
-
-	/*pD3D->Release();
-	pD3D = NULL;*/
-
-	::DestroyWindow(overlayHWND);
-	::UnregisterClass(wc.lpszClassName, wc.hInstance);
 }
 
 void D3D::MenuTheme()
