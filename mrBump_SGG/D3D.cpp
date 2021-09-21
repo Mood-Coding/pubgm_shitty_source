@@ -162,6 +162,7 @@ bool D3D::SetupHWND(HWND processHWND)
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 16);
+		io.Fonts->AddFontFromMemoryCompressedBase85TTF()
 
 		ImGuiStyle* style = &ImGui::GetStyle();
 		style->Colors[ImGuiCol_WindowBg] = ImColor(0, 0, 0, 255);
@@ -191,7 +192,8 @@ void D3D::DrawRect(ImVec2 topleft, ImVec2 botright, unsigned int color, float ro
 	ImGui::GetBackgroundDrawList()->AddRect(topleft, botright, color, rounding, 0, thickness);
 }
 
-void D3D::DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color) {
+void D3D::DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color)
+{
 	DrawLine(x1, y1, x2, y2, color);
 	DrawLine(x1, y2, x2, y1, color);
 }

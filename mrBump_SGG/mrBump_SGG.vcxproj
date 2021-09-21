@@ -185,6 +185,7 @@
     </ClCompile>
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="mrBump_SGG.cpp" />
+    <ClCompile Include="msyhl.cpp" />
     <ClCompile Include="Offset.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

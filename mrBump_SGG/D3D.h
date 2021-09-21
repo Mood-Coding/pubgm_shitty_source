@@ -1,8 +1,11 @@
 ﻿#pragma once
 #include "pch.h"
+
 #include "Utils.h"
 #include "Colors.h"
 #include "Settings.h"
+
+#include "msyhl.cpp"
 
 #pragma warning( push )
 #pragma warning( disable : 4820)
@@ -35,6 +38,7 @@ private:
 
 public:
 	D3D() {}
+	~D3D();
 
 	HWND gameHWND = NULL;
 	HWND gameHWND0 = NULL;
@@ -50,8 +54,6 @@ public:
 
 	RECT gameScreenRct{};
 
-	D3D();
-	~D3D();
 	
 	bool SetupHWND(HWND processHWND);
 	bool InitD3D();
