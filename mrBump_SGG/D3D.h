@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include "Colors.h"
 #include "Settings.h"
+#include "ProcessManager.h"
 
 #pragma warning( push )
 #pragma warning( disable : 4820)
@@ -78,6 +79,9 @@ public:
 
 	void MenuTheme();
 	void MenuRender();
+
+	void HandleWindow();
+	void HandleKeyInput();
 
 	void TestDraw();
 };

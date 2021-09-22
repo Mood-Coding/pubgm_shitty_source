@@ -88,6 +88,19 @@ bool D3D::SetupHWND(HWND processHWND)
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
+
+		wchar_t path[MAX_PATH];
+		GetModuleFileNameW(NULL, path, sizeof(path));
+		std::wcout << path << std::endl;
+
+		std::ifstream iFile;
+		iFile.open("msyhl.ttf");
+		if (!iFile)
+		{
+			std::cout << "<!> Can't find font\n";
+			return false;
+		}
+
 		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 16);
 
 		ImGuiStyle* style = &ImGui::GetStyle();
@@ -445,5 +458,63 @@ void D3D::MenuRender()
 			ImGui::Checkbox("ESP unsorted actor", &Settings::bUnsortedActorESP);
 			ImGui::Text("Cached %d actor(s)", g_pESP->ActorCache.size());
 		}
+	}
+}
+
+void ChangeClickability(bool canclick, HWND hwnd)
+{
+	long style = GetWindowLong(hwnd, GWL_EXSTYLE);
+	if (canclick)
+	{
+		style &= ~WS_EX_LAYERED;
+		SetWindowLong(hwnd, GWL_EXSTYLE, style);
+		SetForegroundWindow(hwnd);
+	}
+	else
+	{
+		style |= WS_EX_LAYERED;
+		SetWindowLong(hwnd, GWL_EXSTYLE, style);
+	}
+}
+
+void D3D::HandleWindow()
+{
+	// When we minimized emulator window, its current hwnd will be invalid
+		// So we need to get the new emulator hwnd
+	if (g_pPM->emuProcName == L"aow_exe.exe")
+	{
+		g_pD3D->gameHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
+		g_pD3D->gameHWND = FindWindowEx(g_pD3D->gameHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
+	}
+	else
+	{
+		g_pD3D->gameHWND = FindWindow(L"TitanRenderWindowClass", NULL);
+		g_pD3D->gameHWND = FindWindowEx(g_pD3D->gameHWND, 0, L"TitanOpenglWindowClass", NULL);
+	}
+
+	GetWindowRect(g_pD3D->gameHWND, &g_pD3D->gameScreenRct);
+
+	//SetWindowPos(g_pD3D->overlayHWND, 0, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->screenW, g_pD3D->screenH, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOSIZE);
+	// Move overlay window when we move emulator window
+	MoveWindow(g_pD3D->overlayHWND, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->screenW, g_pD3D->screenH, true);
+
+	UpdateWindow(g_pD3D->overlayHWND);
+
+	// Auto close hack when emulator process is closed
+	if (g_pD3D->gameHWND == NULL)
+		::PostQuitMessage(0);
+}
+
+void D3D::HandleKeyInput()
+{
+	if (GetAsyncKeyState(VK_HOME) & 1)
+	{
+		Settings::bShowMenu = !Settings::bShowMenu;
+		ChangeClickability(Settings::bShowMenu, g_pD3D->overlayHWND);
+	}
+
+	if (GetAsyncKeyState(VK_END) & 1)
+	{
+		::PostQuitMessage(0);
 	}
 }

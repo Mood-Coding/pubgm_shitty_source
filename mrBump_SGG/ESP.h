@@ -112,14 +112,16 @@ struct AirDropItem
 struct BoxData
 {
 public:
-	BoxData(DWORD currActorAddr, SDK::FVector actorPosition)
+	BoxData(std::string& actorName, DWORD currActorAddr, SDK::FVector actorPosition)
 	{
+		ActorName = actorName;
 		address = currActorAddr;
 		Position = actorPosition;
 	}
 
 	BoxData() {}
 
+	std::string ActorName;
 	DWORD address = 0;
 	SDK::FVector Position;
 	SDK::FVector PositionOnSc;
@@ -265,10 +267,13 @@ public:
 	void DrawPlayerBone(Character* character);
 
 	bool IsPlayer(const std::string& actorName);
+	
+
 	bool IsVehicle(const std::string& actorName);
 	bool IsItem(const std::string& actorName, bool bIsItem, bool bIsCached);
 	bool IsAirDropData(const std::string& actorName);
 	bool IsAirdrop(const std::string& actorName);
+
 	bool IsLootbox(const std::string& actorName);
 };
 

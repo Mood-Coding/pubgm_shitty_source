@@ -174,6 +174,9 @@ std::map<std::string, std::string> ActorDisplayName
 	{"PickUp_BP_Armor_Lv3_C", "Armor 3"},
 	{"PickUp_BP_Armor_Lv2_C", "Armor 2"},
 	{"PickUp_BP_Armor_Lv1_C", "Armor 1"},
+	{ "PickUp_BP_Armor_Lv3_C_Recycled", "Armor 3" },
+	{ "PickUp_BP_Armor_Lv2_C_Recycled", "Armor 2" },
+	{ "PickUp_BP_Armor_Lv1_C_Recycled", "Armor 1" },
 
 	//helmet
 	{"PickUp_BP_Helmet_Lv3_C", "Helmet 3"},
@@ -244,10 +247,9 @@ std::map<std::string, std::string> ActorDisplayName
 	{"GasCan_Destructible_Pickup_C", "Gas Can" },
 	{"BP_SpikeTrap_Wrapper_C", "Spike Trap" },
 
-		
-	/*{"PickUpListWrapperActor", "Player Crate" },*/
-	//{"PlayerDeadInventoryBox_C", "Player Crate" },
-	//{"BP_AirDropBox_C", "Air Drop" },
+	{ "BP_ZDD_Sniper_Pickup_C_Recycled", "Bullet Loop" },
+	{ "GasCan_Destructible_Pickup_C_Recycled", "Gas Can" },
+	{ "BP_SpikeTrap_Wrapper_C_Recycled", "Spike Trap" },
 
 	//energy
 	{"Firstaid_Pickup_C", "Firstaid"},

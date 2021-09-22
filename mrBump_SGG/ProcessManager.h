@@ -14,6 +14,8 @@ public:
 
 	DWORD processPID = 0;
 	HANDLE hProcess = 0;
+
+	std::wstring emuProcName{};
 };
 
 extern ProcessManager* g_pPM;

@@ -227,23 +227,28 @@ void ESP::DrawAirDrop()
 	for (int i = 0; i < AirDropDatas.size(); ++i)
 	{
 		g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance);
-		g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);
+
+		if (Settings::bDebugESP)
+		{
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);
+
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address), false);
+
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount), false);
+		}
+
+		int xOffset = 0;
+		for (auto itr : Lootboxes[i].items)
+		{
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X + 18, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
+			xOffset += 18;
+		}
 	}
 
 	for (int i = 0; i < Airdrops.size(); ++i)
 	{
 		g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance);
 		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(255), "AirDrop", true);
-		//g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y + 18, RED(255), std::to_string(Airdrops[i].boxData.itemCount), false);
-		/*g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Airdrops[i].count), false); */
-
-		/*int xOffset = 0;*/
-
-		/*for (auto itr : Airdrops[i].Items)
-		{
-			g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr.first + ':' + itr.second, false);
-			xOffset += 18;
-		}*/
 	}
 }
 
@@ -470,7 +475,7 @@ bool ESP::IsItem(const std::string& actorName, bool bIsItem, bool bIsCached)
 
 bool ESP::IsAirDropData(const std::string& actorName)
 {
-	if (actorName == "AirDropListWrapperActor")
+	if (actorName == "AirDropListWrapperActor" || actorName == "AirDropListWrapperActor_Recycled")
 		return true;
 
 	return false;
@@ -536,3 +541,4 @@ void ESP::GetBoxItems(BoxData* boxData)
 		}
 	}
 }
+

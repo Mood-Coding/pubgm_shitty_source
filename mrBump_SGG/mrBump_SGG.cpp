@@ -1,52 +1,15 @@
 ﻿#include "pch.h"
 
-#include "Offset.h"
-#include "D3D.h"
-#include "ESP.h"
-#include "Aimbot.h"
-#include "Settings.h"
 #include "mrBump_SGG.h"
-#include "MemoryManager.h"
-#include "ProcessManager.h"
 
-void DumpActorName()
-{
-	std::cout << "[Debug] Start dumping" << std::endl;
 
-	std::ofstream myfile;
-	myfile.open("ActorName.txt");
-
-	// Increase if missing some actor name
-	for (int i = 0; i < 250000; i++)
-	{
-		myfile << i << "  |  " << g_pESP->GetActorName(i) << "\n";
-	}
-
-	myfile.close();
-
-	std::cout << "[Debug] Dump actor name done!" << std::endl;
-}
-
-void ChangeClickability(bool canclick, HWND hwnd)
-{
-	long style = GetWindowLong(hwnd, GWL_EXSTYLE);
-	if (canclick)
-	{
-		style &= ~WS_EX_LAYERED;
-		SetWindowLong(hwnd, GWL_EXSTYLE, style);
-		SetForegroundWindow(hwnd);
-	}
-	else
-	{
-		style |= WS_EX_LAYERED;
-		SetWindowLong(hwnd, GWL_EXSTYLE, style);
-	}
-}
 
 bool g_bDoneReadMem = false;
 bool g_bActive = true;
 
 std::vector<Character> tmpCharacters;
+int g_tmpCharacterCount = 0;
+
 std::vector<Vehicle> tmpVehicles;
 std::vector<Item> tmpItems;
 
@@ -56,68 +19,81 @@ std::vector<BoxData> tmpAirDropDatas;
 
 std::vector<UnsortedActor> tmpUnsortedActors;
 
-//std::vector<Lootbox> newLootboxes;
+void inline AddToCharacters(std::string& currActorName, DWORD currActorAddr, SDK::FVector currActorPos, bool bIsCached)
+{
+	Character character(currActorAddr, currActorPos);
+
+	// These data below can't be cached because it update every second
+
+	// Read whole STExtraCharacter class
+	character.STExtraCharacter = g_pMM->read<SDK::STExtraCharacter>(currActorAddr);
+
+	// This character is in my team so skip
+	if (character.STExtraCharacter.TeamID == g_pESP->MyTeamID)
+	{
+		return;
+
+	}
+
+	if (Settings::PlayerESP::bName)
+		character.PlayerName = g_pESP->GetPlayerName(character.STExtraCharacter.PlayerName);
+
+	bool bDead = g_pMM->read<bool>(currActorAddr + 0x964);
+	if (bDead)
+		return;
+
+	if (bIsCached)
+		// Get all cached data
+	{
+		// Nothing o.O
+	}
+	else
+	{
+		// Cache current actor to ActorCache map
+		g_pESP->ActorCache[character.Address] = ActorCaching(currActorName, "", L"");
+	}
+
+	// emplace_back a local object is faster than push_back a local object :v
+	tmpCharacters.emplace_back(character);
+	++g_tmpCharacterCount;
+}
+
+void inline AddToVehicles(std::string& currActorName, DWORD currActorAddr, SDK::FVector currActorPos, ActorCaching cachedActor, bool bIsCached)
+{
+	Vehicle vehicle(currActorAddr, currActorPos);
+
+	// These data below can't be cached because it update every second
+	DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
+	vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
+
+	if (bIsCached)
+	{
+		vehicle.displayName = cachedActor.DisplayName;
+	}
+	else
+	{
+		std::string actorDisplayName = ActorDisplayName[currActorName];
+		// Display name unavailable
+		if (actorDisplayName != "")
+			vehicle.displayName = actorDisplayName;
+		else
+			vehicle.displayName = currActorName;
+
+		g_pESP->ActorCache[vehicle.Address] = ActorCaching(currActorName, vehicle.displayName, L"");
+	}
+
+	// emplace_back a local object is faster than push_back a local object :v
+	tmpVehicles.emplace_back(vehicle);
+}
 
 DWORD tmpViewMatrixAddr = 0;
 
-int g_tmpCharacterCount = 0;
-
 bool bInGame = false;
-
-// Remove Lootbox that is belong to Airdrop
-// Then find out what box(airdrop or lootbox) that certain boxData is belong to
-// By checking box's position(X, Y) and boxData's position(X, Y)
-//void SortBoxData()
-//{
-//
-//	// Move Lootbox that isn't belong to Airdrop to a new Lootboxes vector
-//	for (auto& airdrop : tmpAirdrops)
-//	{
-//		for (auto& lootbox : tmpLootboxes)
-//		{
-//			if (lootbox.Position.X != airdrop.Position.X && lootbox.Position.Y != airdrop.Position.Y && lootbox.Position.Z != airdrop.Position.Z)
-//			{
-//				newLootboxes.push_back(lootbox);
-//				break;
-//			}
-//		}
-//	}
-//
-//	// Then find out what box(airdrop or lootbox) that every boxData belong to
-//	
-//	for (auto &boxData : tmpBoxData)
-//	{
-//		bool bFound = false;
-//
-//		for (auto airdrop : tmpAirdrops)
-//		{
-//			if (boxData.Position.X == airdrop.Position.X && boxData.Position.Y == airdrop.Position.Y)
-//			{
-//				airdrop.boxData = boxData;
-//				bFound = true;
-//				break;
-//			}
-//		}
-//
-//		// If yes so we dont need to loop through position of lootbox
-//		// Because each boxData is only belong to 1 box (airdrop or lootbox)
-//		if (bFound)
-//			continue;
-//
-//		for (auto& lootbox : newLootboxes)
-//		{
-//			if (boxData.Position.X == lootbox.Position.X && boxData.Position.Y == lootbox.Position.Y)
-//			{
-//				lootbox.boxData = boxData;
-//				break;
-//			}
-//		}
-//	}
-//}
 
 void UpdateValue()
 {
 	tmpAirDrops.reserve(20);
+	tmpAirDropDatas.reserve(20);
 	tmpCharacters.reserve(101);
 	tmpLootboxes.reserve(101);
 	tmpUnsortedActors.reserve(512);
@@ -235,71 +211,14 @@ void UpdateValue()
 
 			if (g_pESP->IsPlayer(currActorName) && Settings::PlayerESP::bToggle)
 			{
-				Character character(currActorAddr, currActorPos);
-
-				// These data below can't be cached because it update every second
-				 
-				// Read whole STExtraCharacter class
-				character.STExtraCharacter = g_pMM->read<SDK::STExtraCharacter>(currActorAddr);
-
-				// This character is in my team so skip
-				if (character.STExtraCharacter.TeamID == g_pESP->MyTeamID)
-				{
-					continue;
-
-				}
-
-				if (Settings::PlayerESP::bName)
-					character.PlayerName = g_pESP->GetPlayerName(character.STExtraCharacter.PlayerName);
-
-				bool bDead = g_pMM->read<bool>(currActorAddr + 0x964);
-				if (bDead)
-					continue;
-
-				if (bIsCached)
-				// Get all cached data
-				{
-					// Nothing o.O
-				}
-				else
-				{	
-					// Cache current actor to ActorCache map
-					g_pESP->ActorCache[character.Address] = ActorCaching(currActorName, "", L"");
-				}
-
-				// emplace_back a local object is faster than push_back a local object :v
-				tmpCharacters.emplace_back(character);
-				++g_tmpCharacterCount;
+				AddToCharacters(currActorName, currActorAddr, currActorPos, bIsCached);
 
 				continue;
 			}
 
 			if (g_pESP->IsVehicle(currActorName) && Settings::VehicleESP::bToggle)
 			{
-				Vehicle vehicle(currActorAddr, currActorPos);
-
-				// These data below can't be cached because it update every second
-				DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
-				vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
-
-				if (bIsCached)
-				{
-					vehicle.displayName = cachedActor.DisplayName;
-				}
-				else
-				{
-					std::string actorDisplayName = ActorDisplayName[currActorName];
-					// Display name unavailable
-					if (actorDisplayName != "")
-						vehicle.displayName = actorDisplayName;
-					else
-						vehicle.displayName = currActorName;
-
-					g_pESP->ActorCache[vehicle.Address] = ActorCaching(currActorName, vehicle.displayName, L"");
-				}
-
-				// emplace_back a local object is faster than push_back a local object :v
-				tmpVehicles.emplace_back(vehicle);
+				AddToVehicles(currActorName, currActorAddr, currActorPos, cachedActor, bIsCached);
 
 				continue;
 			}
@@ -315,7 +234,7 @@ void UpdateValue()
 
 			if (g_pESP->IsAirDropData(currActorName))
 			{	
-				BoxData airDropData{ currActorAddr, currActorPos };
+				BoxData airDropData{ currActorName, currActorAddr, currActorPos };
 
 				g_pESP->GetBoxItems(&airDropData);
 
@@ -326,7 +245,7 @@ void UpdateValue()
 
 			if (g_pESP->IsLootbox(currActorName))
 			{
-				BoxData lootboxData(currActorAddr, currActorPos);
+				BoxData lootboxData(currActorName, currActorAddr, currActorPos);
 
 				g_pESP->GetBoxItems(&lootboxData);
 
@@ -364,9 +283,6 @@ void UpdateValue()
 			tmpUnsortedActors.emplace_back(unsortedActor);
 		}
 
-		//TODO sort box data to airdrop and lootbox
-		//SortBoxData();
-
 		g_bDoneReadMem = true;
 
 		// Wait until draw loop take all data from UpdateValue()
@@ -381,15 +297,13 @@ void UpdateValue()
 
 int main()
 {
-	std::wstring emulator{};
-
 	// Find Smartgaga HWND
 	HWND targetHWND = FindWindow(L"TitanRenderWindowClass", NULL);
 	targetHWND = FindWindowEx(targetHWND, 0, L"TitanOpenglWindowClass", NULL);
 
 	if (targetHWND)
 	{
-		emulator = L"AndroidProcess.exe";
+		g_pPM->emuProcName = L"AndroidProcess.exe";
 	}
 	else
 	{
@@ -397,7 +311,7 @@ int main()
 		targetHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
 		targetHWND = FindWindowEx(targetHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
 
-		emulator = L"aow_exe.exe";
+		g_pPM->emuProcName = L"aow_exe.exe";
 	}
 
     if (!g_pD3D->SetupHWND(targetHWND))
@@ -406,7 +320,7 @@ int main()
         return 0;
     }
 
-	if (!g_pPM->Init(emulator))
+	if (!g_pPM->Init(g_pPM->emuProcName))
 	{
 		system("pause");
 		return 0;
@@ -418,7 +332,7 @@ int main()
 		return 0;
 	}
 
-	if (!g_pESP->Init(emulator))
+	if (!g_pESP->Init(g_pPM->emuProcName))
 	{
 		system("pause");
 		return 0;
@@ -433,7 +347,7 @@ int main()
 	// Start read memory loop
 	std::thread readMem(UpdateValue);
 
-	// FPS limiter
+	// Prepare FPS limiter
 	using clock = std::chrono::steady_clock;
 	auto next_frame = clock::now();
 
@@ -465,64 +379,27 @@ int main()
 			}
 		}
 
-		// When we minimized emulator window, its current hwnd will be invalid
-		// So we need to get the new emulator hwnd
-		if (emulator == L"aow_exe.exe")
-		{
-			targetHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
-			targetHWND = FindWindowEx(targetHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
-		}
-		else
-		{
-			targetHWND = FindWindow(L"TitanRenderWindowClass", NULL);
-			targetHWND = FindWindowEx(targetHWND, 0, L"TitanOpenglWindowClass", NULL);
-		}
-		g_pD3D->gameHWND = targetHWND;
-
-		GetWindowRect(g_pD3D->gameHWND, &g_pD3D->gameScreenRct);
-
-		//SetWindowPos(g_pD3D->overlayHWND, 0, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->screenW, g_pD3D->screenH, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOSIZE);
-		// Move overlay window when we move emulator window
-		MoveWindow(g_pD3D->overlayHWND, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->screenW, g_pD3D->screenH, true);
-
-		UpdateWindow(g_pD3D->overlayHWND);
-
-		// Auto close hack when emulator process is closed
-		if (targetHWND == NULL)
-			::PostQuitMessage(0);
+		g_pD3D->HandleWindow();
 		
-		if (GetAsyncKeyState(VK_HOME) & 1)
-		{
-			Settings::bShowMenu = !Settings::bShowMenu;
-			ChangeClickability(Settings::bShowMenu, g_pD3D->overlayHWND);
-		}
-		
-		if (GetAsyncKeyState(VK_END) & 1)
-		{
-			::PostQuitMessage(0);
-		}
+		g_pD3D->HandleKeyInput();
 
 		// Get read mem loop's data when it complete reading memory
 		if (g_bDoneReadMem)
 		{
-			g_pESP->Characters = tmpCharacters;
-			g_pESP->Items = tmpItems;
-			g_pESP->Vehicles = tmpVehicles;
 			g_pESP->UnsortedActors = tmpUnsortedActors;
+
+			g_pESP->Characters = tmpCharacters;
+			g_pESP->CharacterCount = g_tmpCharacterCount;
+
+			g_pESP->Items = tmpItems;
+
+			g_pESP->Vehicles = tmpVehicles;
 
 			g_pESP->Lootboxes = tmpLootboxes;
 			g_pESP->AirDropDatas = tmpAirDropDatas;
-			
-
-			g_pAim->Characters = tmpCharacters;
-
-			g_pESP->CharacterCount = g_tmpCharacterCount;
+			g_pESP->Airdrops = tmpAirDrops;
 
 			g_pESP->viewMatrixAddr = tmpViewMatrixAddr;
-
-			//g_pESP->BoxData = tmpBoxData;
-			// Resume the read mem loop, let it continue its work :>
-			
 		}
 
 		g_pD3D->pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0); // Clear the window alpha
@@ -559,9 +436,6 @@ int main()
 				g_pESP->DrawVehicles();
 
 				g_pESP->DrawPlayers();
-
-				if (g_bDoneReadMem)
-					g_bDoneReadMem = false;
 			}
 			
 			
@@ -590,6 +464,12 @@ int main()
 		
 		g_pD3D->pD3DDevice->EndScene(); // End the 3D scene
 		g_pD3D->pD3DDevice->Present(NULL, NULL, NULL, NULL); // Display the created frame on the screen
+
+		// Resume the read mem loop, let it continue its work :>
+		// We put it here because in DrawPlayer func, we use a read memory function
+		// so we need to pause the read mem loop longer
+		if (g_bDoneReadMem)
+			g_bDoneReadMem = false;
 
 		next_frame += std::chrono::milliseconds(Settings::drawLoopDelay);
 		std::this_thread::sleep_until(next_frame); // Wait for end of frame

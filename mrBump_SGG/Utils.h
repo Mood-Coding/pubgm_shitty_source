@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "ESP.h"
 #include "SDK_classes.h"
 #include "SDK_structs.h"
 
@@ -24,6 +25,8 @@ namespace Utils
     bool is_digits(const std::string& str);
 
     float DistBetween2Vector2D(SDK::FVector2D v1, SDK::FVector2D v2);
+
+    void DumpActorName();
 }
 
 #endif // ! _UTILS_H_

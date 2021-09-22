@@ -76,3 +76,21 @@ std::string Utils::wstring_to_string_utf8(const std::wstring& str)
     std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
     return myconv.to_bytes(str);
 }
+
+void Utils::DumpActorName()
+{
+    std::cout << "[Debug] Start dumping" << std::endl;
+
+    std::ofstream myfile;
+    myfile.open("ActorName.txt");
+
+    // Increase if missing some actor name
+    for (int i = 0; i < 250000; i++)
+    {
+        myfile << i << "  |  " << g_pESP->GetActorName(i) << "\n";
+    }
+
+    myfile.close();
+
+    std::cout << "[Debug] Dump actor name done!" << std::endl;
+}
