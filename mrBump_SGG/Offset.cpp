@@ -34,8 +34,14 @@ const DWORD VEHICLECOMMON = 0x6a0;
 //Character.Pawn.Actor.Object //mesh, tmp
 const DWORD MESH = 0x320; //[Offset: 0x320, Size: 4]
 
-const DWORD ACTORPOSITION = 0x160;
-
 //Class: SceneComponent.ActorComponent.Object
+// Bad, sometime not show enemy
 const DWORD RELATIVELOCATION = 0x120; //Vector RelativeLocation; [Offset: 0x120, Size: 12]
-const DWORD RELATIVELOCATION3 = 0x160;
+//Good
+const DWORD ACTORPOSITION = 0x160; 
+
+// Class: PickUpListWrapperActor.PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
+//PickUpItemData[] PickUpDataList;//[Offset: 0x640, Size: 12]
+const DWORD PICKUPDATALIST = 0x640;
+
+//enum BoxType;//[Offset: 0x658, Size: 1]

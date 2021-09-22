@@ -49,17 +49,75 @@ bool g_bActive = true;
 std::vector<Character> tmpCharacters;
 std::vector<Vehicle> tmpVehicles;
 std::vector<Item> tmpItems;
-std::vector<Airdrop> tmpAirdrops;
-std::vector<Lootbox> tmpLootboxes;
+
+std::vector<Airdrop> tmpAirDrops;
+std::vector<BoxData> tmpLootboxes;
+std::vector<BoxData> tmpAirDropDatas;
+
 std::vector<UnsortedActor> tmpUnsortedActors;
+
+//std::vector<Lootbox> newLootboxes;
+
+DWORD tmpViewMatrixAddr = 0;
 
 int g_tmpCharacterCount = 0;
 
 bool bInGame = false;
 
+// Remove Lootbox that is belong to Airdrop
+// Then find out what box(airdrop or lootbox) that certain boxData is belong to
+// By checking box's position(X, Y) and boxData's position(X, Y)
+//void SortBoxData()
+//{
+//
+//	// Move Lootbox that isn't belong to Airdrop to a new Lootboxes vector
+//	for (auto& airdrop : tmpAirdrops)
+//	{
+//		for (auto& lootbox : tmpLootboxes)
+//		{
+//			if (lootbox.Position.X != airdrop.Position.X && lootbox.Position.Y != airdrop.Position.Y && lootbox.Position.Z != airdrop.Position.Z)
+//			{
+//				newLootboxes.push_back(lootbox);
+//				break;
+//			}
+//		}
+//	}
+//
+//	// Then find out what box(airdrop or lootbox) that every boxData belong to
+//	
+//	for (auto &boxData : tmpBoxData)
+//	{
+//		bool bFound = false;
+//
+//		for (auto airdrop : tmpAirdrops)
+//		{
+//			if (boxData.Position.X == airdrop.Position.X && boxData.Position.Y == airdrop.Position.Y)
+//			{
+//				airdrop.boxData = boxData;
+//				bFound = true;
+//				break;
+//			}
+//		}
+//
+//		// If yes so we dont need to loop through position of lootbox
+//		// Because each boxData is only belong to 1 box (airdrop or lootbox)
+//		if (bFound)
+//			continue;
+//
+//		for (auto& lootbox : newLootboxes)
+//		{
+//			if (boxData.Position.X == lootbox.Position.X && boxData.Position.Y == lootbox.Position.Y)
+//			{
+//				lootbox.boxData = boxData;
+//				break;
+//			}
+//		}
+//	}
+//}
+
 void UpdateValue()
 {
-	tmpAirdrops.reserve(20);
+	tmpAirDrops.reserve(20);
 	tmpCharacters.reserve(101);
 	tmpLootboxes.reserve(101);
 	tmpUnsortedActors.reserve(512);
@@ -96,20 +154,27 @@ void UpdateValue()
 			continue;
 		}
 
-		tmpCharacters.clear();
-		tmpVehicles.clear();
-		tmpItems.clear();
-		tmpAirdrops.clear();
-		tmpLootboxes.clear();
 		tmpUnsortedActors.clear();
 
+		tmpCharacters.clear();
+
+		tmpVehicles.clear();
+
+		tmpItems.clear();
+
+		tmpAirDrops.clear();
+		tmpAirDropDatas.clear();
+		tmpLootboxes.clear();
+
 		g_tmpCharacterCount = 0;
+
+		tmpViewMatrixAddr = g_pMM->read<DWORD>(g_pMM->read<DWORD>(g_pESP->viewWorld) + 32) + 512;
+		
 
 		// Get my character address
 		DWORD NetConnection = g_pMM->read<DWORD>(NetDriver + SERVERCONNECTION);
 		DWORD PlayerController = g_pMM->read<DWORD>(NetConnection + PLAYERCONTROLLER);
 		g_pESP->Pawn = g_pMM->read<DWORD>(PlayerController + ACKNOWLEDGEDPAWN);
-		//std::cout << g_pESP->Pawn << '\n';
 
 		// Get ActorList and maxActorCount
 		g_pESP->Level = g_pMM->read<DWORD>(g_pESP->UWorld + PERSISTENTLEVEL);
@@ -121,7 +186,7 @@ void UpdateValue()
 		DWORD GameModeBase = g_pMM->read<DWORD>(g_pESP->UWorld + 0x168);
 		DWORD GameStateBase = g_pMM->read<DWORD>(GameModeBase + 0x2ec);*/
 
-		// Loop through acctorlist
+		// Loop through actorlist
 		// Because size of actor address is 4 byte: maxActorCount * 4
 		for (DWORD pActorAddr = g_pESP->ActorList; pActorAddr <= g_pESP->ActorList + g_pESP->maxActorCount * 4; pActorAddr += 4)
 		{
@@ -136,8 +201,6 @@ void UpdateValue()
 				// Didn't have my team id
 				if (g_pESP->MyTeamID == 0)
 					g_pESP->MyTeamID = g_pMM->read<DWORD>(g_pESP->Pawn + TEAMID);
-
-				continue;
 			}
 
 			ActorCaching cachedActor{};
@@ -168,7 +231,7 @@ void UpdateValue()
 			}
 
 			SceneComponent = g_pMM->read<DWORD>(currActorAddr + ROOTCOMPONENT);
-			currActorPos = g_pMM->read<SDK::FVector>(SceneComponent + RELATIVELOCATION3);
+			currActorPos = g_pMM->read<SDK::FVector>(SceneComponent + ACTORPOSITION);
 
 			if (g_pESP->IsPlayer(currActorName) && Settings::PlayerESP::bToggle)
 			{
@@ -178,9 +241,6 @@ void UpdateValue()
 				 
 				// Read whole STExtraCharacter class
 				character.STExtraCharacter = g_pMM->read<SDK::STExtraCharacter>(currActorAddr);
-
-				
-					
 
 				// This character is in my team so skip
 				if (character.STExtraCharacter.TeamID == g_pESP->MyTeamID)
@@ -219,7 +279,7 @@ void UpdateValue()
 				Vehicle vehicle(currActorAddr, currActorPos);
 
 				// These data below can't be cached because it update every second
-				DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + g_pESP->VehicleCommonOffset);
+				DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
 				vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
 
 				if (bIsCached)
@@ -240,9 +300,41 @@ void UpdateValue()
 
 				// emplace_back a local object is faster than push_back a local object :v
 				tmpVehicles.emplace_back(vehicle);
-				/*++g_tmpVehicleCount;*/
+
 				continue;
 			}
+
+			if (g_pESP->IsAirdrop(currActorName))
+			{
+				Airdrop airdrop(currActorAddr, currActorPos);
+
+				tmpAirDrops.emplace_back(airdrop);
+
+				continue;
+			}
+
+			if (g_pESP->IsAirDropData(currActorName))
+			{	
+				BoxData airDropData{ currActorAddr, currActorPos };
+
+				g_pESP->GetBoxItems(&airDropData);
+
+				tmpAirDropDatas.emplace_back(airDropData);
+
+				continue;
+			}
+
+			if (g_pESP->IsLootbox(currActorName))
+			{
+				BoxData lootboxData(currActorAddr, currActorPos);
+
+				g_pESP->GetBoxItems(&lootboxData);
+
+				tmpLootboxes.emplace_back(lootboxData);
+
+				continue;
+			}
+
 
 			if (g_pESP->IsItem(currActorName, cachedActor.bIsItem, bIsCached) && Settings::ItemESP::bToggle)
 			{
@@ -268,38 +360,12 @@ void UpdateValue()
 				continue;
 			}
 
-			if (g_pESP->IsAirdrop(currActorName))
-			{
-				Airdrop airdrop(currActorAddr, currActorPos);
-				//std::cout << "Airdrop " << currActorAddr << '\n';
-				DWORD itemBase = g_pMM->read<DWORD>(currActorAddr + 0x640);
-				DWORD count = g_pMM->read<int>(currActorAddr + 0x644);
-				if (count > 60)
-					count = 60;
-
-				for (DWORD itemAddr = itemBase; itemAddr <= itemBase + count * 0x30; itemAddr += 0x30)
-				{
-					int itemID = g_pMM->read<int>(itemAddr + 0x4);
-					int itemCount = g_pMM->read<int>(itemAddr + 0x18);
-					if (itemID > 0)
-					{
-						airdrop.Items.insert(std::make_pair(std::to_string(itemID), std::to_string(itemCount)));
-						++airdrop.count;
-					}
-				}
-
-				//airdrop.actorName = currActorName;
-
-				tmpAirdrops.emplace_back(airdrop);
-
-				continue;
-			}
-
 			UnsortedActor unsortedActor(currActorName, currActorPos);
 			tmpUnsortedActors.emplace_back(unsortedActor);
-
-			// TODO if lootbox, airdrop
 		}
+
+		//TODO sort box data to airdrop and lootbox
+		//SortBoxData();
 
 		g_bDoneReadMem = true;
 
@@ -443,12 +509,18 @@ int main()
 			g_pESP->Items = tmpItems;
 			g_pESP->Vehicles = tmpVehicles;
 			g_pESP->UnsortedActors = tmpUnsortedActors;
+
 			g_pESP->Lootboxes = tmpLootboxes;
-			g_pESP->Airdrops = tmpAirdrops;
+			g_pESP->AirDropDatas = tmpAirDropDatas;
+			
+
 			g_pAim->Characters = tmpCharacters;
 
 			g_pESP->CharacterCount = g_tmpCharacterCount;
 
+			g_pESP->viewMatrixAddr = tmpViewMatrixAddr;
+
+			//g_pESP->BoxData = tmpBoxData;
 			// Resume the read mem loop, let it continue its work :>
 			
 		}
@@ -480,8 +552,12 @@ int main()
 					g_pESP->DrawUnsortedActors();
 
 				g_pESP->DrawItems();
+
 				g_pESP->DrawAirDrop();
+				g_pESP->DrawLootbox();
+
 				g_pESP->DrawVehicles();
+
 				g_pESP->DrawPlayers();
 
 				if (g_bDoneReadMem)

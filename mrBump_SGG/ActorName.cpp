@@ -222,6 +222,10 @@ std::map<std::string, std::string> ActorDisplayName
 	{"BP_QT_A_Pickup_C", "Tactical Stock"},
 	{"BP_QT_Sniper_Pickup_C", "Check Pad"},
 	{"BP_QT_UZI_Pickup_C", "UZI Stock"},
+	{ "BP_QT_A_Pickup_C_Recycled", "Tactical Stock" },
+	{ "BP_QT_Sniper_Pickup_C_Recycled", "Check Pad" },
+	{ "BP_QT_UZI_Pickup_C_Recycled", "UZI Stock" },
+
 
 	//grip
 	{"BP_WB_Angled_Pickup_C", "Angled Foregrip"},

@@ -441,6 +441,7 @@ void D3D::MenuRender()
 
 		if (Settings::tab == DEBUG_TAB_ID)
 		{
+			ImGui::Checkbox("Debug ESP", &Settings::bDebugESP);
 			ImGui::Checkbox("ESP unsorted actor", &Settings::bUnsortedActorESP);
 			ImGui::Text("Cached %d actor(s)", g_pESP->ActorCache.size());
 		}

@@ -36,11 +36,6 @@ public:
 
 	PSIZE_T NumberOfBytes = nullptr;
 
-	/*DWORD _d;*/
-	/*float _f;*/
-	/*int _i;*/
-	/*char _c;
-	byte _b;*/
 	Vector3f _v3;
 	Vector2f _v2;
 	FTransform _ft;
@@ -55,24 +50,11 @@ public:
 
 	template<typename T> T read(DWORD address)
 	{
-		T buffer;
+		T buffer{};
 		readMemory(reinterpret_cast<PVOID>(address), reinterpret_cast<PVOID>(&buffer), sizeof(T));
 		return buffer;
 	}
-
-	//ESP FUNCTION
-	/*DWORD GetViewWorld();
-	void GetViewMatrix();*/
-
-	//id = Entities.entityStruct
-	/*std::string GetEntityType(DWORD id);
-	std::wstring GetPlayerName(DWORD addr);
-	void ClearCachedEntityClassName();*/
 };
 
 extern MemoryManager* g_pMM;
-
-//TODO chuyển qua ESP
-//extern std::map<DWORD, std::string> CachedEntityClassName;
-
 #endif

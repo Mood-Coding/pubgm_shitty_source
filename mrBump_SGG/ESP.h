@@ -102,16 +102,32 @@ public:
 	std::string displayName = "";
 };
 
-class Lootbox : public Actor
-{
-public:
-
-};
 
 struct AirDropItem
 {
 	std::string name{};
 	int quantity = 0;
+};
+
+struct BoxData
+{
+public:
+	BoxData(DWORD currActorAddr, SDK::FVector actorPosition)
+	{
+		address = currActorAddr;
+		Position = actorPosition;
+	}
+
+	BoxData() {}
+
+	DWORD address = 0;
+	SDK::FVector Position;
+	SDK::FVector PositionOnSc;
+
+	int distance = 0; 
+
+	std::list<std::string> items;
+	int itemCount = 0;
 };
 
 class Airdrop : public Actor
@@ -123,13 +139,19 @@ public:
 		Position = actorPosition;
 	}
 
-	Airdrop() {}
+	BoxData boxData;
+};
 
-	std::unordered_map<std::string, std::string> Items;
+class Lootbox : public Actor
+{
+public:
+	Lootbox(DWORD actorAddress, SDK::FVector actorPosition)
+	{
+		Address = actorAddress;
+		Position = actorPosition;
+	}
 
-	//std::string actorName{};
-	int count = 0;
-	
+	BoxData boxData;
 };
 
 class UnsortedActor : public Actor
@@ -143,6 +165,7 @@ public:
 
 	std::string ActorName{};
 };
+
 
 struct ActorCaching
 {
@@ -178,44 +201,12 @@ public:
 	D3DMatrix viewMatrix;
 
 	DWORD viewWorld = 0;
-
-	DWORD GWorldOffset = 4786820;
-	DWORD GNamesOffset = 1924332;
-
-	// Class: World.Object
-	DWORD NetDriverOffset = 0x24;
-	DWORD PersistentLevel = 0x20;
-
-	// Class: NetDriver.Object
-	DWORD ServerConnectionOffset = 0x60;
-
-	// Class: Player.Object
-	DWORD PlayerControllerOffset = 0x20;
-
-	// Class: PlayerController.Controller.Actor.Object
-	DWORD AcknowledgedPawnOffset = 0x330;
-
-	// Class: UAECharacter.Character.Pawn.Actor.Object
-	DWORD iRegionCharacterOffset = 0x638;
-	DWORD TeamIDOffset = 0x670;
-
-	// Class: Actor.Object
-	DWORD RootComponentOffset = 0x14C;
-
-	//Class: STExtraVehicleBase.Pawn.Actor.Object
-	DWORD VehicleCommonOffset = 0x6a0;
-
-	//Class: STExtraCharacter.UAECharacter.Character.Pawn.Actor.Object
-	//uint64 CurrentStates;//[Offset: 0x920, Size: 8]
 	
 	//Character.Pawn.Actor.Object //mesh, tmp
 	DWORD MeshOffset = 0x320; //[Offset: 0x320, Size: 4]
 
-	DWORD ActorPosOffset = 0x160;
-
 	DWORD GWorld = 0;
 	DWORD GNames = 0;
-	
 	DWORD Names = 0;
 	//GNames -> Names -> Actor Name
 
@@ -225,7 +216,6 @@ public:
 	DWORD NetDriver = 0;
 	
 	DWORD Level = 0;
-	
 
 	DWORD ActorList = 0;
 	DWORD ActorListOffset = 0x70; //112
@@ -234,42 +224,50 @@ public:
 
 	DWORD SceneComponent = 0;
 
+	// Current player acdress
+	DWORD Pawn = 0;
+
+	DWORD viewMatrixAddr = 0;
+
+	int MyTeamID = 0;
+
+	int CharacterCount = 0;
+
 	std::vector<Vehicle> Vehicles;
 	std::vector<Character> Characters;
 	std::vector<Item> Items;
 	std::vector<Airdrop> Airdrops;
-	std::vector<Lootbox> Lootboxes;
+	std::vector<BoxData> Lootboxes;
 	std::vector<UnsortedActor> UnsortedActors;
+	std::vector<BoxData> AirDropDatas;
 
+	std::unordered_map<DWORD, std::string> ActorNameCache;	
 	std::map<DWORD, ActorCaching> ActorCache;
 	
-	int CharacterCount = 0;
-
-	int MyTeamID = 0;
-	
-
-	// Pawn = current player acdress
-	DWORD Pawn = 0;
-
 	void DrawPlayers();
 	void DrawItems();
 	void DrawVehicles();
-	void DrawAirDrop();
 	void DrawUnsortedActors();
+
+	void DrawAirDrop();
+	void DrawLootbox();
+
+	void GetBoxItems(BoxData* boxData);
 
 	std::string GetActorName(DWORD actorID);
 	std::wstring GetPlayerName(DWORD nameAddr);
+
+	static int Bones[11];
 
 	void GetPlayerBonePos(Character* character);
 
 	void DrawHeadBone(SDK::FVector2D headScreenPosition, int playerDistance);
 	void DrawPlayerBone(Character* character);
 
-	static int Bones[11];
-
 	bool IsPlayer(const std::string& actorName);
 	bool IsVehicle(const std::string& actorName);
 	bool IsItem(const std::string& actorName, bool bIsItem, bool bIsCached);
+	bool IsAirDropData(const std::string& actorName);
 	bool IsAirdrop(const std::string& actorName);
 	bool IsLootbox(const std::string& actorName);
 };

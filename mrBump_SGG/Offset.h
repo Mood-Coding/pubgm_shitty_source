@@ -37,10 +37,13 @@ extern const DWORD VEHICLECOMMON;
 //Character.Pawn.Actor.Object //mesh, tmp
 extern const DWORD MESH; //[Offset: 0x320, Size: 4]
 
-extern const DWORD ACTORPOSITION;
 
 //Class: SceneComponent.ActorComponent.Object
 extern const DWORD RELATIVELOCATION;
-extern const DWORD RELATIVELOCATION3;
+extern const DWORD ACTORPOSITION; 
 
+// Class: PickUpListWrapperActor.PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
+extern const DWORD PICKUPDATALIST; //PickUpItemData[] PickUpDataList;//[Offset: 0x640, Size: 12]
+
+//enum BoxType;//[Offset: 0x658, Size: 1]
 #endif

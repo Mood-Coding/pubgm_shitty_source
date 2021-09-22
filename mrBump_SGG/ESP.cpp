@@ -28,6 +28,13 @@ bool ESP::Init(std::wstring emulator)
 	std::cout << "GNames : 0x" << std::hex << GNames << "\n";
 	std::cout << "Names : 0x" << std::hex << Names << "\n";
 
+	Airdrops.reserve(20);
+	Characters.reserve(101);
+	Lootboxes.reserve(101);
+	UnsortedActors.reserve(512);
+	Items.reserve(200);
+	Vehicles.reserve(50);
+
 	return 1;
 }
 
@@ -135,57 +142,50 @@ void ESP::DrawPlayers()
 	{
 		g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
 
-		if (Characters[i].PositionOnSc.X <= 0 || Characters[i].PositionOnSc.Y <= 0 || Characters[i].distance >= 1000)
+		if ( (Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0) /*|| Characters[i].distance >= 1000*/)
 			continue;
-		
-		// Background shape
-		//g_pD3D->DrawFilledRect(Characters[i].PositionOnSc.X - 60, Characters[i].PositionOnSc.Y - 18, 120, 18, BLACK(255), BLACK(200));
 
-		int txtBotCheckOffset = 0;
-		
-		// Player name
-		if (Settings::PlayerESP::bName)
+		// Player name + Bot check
 		{
-			RECT txtRct{};
-			g_pD3D->pPlayerNameFont->DrawText(NULL, Characters[i].PlayerName.c_str(), Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
+			long txtBotCheckOffset = 0;
 
-			// ImGui Color isn't compatible with D3D Color :)
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 18, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
+			if (Settings::PlayerESP::bName)
+			{
+				RECT txtRct{};
+				g_pD3D->pPlayerNameFont->DrawText(NULL, Characters[i].PlayerName.c_str(), Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
 
-			txtBotCheckOffset += floor((txtRct.right - txtRct.left) / 2) + 10;
-		}
-	
-		// Bot check
-		if (Characters[i].STExtraCharacter.bIsAI)
-		{
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - txtBotCheckOffset, Characters[i].PositionOnSc.Y - 18, CYAN(255), "B", false);
-		}
-			
+				// We use D3D draw string API because ImGui doesn't support UNICODE string
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 32, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
 
-		// Knocked check (hp <= 0)
-		if (Characters[i].STExtraCharacter.Health <= 0)
-		{
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z * 2 + 18, RED(255), "Knocked", Settings::bToggleShadowText);
-		}
+				txtBotCheckOffset += floor((txtRct.right - txtRct.left) / 2) + 10;
+			}
 
-		// String builder for foot text
-		std::string sb{};
-
-		if (Settings::PlayerESP::bDistance)
-			sb += std::to_string(Characters[i].distance) + "m";
-
-		if (Settings::PlayerESP::bHp)
-		{
-			if (sb != "")
-				sb += " ";
-			
-			sb += std::to_string((int)(Characters[i].STExtraCharacter.Health)) + "HP";
+			if (Characters[i].STExtraCharacter.bIsAI)
+			{
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - txtBotCheckOffset, Characters[i].PositionOnSc.Y - 32, CYAN(255), "B", false);
+			}
 		}
 		
-		if (sb != "")
+		// Distance + HP
 		{
-			ImVec2 size = ImGui::CalcTextSize(sb.c_str());
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z * 2, RED(255), sb, Settings::bToggleShadowText);
+			std::string topTxt{};
+
+			if (Settings::PlayerESP::bDistance)
+				topTxt += std::to_string(Characters[i].distance) + "m";
+
+			if (Settings::PlayerESP::bHp)
+			{
+				if (!topTxt.empty())
+					topTxt += " ";
+
+				topTxt += std::to_string((int)(Characters[i].STExtraCharacter.Health)) + "HP";
+			}
+
+			if (!topTxt.empty())
+			{
+				ImVec2 size = ImGui::CalcTextSize(topTxt.c_str());
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y - 18, RED(255), topTxt, Settings::bToggleShadowText);
+			}
 		}
 
 		if (Settings::PlayerESP::BoneESP::bToggle)
@@ -196,6 +196,12 @@ void ESP::DrawPlayers()
 			DrawPlayerBone(&Characters[i]);
 
 			g_pAim->FindBestTarget(&Characters[i]);
+		}
+
+		// Knocked check (hp <= 0)
+		if (Characters[i].STExtraCharacter.Health <= 0)
+		{
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z * 2, RED(255), "Knocked", Settings::bToggleShadowText);
 		}
 
 		// Line
@@ -218,24 +224,52 @@ void ESP::DrawUnsortedActors()
 
 void ESP::DrawAirDrop()
 {
+	for (int i = 0; i < AirDropDatas.size(); ++i)
+	{
+		g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance);
+		g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);
+	}
+
 	for (int i = 0; i < Airdrops.size(); ++i)
 	{
 		g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance);
-		//std::cout << Airdrops[i].PositionOnSc.X << " " << Airdrops[i].PositionOnSc.Y << '\n';
-		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(255), "Box", false);
-		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y + 18, RED(255), std::to_string(Airdrops[i].Address), false);
-		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Airdrops[i].count), false);
+		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(255), "AirDrop", true);
+		//g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y + 18, RED(255), std::to_string(Airdrops[i].boxData.itemCount), false);
+		/*g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Airdrops[i].count), false); */
 
-		int xOffset = 0;
+		/*int xOffset = 0;*/
 
-		for (auto itr : Airdrops[i].Items)
+		/*for (auto itr : Airdrops[i].Items)
 		{
 			g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr.first + ':' + itr.second, false);
 			xOffset += 18;
-		}
+		}*/
 	}
 }
 
+void ESP::DrawLootbox()
+{
+	for (int i = 0; i < Lootboxes.size(); ++i)
+	{
+		g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance);
+
+		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, RED(255), "Lootbox", true);
+
+		int xOffset = 0;
+		for (auto itr : Lootboxes[i].items)
+		{
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
+			xOffset += 18;
+		}
+
+		if (Settings::bDebugESP)
+		{
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address), false);
+
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount), false);
+		}
+	}
+}
 
 std::string ESP::GetActorName(DWORD actorID)
 {
@@ -274,23 +308,14 @@ void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, int playerDistance)
 
 void ESP::DrawPlayerBone(Character* character)
 {
-	/*g_pD3D->DrawString(character->BONE_HEAD.X, character->BONE_HEAD.Y, WHITE(255), "head", false);
+	if (character->BONE_HEAD.X == 0 && character->BONE_HEAD.Y == 0)
+		return;
 
-	g_pD3D->DrawString(character->BONE_CHEST.X, character->BONE_CHEST.Y, WHITE(255), "chest", false);
+	if (character->BONE_CHEST.X == 0 && character->BONE_CHEST.Y == 0)
+		return;
 
-	g_pD3D->DrawString(character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, WHITE(255), "l elbow", false);
-	g_pD3D->DrawString(character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, WHITE(255), "r elbow", false);
-
-	g_pD3D->DrawString(character->BONE_L_WRIST.X, character->BONE_L_WRIST.Y, WHITE(255), "l wrist", false);
-	g_pD3D->DrawString(character->BONE_R_WRIST.X, character->BONE_R_WRIST.Y, WHITE(255), "r wrist", false);
-
-	g_pD3D->DrawString(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, WHITE(255), "pelvis", false);
-
-	g_pD3D->DrawString(character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, WHITE(255), "l knee", false);
-	g_pD3D->DrawString(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, WHITE(255), "r knee", false);
-
-	g_pD3D->DrawString(character->BONE_L_FOOT.X, character->BONE_L_FOOT.Y, WHITE(255), "l foot", false);
-	g_pD3D->DrawString(character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, WHITE(255), "r foot", false);*/
+	if (character->BONE_PELVIS.X == 0 && character->BONE_PELVIS.Y == 0)
+		return;
 
 	DrawHeadBone(character->BONE_HEAD, character->distance);
 
@@ -433,37 +458,40 @@ bool ESP::IsItem(const std::string& actorName, bool bIsItem, bool bIsCached)
 		else
 			return false;
 
-	if (actorName.find("PickUpListWrapperActor") != std::string::npos)
-		return false;
+	// Although this actor name containts: "PickUp" and "Wrapper" but it's airdrop/ lootbox actor.
 
-	if (actorName.find("Wrapper") == std::string::npos &&
-		actorName.find("PickUp") == std::string::npos &&
-		actorName.find("Pickup") == std::string::npos)
+	if (actorName.find("Wrapper") == std::string::npos
+		&& actorName.find("PickUp") == std::string::npos
+		&& actorName.find("Pickup") == std::string::npos)
 		return false;
-
-	/*if (actorName.find("_C") == std::string::npos)
-		return false;*/
 
 	return true;
 }
 
-bool ESP::IsAirdrop(const std::string& actorName)
+bool ESP::IsAirDropData(const std::string& actorName)
 {
-	if (actorName == "PickUpListWrapperActor" /*|| actorName == "PlayerDeadInventoryBox_C"*/ /*|| actorName == "BP_AirDropBox_C"*/)
-	{
+	if (actorName == "AirDropListWrapperActor")
 		return true;
-	}
 
 	return false;
 }
 
+bool ESP::IsAirdrop(const std::string& actorName)
+{
+	if (actorName == "BP_AirDropBox_C" || actorName == "BP_AirDropBox_C_Recycled")
+		return true;
+
+	return false;
+}
+
+// Because sometime Airdrop will have 2 actors: PlayerDeadInventoryBox_C and BP_AirDropBox_C
+// So we dont use PlayerDeadInventoryBox_C to find Lootbox
+// Instead, we will use PickUpListWrapperActor
 bool ESP::IsLootbox(const std::string& actorName)
 {
-	// AirDropListWrapperActor
-	if (actorName == "PickUpListWrapperActor" || actorName == "BP_AirDropBox_C")
-	{
+	// F :) PlayerDeadInventoryBox_C
+	if (actorName == "PickUpListWrapperActor" || actorName == "PickUpListWrapperActor_Recycled")
 		return true;
-	}
 
 	return false;
 }
@@ -475,4 +503,36 @@ std::string BoxItemIDToDisplayName()
 
 
 	return result;
+}
+
+void ESP::GetBoxItems(BoxData* boxData)
+{
+	// Class: PickUpListWrapperActor.PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
+	DWORD PickUpDataList{ g_pMM->read<DWORD>(boxData->address + PICKUPDATALIST) };
+	int itemCount{ g_pMM->read<int>(boxData->address + PICKUPDATALIST + 0x4) }; // It's right before PickUpDataList
+
+	// Copy pasta :D dont know why
+	if (itemCount > 32)
+		itemCount = 32;
+
+	for (DWORD itemAddr = PickUpDataList; itemAddr <= PickUpDataList + itemCount * 0x30; itemAddr += 0x30)
+	{
+		//Class: PickUpItemData
+		//Class: ItemDefineID //ItemDefineID ID;//[Offset: 0x0, Size: 24]
+			//int Type;//[Offset: 0x0, Size: 4]
+			int TypeSpecificID{ g_pMM->read<int>(itemAddr + 0x4) }; ///[Offset: 0x4, Size: 4]
+			//bool bValidItem;//(ByteOffset: 0, ByteMask: 1, FieldMask: 255)[Offset: 0x8, Size: 1]
+			//bool bValidInstance;//(ByteOffset: 0, ByteMask: 1, FieldMask: 255)[Offset: 0x9, Size: 1]
+			//uint64 InstanceID;//[Offset: 0x10, Size: 8]
+		//int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
+		//BattleItemAdditionalData[] AdditionalDataList;//[Offset: 0x1c, Size: 12]
+		//int InstanceID;//[Offset: 0x28, Size: 4]
+
+		if (TypeSpecificID > 0)
+		{
+			int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
+			boxData->items.push_back(std::to_string(TypeSpecificID) + " " + std::to_string(Count));
+			++boxData->itemCount;
+		}
+	}
 }

@@ -48,6 +48,7 @@ namespace Settings
 	}
 
 	extern bool bUnsortedActorESP;
+	extern bool bDebugESP;
 
 	namespace Aimbot
 	{

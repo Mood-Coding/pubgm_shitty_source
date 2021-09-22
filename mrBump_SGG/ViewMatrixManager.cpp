@@ -99,8 +99,12 @@ D3DMatrix ViewMatrixManager::ToMatrixWithScale(Vector3f translation, Vector3f sc
 
 void ViewMatrixManager::WorldToScreenBone(Vector3f pos, SDK::FVector2D& screen)
 {
-	float screenW = (viewMatrix._14 * pos.x) + (viewMatrix._24 * pos.y) + (viewMatrix._34 * pos.z + viewMatrix._44);
-	//TODO fix here
+	float screenW{  ( (viewMatrix._14 * pos.x) + (viewMatrix._24 * pos.y) + (viewMatrix._34 * pos.z + viewMatrix._44) )};
+
+	//entity is behind player
+	if (screenW < 0.0001f)
+		return;
+
 	screenW = 1 / screenW;
 	screen.X = (g_pD3D->screenW / 2) + (viewMatrix._11 * pos.x + viewMatrix._21 * pos.y + viewMatrix._31 * pos.z + viewMatrix._41) * screenW * (g_pD3D->screenW / 2);
 	screen.Y = (g_pD3D->screenH / 2) - (viewMatrix._12 * pos.x + viewMatrix._22 * pos.y + viewMatrix._32 * pos.z + viewMatrix._42) * screenW * (g_pD3D->screenH / 2);
@@ -158,7 +162,8 @@ DWORD ViewMatrixManager::GetViewWorld(std::wstring emulator)
 			}
 		}
 	}
-	else
+
+	if (emulator == L"aow_exe.exe")
 	{
 		g_pMM->search(pattern, sizeof(pattern), 0x26000000, 0x30000000, false, 0, foundedBases);
 
@@ -177,8 +182,8 @@ DWORD ViewMatrixManager::GetViewWorld(std::wstring emulator)
 				return cand;
 			}
 		}
-		foundedBases.clear();
 
+		foundedBases.clear();
 		g_pMM->search(pattern, sizeof(pattern), 0x30000000, 0x40000000, false, 0, foundedBases);
 		for (int i = 0; i < foundedBases.size(); i++) {
 			DWORD cand = foundedBases[i] - 0x20;
@@ -195,8 +200,8 @@ DWORD ViewMatrixManager::GetViewWorld(std::wstring emulator)
 				return cand;
 			}
 		}
-		foundedBases.clear();
 
+		foundedBases.clear();
 		g_pMM->search(pattern, sizeof(pattern), 0x40000000, 0x50000000, false, 0, foundedBases);
 		for (int i = 0; i < foundedBases.size(); i++) {
 			DWORD cand = foundedBases[i] - 0x20;
@@ -215,18 +220,10 @@ DWORD ViewMatrixManager::GetViewWorld(std::wstring emulator)
 		}
 	}
 		
-
-	
-
-	
-
 	return 0;
 }
 
-void ViewMatrixManager::GetViewMatrix() {
-	//DWORD viewMaxtrixAddr = dRead(dRead(g_pESP->viewWorld) + 32) + 512;
-
-	DWORD viewMatrixAddr = g_pMM->read<DWORD>(g_pMM->read<DWORD>(g_pESP->viewWorld) + 32) + 512;
-
-	g_pMM->readMemory((PVOID)viewMatrixAddr, &g_pVMM->viewMatrix, 64);
+void ViewMatrixManager::GetViewMatrix()
+{	
+	g_pMM->readMemory((PVOID)g_pESP->viewMatrixAddr, &g_pVMM->viewMatrix, 64);
 }

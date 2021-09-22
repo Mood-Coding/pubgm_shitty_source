@@ -13,7 +13,7 @@
 //        render glyphs to one-channel bitmaps with antialiasing (box filter)
 //        render glyphs to one-channel SDF bitmaps (signed-distance field/function)
 //
-//   Todo:
+//   
 //        non-MS cmaps
 //        crashproof on bad data
 //        hinting? (no longer patented)
@@ -2474,7 +2474,7 @@ static stbtt_int32  stbtt__GetGlyphGPOSInfoAdvance(const stbtt_fontinfo *info, i
                             stbtt_uint8 *pairValueTable = table + pairPosOffset;
                             stbtt_uint16 pairValueCount = ttUSHORT(pairValueTable);
                             stbtt_uint8 *pairValueArray = pairValueTable + 2;
-                            // TODO: Support more formats.
+                            
                             STBTT_GPOS_TODO_assert(valueFormat1 == 4);
                             if (valueFormat1 != 4) return 0;
                             STBTT_GPOS_TODO_assert(valueFormat2 == 0);
@@ -2520,7 +2520,7 @@ static stbtt_int32  stbtt__GetGlyphGPOSInfoAdvance(const stbtt_fontinfo *info, i
                             STBTT_assert(glyph1class < class1Count);
                             STBTT_assert(glyph2class < class2Count);
 
-                            // TODO: Support more formats.
+                            
                             STBTT_GPOS_TODO_assert(valueFormat1 == 4);
                             if (valueFormat1 != 4) return 0;
                             STBTT_GPOS_TODO_assert(valueFormat2 == 0);
@@ -2545,7 +2545,7 @@ static stbtt_int32  stbtt__GetGlyphGPOSInfoAdvance(const stbtt_fontinfo *info, i
             } // [DEAR IMGUI] removed ;
 
             default:
-                // TODO: Implement other stuff.
+                
                 break;
         }
     }

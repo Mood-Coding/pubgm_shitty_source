@@ -16,7 +16,7 @@ namespace Settings
 
 		namespace LineESP
 		{
-			bool bToggle = true;
+			bool bToggle = false;
 		}
 
 		bool bDistance = true;
@@ -39,10 +39,11 @@ namespace Settings
 		bool bToggle = true;
 		bool bDistance = true;
 		bool bName = true;
-		int drawDistance = 9;
+		int drawDistance = 13;
 	}
 
 	bool bUnsortedActorESP = false;
+	bool bDebugESP = false;
 
 	namespace Aimbot
 	{

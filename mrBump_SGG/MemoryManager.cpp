@@ -1,11 +1,7 @@
 ﻿#include "pch.h"
 #include "MemoryManager.h"
 
-//TODO chuyển qua ESP
-//std::map<DWORD, std::string> CachedEntityClassName;
-
 MemoryManager* g_pMM = new MemoryManager();
-
 
 bool MemoryManager::Init(HANDLE hTargetProcess, DWORD dwTargetProcessPID)
 {
