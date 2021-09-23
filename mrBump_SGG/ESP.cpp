@@ -210,7 +210,7 @@ void ESP::DrawPlayers()
 		// Line
 		if (Settings::PlayerESP::LineESP::bToggle)
 		{
-			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 20, g_pD3D->screenW / 2, 0, WHITE(255));
+			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 20, g_pD3D->screenW / 2, g_pD3D->screenH, WHITE(255));
 		}
 	}
 }
@@ -287,7 +287,7 @@ std::string ESP::GetActorName(DWORD actorID)
 
 	char name[70] {};
 
-	// minus 1 : or string will end with ||||||||||||||||||||||||||||||||||||||||||||
+	// minus 1 : if not string will end with |||||||||||||||||||||||||||||||| or some other shit :O
 	g_pMM->readMemory((PVOID)FName, &name, sizeof(name)-1);
 
 	std::string result = std::string(name);
@@ -466,8 +466,6 @@ bool ESP::IsItem(const std::string& actorName, bool bIsItem, bool bIsCached)
 		else
 			return false;
 
-	// Although this actor name containts: "PickUp" and "Wrapper" but it's airdrop/ lootbox actor.
-
 	if (actorName.find("Wrapper") == std::string::npos
 		&& actorName.find("PickUp") == std::string::npos
 		&& actorName.find("Pickup") == std::string::npos)
@@ -492,7 +490,7 @@ bool ESP::IsAirdrop(const std::string& actorName)
 	return false;
 }
 
-// Because sometime Airdrop will have 2 actors: PlayerDeadInventoryBox_C and BP_AirDropBox_C
+// Sometime Airdrop will have 2 actors: PlayerDeadInventoryBox_C and BP_AirDropBox_C
 // So we dont use PlayerDeadInventoryBox_C to find Lootbox
 // Instead, we will use PickUpListWrapperActor
 bool ESP::IsLootbox(const std::string& actorName)

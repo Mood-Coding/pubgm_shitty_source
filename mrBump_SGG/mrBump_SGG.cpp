@@ -435,6 +435,8 @@ int main()
 
 				g_pESP->DrawVehicles();
 
+				// Reset then in DrawPlayers function, we will find new target for aimbot
+				g_pAim->ResetTargetValue();
 				g_pESP->DrawPlayers();
 			}
 			
@@ -473,8 +475,6 @@ int main()
 
 		next_frame += std::chrono::milliseconds(Settings::drawLoopDelay);
 		std::this_thread::sleep_until(next_frame); // Wait for end of frame
-
-		g_pAim->ResetTargetValue();
 	}
 
 	return 0;

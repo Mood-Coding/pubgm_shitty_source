@@ -100,7 +100,6 @@ bool D3D::SetupHWND(HWND processHWND)
 			std::cout << "<!> Can't find font\n";
 			return false;
 		}
-
 		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 16);
 
 		ImGuiStyle* style = &ImGui::GetStyle();
