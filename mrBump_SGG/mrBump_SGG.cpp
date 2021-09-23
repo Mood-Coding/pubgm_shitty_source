@@ -2,8 +2,6 @@
 
 #include "mrBump_SGG.h"
 
-
-
 bool g_bDoneReadMem = false;
 bool g_bActive = true;
 
@@ -11,6 +9,7 @@ std::vector<Character> tmpCharacters;
 int g_tmpCharacterCount = 0;
 
 std::vector<Vehicle> tmpVehicles;
+
 std::vector<Item> tmpItems;
 
 std::vector<Airdrop> tmpAirDrops;
@@ -50,7 +49,7 @@ void inline AddToCharacters(std::string& currActorName, DWORD currActorAddr, SDK
 	else
 	{
 		// Cache current actor to ActorCache map
-		g_pESP->ActorCache[character.Address] = ActorCaching(currActorName, "", L"");
+		//g_pESP->ActorCache[character.Address] = ActorCaching(currActorName, "", L"");
 	}
 
 	// emplace_back a local object is faster than push_back a local object :v
@@ -58,7 +57,7 @@ void inline AddToCharacters(std::string& currActorName, DWORD currActorAddr, SDK
 	++g_tmpCharacterCount;
 }
 
-void inline AddToVehicles(std::string& currActorName, DWORD currActorAddr, SDK::FVector currActorPos, ActorCaching cachedActor, bool bIsCached)
+void inline AddToVehicles(std::string& currActorName, DWORD currActorAddr, SDK::FVector currActorPos, bool bIsCached)
 {
 	Vehicle vehicle(currActorAddr, currActorPos);
 
@@ -68,7 +67,7 @@ void inline AddToVehicles(std::string& currActorName, DWORD currActorAddr, SDK::
 
 	if (bIsCached)
 	{
-		vehicle.displayName = cachedActor.DisplayName;
+		/*vehicle.displayName = cachedActor.DisplayName;*/
 	}
 	else
 	{
@@ -79,7 +78,7 @@ void inline AddToVehicles(std::string& currActorName, DWORD currActorAddr, SDK::
 		else
 			vehicle.displayName = currActorName;
 
-		g_pESP->ActorCache[vehicle.Address] = ActorCaching(currActorName, vehicle.displayName, L"");
+		//g_pESP->ActorCache[vehicle.Address] = ActorCaching(currActorName, vehicle.displayName, L"");
 	}
 
 	// emplace_back a local object is faster than push_back a local object :v
@@ -120,7 +119,7 @@ void UpdateValue()
 			// Reset left over from last match
 			if (bInGame)
 			{
-				g_pESP->ActorCache.clear();
+				/*g_pESP->ActorCache.clear();*/
 
 				g_pESP->MyTeamID = 0;
 			}
@@ -163,7 +162,7 @@ void UpdateValue()
 		DWORD GameStateBase = g_pMM->read<DWORD>(GameModeBase + 0x2ec);*/
 
 		// Loop through actorlist
-		// Because size of actor address is 4 byte: maxActorCount * 4
+		// maxActorCount * 4 : Because size of actor address is 4 byte 
 		for (DWORD pActorAddr = g_pESP->ActorList; pActorAddr <= g_pESP->ActorList + g_pESP->maxActorCount * 4; pActorAddr += 4)
 		{
 			DWORD currActorAddr = g_pMM->read<DWORD>(pActorAddr);
@@ -186,28 +185,22 @@ void UpdateValue()
 			DWORD currActorID = 0;
 			std::string currActorName{};
 
-			SDK::FVector currActorPos;
-			DWORD SceneComponent = 0;
+			currActorID = g_pMM->read<DWORD>(currActorAddr + 0x10);
 
-			// If current actor address is exist in actor cache map
-			// Return value of ActorCache.count will be 1, else 0
-			if (g_pESP->ActorCache.count(currActorAddr))
+			// If current actorID isn't exist in ActorNameCache
+			if (g_pESP->ActorNameCache.find(currActorID) == g_pESP->ActorNameCache.end())
 			{
-				bIsCached = true;
-
-				// Get cached data from actor cache map
-				cachedActor = g_pESP->ActorCache.at(currActorAddr);
-
-				currActorName = cachedActor.ActorName;
+				currActorName = g_pESP->GetActorName(currActorID);
+				g_pESP->ActorNameCache.insert( std::make_pair(currActorID, currActorName) );
 			}
+			// Current accotrID is exist in AcotrNameCache
 			else
 			{
-				currActorID = g_pMM->read<DWORD>(currActorAddr + 0x10);
-				currActorName = g_pESP->GetActorName(currActorID);
+				currActorName = g_pESP->ActorNameCache[currActorID];
 			}
 
-			SceneComponent = g_pMM->read<DWORD>(currActorAddr + ROOTCOMPONENT);
-			currActorPos = g_pMM->read<SDK::FVector>(SceneComponent + ACTORPOSITION);
+			DWORD SceneComponent{ g_pMM->read<DWORD>(currActorAddr + ROOTCOMPONENT) };
+			SDK::FVector currActorPos = g_pMM->read<SDK::FVector>(SceneComponent + ACTORPOSITION);
 
 			if (g_pESP->IsPlayer(currActorName) && Settings::PlayerESP::bToggle)
 			{
@@ -218,7 +211,7 @@ void UpdateValue()
 
 			if (g_pESP->IsVehicle(currActorName) && Settings::VehicleESP::bToggle)
 			{
-				AddToVehicles(currActorName, currActorAddr, currActorPos, cachedActor, bIsCached);
+				AddToVehicles(currActorName, currActorAddr, currActorPos, bIsCached);
 
 				continue;
 			}
@@ -254,7 +247,6 @@ void UpdateValue()
 				continue;
 			}
 
-
 			if (g_pESP->IsItem(currActorName, cachedActor.bIsItem, bIsCached) && Settings::ItemESP::bToggle)
 			{
 				Item item(currActorAddr, currActorPos);
@@ -271,7 +263,7 @@ void UpdateValue()
 					else
 						item.displayName = currActorName;
 
-					g_pESP->ActorCache[item.Address] = ActorCaching(currActorName, item.displayName, true);
+					//g_pESP->ActorCache[item.Address] = ActorCaching(currActorName, item.displayName, true);
 				}
 
 				tmpItems.emplace_back(item);

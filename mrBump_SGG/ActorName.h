@@ -2,11 +2,10 @@
 // <ActorName, DisplayName>
 extern std::map<std::string, std::string> ActorDisplayName;
 
-
-extern std::map<std::string, bool> IsItem;
-
 // <ActorName, Color filter>
-extern std::map<std::string, byte> ActorColorFilterID;
+//extern std::map<std::string, byte> ActorColorFilterID;
+extern std::unordered_map<std::string, byte> ActorColorFilterID;
 
 // <Color filter, Color>
-extern std::map<int, unsigned int> ColorFilter;
+//extern std::map<int, unsigned int> ColorFilter;
+extern std::unordered_map<int, unsigned int> ColorFilter;

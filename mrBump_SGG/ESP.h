@@ -213,7 +213,6 @@ public:
 	//GNames -> Names -> Actor Name
 
 	DWORD UWorld = 0;
-	DWORD lastUWorld = 0; // For checking switch from game <-> lobby
 
 	DWORD NetDriver = 0;
 	
@@ -243,8 +242,8 @@ public:
 	std::vector<UnsortedActor> UnsortedActors;
 	std::vector<BoxData> AirDropDatas;
 
+	// ActorID <-> ActorName
 	std::unordered_map<DWORD, std::string> ActorNameCache;	
-	std::map<DWORD, ActorCaching> ActorCache;
 	
 	void DrawPlayers();
 	void DrawItems();

@@ -24,16 +24,23 @@ bool ESP::Init(std::wstring emulator)
 	GNames = viewWorld - GNAMES;
 	Names = g_pMM->read<DWORD>(GNames);
 
-	std::cout << "GWorld : 0x" << std::hex << GWorld <<  "\n";
-	std::cout << "GNames : 0x" << std::hex << GNames << "\n";
-	std::cout << "Names : 0x" << std::hex << Names << "\n";
+	std::cout << "GWorld: 0x" << std::hex << GWorld <<  "\n";
+	std::cout << "GNames: 0x" << std::hex << GNames << "\n";
+	std::cout << "Names: 0x" << std::hex << Names << "\n";
 
 	Airdrops.reserve(20);
-	Characters.reserve(101);
+	AirDropDatas.reserve(20);
 	Lootboxes.reserve(101);
+
 	UnsortedActors.reserve(512);
+
+	Characters.reserve(101);
+
 	Items.reserve(200);
+
 	Vehicles.reserve(50);
+
+	ActorNameCache.reserve(512);
 
 	return 1;
 }
