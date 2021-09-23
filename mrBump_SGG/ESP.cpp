@@ -148,21 +148,22 @@ void ESP::DrawPlayers()
 		// Player name + Bot check
 		{
 			long txtBotCheckOffset = 0;
+			RECT txtRct{};
 
 			if (Settings::PlayerESP::bName)
 			{
-				RECT txtRct{};
+				// Calculate PlayerName text rect
 				g_pD3D->pPlayerNameFont->DrawText(NULL, Characters[i].PlayerName.c_str(), Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
 
-				// We use D3D draw string API because ImGui doesn't support UNICODE string
+				// We use D3D draw string API because ImGui doesn't support UNICODE string :<
 				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 32, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
 
-				txtBotCheckOffset += floor((txtRct.right - txtRct.left) / 2) + 10;
 			}
 
 			if (Characters[i].STExtraCharacter.bIsAI)
 			{
-				g_pD3D->DrawString(Characters[i].PositionOnSc.X - txtBotCheckOffset, Characters[i].PositionOnSc.Y - 32, CYAN(255), "B", false);
+				txtBotCheckOffset += floor((txtRct.right - txtRct.left) / 2) + 10;
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - txtBotCheckOffset, Characters[i].PositionOnSc.Y - 32, CYAN(255), "B", Settings::bToggleShadowText);
 			}
 		}
 		
@@ -188,15 +189,17 @@ void ESP::DrawPlayers()
 			}
 		}
 
-		if (Settings::PlayerESP::BoneESP::bToggle)
+		if (Settings::PlayerESP::BoneESP::bToggle || Settings::Aimbot::bToggle)
 		{
 			// Because read mem loop has high delay than draw loop
-			// Puting GetPlayerBonePos here so Player's bone ESP will be more smooth than putting this in read mem loop
+			// Puting GetPlayerBonePos here so BoneESP will be more smoother than putting this in read mem loop
 			GetPlayerBonePos(&Characters[i]);
-			DrawPlayerBone(&Characters[i]);
 
 			g_pAim->FindBestTarget(&Characters[i]);
 		}
+
+		if (Settings::PlayerESP::BoneESP::bToggle)
+			DrawPlayerBone(&Characters[i]);
 
 		// Knocked check (hp <= 0)
 		if (Characters[i].STExtraCharacter.Health <= 0)

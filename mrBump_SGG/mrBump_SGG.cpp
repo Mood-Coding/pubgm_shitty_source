@@ -383,7 +383,7 @@ int main()
 		
 		g_pD3D->HandleKeyInput();
 
-		// Get read mem loop's data when it complete reading memory
+		// Get data from read mem loop data when it complete reading memory
 		if (g_bDoneReadMem)
 		{
 			g_pESP->UnsortedActors = tmpUnsortedActors;
