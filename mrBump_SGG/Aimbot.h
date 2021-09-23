@@ -6,6 +6,8 @@
 #include "SDK_structs.h"
 #include "ESP.h"
 
+// Aimbot need PlayerESP toggle is on
+// So read mem loop will get player datas for aimbot to find target
 class Aimbot
 {
 public:

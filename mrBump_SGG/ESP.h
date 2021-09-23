@@ -269,7 +269,7 @@ public:
 	
 
 	bool IsVehicle(const std::string& actorName);
-	bool IsItem(const std::string& actorName, bool bIsItem, bool bIsCached);
+	bool IsItem(const std::string& actorName);
 	bool IsAirDropData(const std::string& actorName);
 	bool IsAirdrop(const std::string& actorName);
 

@@ -465,14 +465,8 @@ bool ESP::IsPlayer(const std::string& actorName)
 	return false;
 }
 
-bool ESP::IsItem(const std::string& actorName, bool bIsItem, bool bIsCached)
+bool ESP::IsItem(const std::string& actorName)
 {
-	if (bIsCached)
-		if (bIsItem)
-			return true;
-		else
-			return false;
-
 	if (actorName.find("Wrapper") == std::string::npos
 		&& actorName.find("PickUp") == std::string::npos
 		&& actorName.find("Pickup") == std::string::npos)
