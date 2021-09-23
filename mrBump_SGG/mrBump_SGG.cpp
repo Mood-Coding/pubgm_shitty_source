@@ -22,7 +22,6 @@ void inline AddToCharacters(std::string& currActorName, DWORD currActorAddr, SDK
 {
 	Character character(currActorAddr, currActorPos);
 
-	// These data below can't be cached because it update every second
 
 	// Read whole STExtraCharacter class
 	character.STExtraCharacter = g_pMM->read<SDK::STExtraCharacter>(currActorAddr);
@@ -31,7 +30,6 @@ void inline AddToCharacters(std::string& currActorName, DWORD currActorAddr, SDK
 	if (character.STExtraCharacter.TeamID == g_pESP->MyTeamID)
 	{
 		return;
-
 	}
 
 	if (Settings::PlayerESP::bName)
@@ -50,7 +48,6 @@ void inline AddToVehicles(std::string& currActorName, DWORD currActorAddr, SDK::
 {
 	Vehicle vehicle(currActorAddr, currActorPos);
 
-	// These data below can't be cached because it update every second
 	DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
 	vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
 
@@ -237,8 +234,11 @@ void UpdateValue()
 				continue;
 			}
 
-			UnsortedActor unsortedActor(currActorName, currActorPos);
-			tmpUnsortedActors.emplace_back(unsortedActor);
+			if (Settings::bUnsortedActorESP)
+			{
+				UnsortedActor unsortedActor(currActorName, currActorPos);
+				tmpUnsortedActors.emplace_back(unsortedActor);
+			}
 		}
 
 		g_bDoneReadMem = true;
