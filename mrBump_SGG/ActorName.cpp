@@ -3,7 +3,8 @@
 #include "Colors.h"
 
 // <ActorName, DisplayName>
-std::map<std::string, std::string> ActorDisplayName
+//std::map<std::string, std::string> ActorDisplayName
+std::unordered_map<std::string, std::string> ActorDisplayName
 {
 	//Vehicle
 	{"BP_VH_Buggy_2_C", "Buggy"},
@@ -277,8 +278,6 @@ std::map<std::string, std::string> ActorDisplayName
 		//BP_AirDropPlane_C
 };
 
-
-
 // <DisplayName, Color filter>
 std::unordered_map<std::string, byte> ActorColorFilterID
 //std::map<std::string, byte> ActorColorFilterID
@@ -484,4 +483,36 @@ std::unordered_map<int, unsigned int> ColorFilter
 	{6, ORANGE(255)},
 	{7, YELLOW(255)},
 	{8, RED(255)},
+};
+
+// int <-> Display Name
+std::unordered_map<int, std::string> TypeID
+{
+	{101008, "M762"},
+	{101002, "M16A4"},
+	{101003, "SCAR"},
+	{101004, "M416"},
+	{101010, "G36"},
+	{101006, "AUG"},
+	{101101, "ASM"},
+	{101001, "AKM"},
+	{101005, "Groza"},
+	{103003, "AWM"},
+	{103002, "M24"},
+	{103001, "Kar98k"},
+	{103011, "Mosin"},
+	{106007, "Flaregun"},
+	{105001, "M249"},
+	{105002, "DP28"},
+	{105010, "MG3"},
+	{203014, "3X"},
+	{203004, "4x"},
+	{203015, "6x"},
+	{203005, "8x"},
+	{502002, "Helmet Lv.2"},
+	{502003, "Helmet Lv.3"},
+	{503002, "Armour Lv.2"},
+	{503003, "Armour Lv.3"},
+	{501006, "Bag Lv.3"},
+	{501005, "Bag Lv.2"},
 };

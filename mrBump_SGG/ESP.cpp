@@ -248,9 +248,15 @@ void ESP::DrawAirDrop()
 		}
 
 		int xOffset = 0;
-		for (auto itr : Lootboxes[i].items)
+		/*for (auto itr : Lootboxes[i].items)
 		{
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X + 18, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
+			xOffset += 18;
+		}*/
+
+		for (const auto& itr : Lootboxes[i].items)
+		{
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X + 18, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr.first + " " + std::to_string(itr.second), false);
 			xOffset += 18;
 		}
 	}
@@ -268,14 +274,24 @@ void ESP::DrawLootbox()
 	{
 		g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance);
 
+		if (Lootboxes[i].PositionOnSc.X == 0 && Lootboxes[i].PositionOnSc.Y == 0)
+			continue;	
+
 		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, RED(255), "Lootbox", true);
 
 		int xOffset = 0;
-		for (auto itr : Lootboxes[i].items)
+		/*for (auto itr : Lootboxes[i].items)
 		{
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
 			xOffset += 18;
+		}*/
+
+		for (const auto& itr : Lootboxes[i].items)
+		{
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr.first + " " + std::to_string(itr.second), false);
+			xOffset += 18;
 		}
+
 
 		if (Settings::bDebugESP)
 		{
@@ -507,7 +523,7 @@ std::string BoxItemIDToDisplayName()
 {
 	std::string result{};
 
-
+	// TODO box item id to display name
 
 	return result;
 }
@@ -538,7 +554,14 @@ void ESP::GetBoxItems(BoxData* boxData)
 		if (TypeSpecificID > 0)
 		{
 			int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
-			boxData->items.push_back(std::to_string(TypeSpecificID) + " " + std::to_string(Count));
+			if (Count == 0)
+				continue;
+			std::string txt = TypeID[TypeSpecificID];
+			if (txt != "")
+				boxData->items[txt] = Count + boxData->items[txt];
+			else
+				boxData->items[std::to_string(TypeSpecificID)] = Count + boxData->items[std::to_string(TypeSpecificID)];
+			/*boxData->items.push_back(std::to_string(TypeSpecificID) + " " + std::to_string(Count));*/
 			++boxData->itemCount;
 		}
 	}

@@ -128,7 +128,8 @@ public:
 
 	int distance = 0; 
 
-	std::list<std::string> items;
+	std::unordered_map<std::string, int> items;
+	//std::list<std::string> items;
 	int itemCount = 0;
 };
 
