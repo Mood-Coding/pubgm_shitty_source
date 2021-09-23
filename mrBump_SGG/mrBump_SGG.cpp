@@ -101,6 +101,8 @@ void UpdateValue()
 
 			bInGame = false;
 
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
 			continue;
 		}
 
@@ -396,6 +398,9 @@ int main()
 				// Reset then in DrawPlayers function, we will find new target for aimbot
 				g_pAim->ResetTargetValue();
 				g_pESP->DrawPlayers();
+
+				if (g_pAim->targetPos.X != -999 && g_pAim->targetPos.Y != -999)
+					g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH / 2, g_pAim->targetPos.X - g_pD3D->screenW / 2, g_pAim->targetPos.Y - g_pD3D->screenH / 2, RED(255));
 			}
 			
 			
@@ -424,6 +429,27 @@ int main()
 		
 		g_pD3D->pD3DDevice->EndScene(); // End the 3D scene
 		g_pD3D->pD3DDevice->Present(NULL, NULL, NULL, NULL); // Display the created frame on the screen
+
+		if ((GetAsyncKeyState(VK_XBUTTON2) & 0x8000) && (g_pAim->targetPos.X > 0 && g_pAim->targetPos.Y > 0))
+		{
+			long targetX = static_cast<long>(g_pAim->targetPos.X) - g_pD3D->screenW / 2;
+			long targetY = static_cast<long>(g_pAim->targetPos.Y) - g_pD3D->screenH / 2;
+
+			//nếu crosshair gần đến điểm aim trên mục tiêu thì hạ tốc độ aimbot
+			if ((targetX > -5 && targetX < 5) && (targetY > -5 && targetY < 5)) {
+				targetX *= 0.1;
+				targetY *= 0.1;
+			}
+
+
+			targetX /= Settings::Aimbot::sensitivity;
+			targetY /= Settings::Aimbot::sensitivity;
+
+			mouse_event(MOUSEEVENTF_MOVE, (DWORD)(targetX), (DWORD)(targetY), 0, 0);
+			//std::cout << posX << " " << posY << "\n";
+			/*g_pAim->MoveMouse(targetX, targetY);*/
+			//std::cout << "aimming" << "\n";
+		}
 
 		// Resume the read mem loop, let it continue its work :>
 		// We put it here because in DrawPlayer func, we use a read memory function

@@ -408,13 +408,6 @@ void D3D::MenuRender()
 				ImGui::EndChild();
 			}
 
-			/*if (ImGui::CollapsingHeader("Aimbot"))
-			{
-				ImGui::BeginChild("20", ImVec2(275, 25), false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Toggle", &Settings::Aimbot::bToggle);
-				ImGui::EndChild();
-			}*/
-
 			if (ImGui::CollapsingHeader("Vehicle ESP"))
 			{
 				ImGui::BeginChild("", ImVec2(330, 65), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
@@ -440,6 +433,12 @@ void D3D::MenuRender()
 				ImGui::SliderInt("Draw distance", &Settings::ItemESP::drawDistance, 1, 100);
 				ImGui::EndChild();
 			}
+		}
+
+		if (Settings::tab == AIMBOT_TAB_ID)
+		{
+			ImGui::Checkbox("Toggle", &Settings::Aimbot::bToggle);
+			ImGui::SliderInt("Sensitivity", &Settings::Aimbot::sensitivity, 2, 10);
 		}
 
 		if (Settings::tab == SETTINGS_TAB_ID)

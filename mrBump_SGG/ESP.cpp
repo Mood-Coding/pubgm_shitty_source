@@ -519,8 +519,8 @@ void ESP::GetBoxItems(BoxData* boxData)
 	int itemCount{ g_pMM->read<int>(boxData->address + PICKUPDATALIST + 0x4) }; // It's right before PickUpDataList
 
 	// Copy pasta :D dont know why
-	if (itemCount > 32)
-		itemCount = 32;
+	if (itemCount > 60)
+		itemCount = 60;
 
 	for (DWORD itemAddr = PickUpDataList; itemAddr <= PickUpDataList + itemCount * 0x30; itemAddr += 0x30)
 	{

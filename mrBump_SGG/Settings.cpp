@@ -49,6 +49,7 @@ namespace Settings
 	{
 		bool bToggle = true;
 		int targetBone = BONE_HEAD;
+		int sensitivity = 2;
 	}
 
 	int readMemloopDelay = 30;

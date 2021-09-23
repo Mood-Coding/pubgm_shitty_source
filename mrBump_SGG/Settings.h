@@ -54,6 +54,7 @@ namespace Settings
 	{
 		extern bool bToggle;
 		extern int targetBone;
+		extern int sensitivity;
 	}
 
 	extern int readMemloopDelay;
