@@ -492,7 +492,6 @@ void D3D::HandleWindow()
 
 	GetWindowRect(g_pD3D->gameHWND, &g_pD3D->gameScreenRct);
 
-	//SetWindowPos(g_pD3D->overlayHWND, 0, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->screenW, g_pD3D->screenH, SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOSIZE);
 	// Move overlay window when we move emulator window
 	MoveWindow(g_pD3D->overlayHWND, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->screenW, g_pD3D->screenH, true);
 
@@ -509,10 +508,14 @@ void D3D::HandleKeyInput()
 	{
 		Settings::bShowMenu = !Settings::bShowMenu;
 		ChangeClickability(Settings::bShowMenu, g_pD3D->overlayHWND);
+
+		return;
 	}
 
 	if (GetAsyncKeyState(VK_END) & 1)
 	{
 		::PostQuitMessage(0);
+
+		return;
 	}
 }

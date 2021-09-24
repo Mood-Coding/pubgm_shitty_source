@@ -142,6 +142,8 @@ void UpdateValue()
 		// maxActorCount * 4 : Because size of actor address is 4 byte 
 		for (DWORD pActorAddr = g_pESP->ActorList; pActorAddr <= g_pESP->ActorList + g_pESP->maxActorCount * 4; pActorAddr += 4)
 		{
+			// TODO read array of pActorAddrs then loop through it
+			// instead reading every single pActorAddr value
 			DWORD currActorAddr = g_pMM->read<DWORD>(pActorAddr);
 
 			if (currActorAddr == NULL)
@@ -152,7 +154,7 @@ void UpdateValue()
 			{
 				// Didn't have my team id
 				/*if (g_pESP->MyTeamID == 0)*/
-					g_pESP->MyTeamID = g_pMM->read<DWORD>(g_pESP->Pawn + TEAMID);
+				g_pESP->MyTeamID = g_pMM->read<DWORD>(g_pESP->Pawn + TEAMID);
 			}
 
 			//ActorCaching cachedActor{};
