@@ -18,10 +18,15 @@ std::vector<BoxData> tmpAirDropDatas;
 
 std::vector<UnsortedActor> tmpUnsortedActors;
 
-void inline AddToCharacters(std::string& currActorName, DWORD currActorAddr, SDK::FVector currActorPos)
+void inline AddToCharacters(const std::string& currActorName, const DWORD& currActorAddr, const SDK::FVector& currActorPos)
 {
 	Character character(currActorAddr, currActorPos);
 
+	// Current actor address = my player's address
+	if (currActorAddr == g_pESP->Pawn)
+	{
+		g_pESP->MyTeamID = g_pMM->read<DWORD>(g_pESP->Pawn + TEAMID);
+	}
 
 	// Read whole STExtraCharacter class
 	character.STExtraCharacter = g_pMM->read<SDK::STExtraCharacter>(currActorAddr);
@@ -149,15 +154,7 @@ void UpdateValue()
 			if (currActorAddr == NULL)
 				continue;
 
-			// Current actor address = my player's address
-			if (currActorAddr == g_pESP->Pawn)
-			{
-				// Didn't have my team id
-				/*if (g_pESP->MyTeamID == 0)*/
-				g_pESP->MyTeamID = g_pMM->read<DWORD>(g_pESP->Pawn + TEAMID);
-			}
-
-			//ActorCaching cachedActor{};
+			
 
 			std::string currActorName{};
 
