@@ -277,9 +277,8 @@ std::unordered_map<std::string, std::string> ActorDisplayName
 		//BP_AirDropPlane_C
 };
 
-// <DisplayName, Color filter>
+// ActorName -> Color filter ID
 std::unordered_map<std::string, byte> ActorColorFilterID
-//std::map<std::string, byte> ActorColorFilterID
 {
 	//air drop
 	{"Flare", 8},
@@ -470,8 +469,7 @@ std::unordered_map<std::string, byte> ActorColorFilterID
 	{"Apple", 1 }
 };
 
-// <Color filter, Color>
-//std::map<int, unsigned int> ColorFilter
+// Color filter ID -> Color
 std::unordered_map<int, unsigned int> ColorFilter
 {
 	{1, DARKERGRAY(255)},
@@ -484,7 +482,7 @@ std::unordered_map<int, unsigned int> ColorFilter
 	{8, RED(255)},
 };
 
-// int <-> Display Name
+// TypeSpecificID -> Display Name
 std::unordered_map<int, std::string> TypeID
 {
 	{101008, "M762"},

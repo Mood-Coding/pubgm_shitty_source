@@ -2,13 +2,11 @@
 // ActorName -> DisplayName
 extern std::unordered_map<std::string, std::string> ActorDisplayName;
 
-// <ActorName, Color filter>
-//extern std::map<std::string, byte> ActorColorFilterID;
+// ActorName -> Color filter ID
 extern std::unordered_map<std::string, byte> ActorColorFilterID;
 
-// <Color filter, Color>
-//extern std::map<int, unsigned int> ColorFilter;
+// Color filter ID -> Color
 extern std::unordered_map<int, unsigned int> ColorFilter;
 
-// int <-> Display Name
+// TypeSpecificID -> Display Name
 extern std::unordered_map<int, std::string> TypeID;

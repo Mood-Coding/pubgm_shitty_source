@@ -199,7 +199,6 @@ void UpdateValue()
 			if (g_pESP->IsAirdrop(currActorName))
 			{
 				Airdrop airdrop(currActorAddr, currActorPos);
-
 				tmpAirDrops.emplace_back(airdrop);
 
 				continue;
@@ -208,7 +207,6 @@ void UpdateValue()
 			if (g_pESP->IsAirDropData(currActorName))
 			{	
 				BoxData airDropData{ currActorName, currActorAddr, currActorPos };
-
 				g_pESP->GetBoxItems(&airDropData);
 
 				tmpAirDropDatas.emplace_back(airDropData);
@@ -219,7 +217,6 @@ void UpdateValue()
 			if (g_pESP->IsLootbox(currActorName))
 			{
 				BoxData lootboxData(currActorName, currActorAddr, currActorPos);
-
 				g_pESP->GetBoxItems(&lootboxData);
 
 				tmpLootboxes.emplace_back(lootboxData);
