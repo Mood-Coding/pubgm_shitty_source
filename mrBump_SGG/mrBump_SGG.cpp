@@ -40,6 +40,7 @@ void inline AddToCharacters(const std::string& currActorName, const DWORD& currA
 	if (Settings::PlayerESP::bName)
 		character.PlayerName = g_pESP->GetPlayerName(character.STExtraCharacter.PlayerName);
 
+	// TODO add bDead to struct STExtraCharacter
 	bool bDead = g_pMM->read<bool>(currActorAddr + 0x964);
 	if (bDead)
 		return;
@@ -60,8 +61,20 @@ void inline AddToVehicles(const std::string& currActorName, const DWORD& currAct
 	if (vehicle.displayName == "")
 		vehicle.displayName = currActorName;
 
-	// emplace_back a local object is faster than push_back a local object :v
 	tmpVehicles.emplace_back(vehicle);
+}
+
+void inline AddToItems(const std::string& currActorName, const DWORD& currActorAddr, const SDK::FVector& currActorPos)
+{
+	Item item(currActorAddr, currActorPos);
+
+	item.displayName = ActorDisplayName[currActorName];
+	// std::unoreder_map will return empty string
+	// if currActorName isn't exist in ActorDisplayName
+	if (item.displayName == "")
+		item.displayName = currActorName;
+
+	tmpItems.emplace_back(item);
 }
 
 DWORD tmpViewMatrixAddr = 0;
@@ -151,8 +164,6 @@ void UpdateValue()
 			if (currActorAddr == NULL)
 				continue;
 
-			
-
 			std::string currActorName{};
 
 			DWORD currActorID = g_pMM->read<DWORD>(currActorAddr + 0x10);
@@ -163,7 +174,6 @@ void UpdateValue()
 				currActorName = g_pESP->GetActorName(currActorID);
 				g_pESP->ActorNameCache.insert( std::make_pair(currActorID, currActorName) );
 			}
-			// Current accotrID is exist in AcotrNameCache
 			else
 			{
 				currActorName = g_pESP->ActorNameCache[currActorID];
