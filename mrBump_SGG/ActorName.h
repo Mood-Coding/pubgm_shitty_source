@@ -1,6 +1,5 @@
 #pragma once
-// <ActorName, DisplayName>
-//extern std::map<std::string, std::string> ActorDisplayName;
+// ActorName -> DisplayName
 extern std::unordered_map<std::string, std::string> ActorDisplayName;
 
 // <ActorName, Color filter>

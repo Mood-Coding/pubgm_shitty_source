@@ -49,18 +49,15 @@ void inline AddToCharacters(const std::string& currActorName, const DWORD& currA
 	++g_tmpCharacterCount;
 }
 
-void inline AddToVehicles(std::string& currActorName, DWORD currActorAddr, SDK::FVector currActorPos)
+void inline AddToVehicles(const std::string& currActorName, const DWORD& currActorAddr, const SDK::FVector& currActorPos)
 {
 	Vehicle vehicle(currActorAddr, currActorPos);
 
 	DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
 	vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
 
-	std::string actorDisplayName = ActorDisplayName[currActorName];
-	// Display name unavailable
-	if (actorDisplayName != "")
-		vehicle.displayName = actorDisplayName;
-	else
+	vehicle.displayName = ActorDisplayName[currActorName];
+	if (vehicle.displayName == "")
 		vehicle.displayName = currActorName;
 
 	// emplace_back a local object is faster than push_back a local object :v

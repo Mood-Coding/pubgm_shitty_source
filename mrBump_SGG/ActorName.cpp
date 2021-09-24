@@ -2,8 +2,7 @@
 #include "ActorName.h"
 #include "Colors.h"
 
-// <ActorName, DisplayName>
-//std::map<std::string, std::string> ActorDisplayName
+// ActorName -> DisplayName
 std::unordered_map<std::string, std::string> ActorDisplayName
 {
 	//Vehicle
