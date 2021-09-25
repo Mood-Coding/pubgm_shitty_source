@@ -97,7 +97,7 @@ void ESP::DrawVehicles()
 		{
 			g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance);
 
-			if (Vehicles[i].PositionOnSc.X <= 0 || Vehicles[i].PositionOnSc.Y <= 0 || Vehicles[i].distance > Settings::VehicleESP::drawDistance)
+			if (Vehicles[i].PositionOnSc.X < 1 || Vehicles[i].PositionOnSc.Y < 1 || Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 				continue;
 
 			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), Settings::bToggleShadowText);
