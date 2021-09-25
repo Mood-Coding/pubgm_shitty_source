@@ -50,11 +50,8 @@ public:
 
 	RECT gameScreenRct{};
 
-	
 	bool SetupHWND(HWND processHWND);
 	bool InitD3D();
-	
-	//void Renderer();
 
 	void DrawLine(float x1, float y1, float x2, float y2, unsigned int color);
 
@@ -66,10 +63,10 @@ public:
 	void DrawFilled(float x, float y, float width, float height, D3DCOLOR color);
 	void DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color);
 
-	void DrawString(int x, int y, unsigned int color, std::string& txt, bool bShadow);
 	void DrawString(int x, int y, unsigned int color, std::wstring& txt, bool bShadow);
-	//void DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow);
-	void DrawString(float x, float y, unsigned int color, std::string txt, bool bShadow);
+	void DrawString(int x, int y, unsigned int color, std::string& txt, bool bShadow);
+	void DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow);
+	void DrawString(float x, float y, unsigned int color, const char* txt, bool bShadow);
 
 	void DrawCircle(int x, int y, int radius, unsigned int Color);
 

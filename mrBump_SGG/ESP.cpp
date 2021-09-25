@@ -57,31 +57,30 @@ void ESP::DrawItems()
 		if (Items[i].distance > Settings::ItemESP::drawDistance /*|| Items[i].distance < 0*/)
 			continue;
 
-		// Optimize
-		unsigned int color = 0;
-		int colorFilterID = ActorColorFilterID[Items[i].displayName];
-		if (colorFilterID < 1)
+		unsigned int color = ColorFilter[ActorColorFilterID[Items[i].displayName]];
+		if (color == 0)
 			color = DARKRED(255);
-		else
-			color = ColorFilter[colorFilterID];
 
-		int xOffset = 0;
+		std::string str;
 
 		if (Settings::ItemESP::bName)
 		{
-			std::string str{ Items[i].displayName };
+			str += Items[i].displayName + " ";
 
-			g_pD3D->DrawString(Items[i].PositionOnSc.X + xOffset, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
-			xOffset += ImGui::CalcTextSize(str.c_str()).x + 5;
+			/*g_pD3D->DrawString(Items[i].PositionOnSc.X + xOffset, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
+			xOffset += ImGui::CalcTextSize(str.c_str()).x + 5;*/
 		}
 
 		if (Settings::ItemESP::bDistance)
 		{
-			std::string str{ std::to_string(Items[i].distance) + "m" };
+			str += std::to_string(Items[i].distance) + "m";
 
-			g_pD3D->DrawString(Items[i].PositionOnSc.X + xOffset, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
-			xOffset += ImGui::CalcTextSize(str.c_str()).x + 5;
+			/*g_pD3D->DrawString(Items[i].PositionOnSc.X + xOffset, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
+			xOffset += ImGui::CalcTextSize(str.c_str()).x + 5;*/
 		}
+
+		if (str != "")
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
 	}
 }
 
@@ -242,21 +241,17 @@ void ESP::DrawAirDrop()
 		{
 			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address).c_str(), false);
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
 		}
 
 		int xOffset = 0;
-		/*for (auto itr : Lootboxes[i].items)
-		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X + 18, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
-			xOffset += 18;
-		}*/
 
 		for (const auto& itr : Lootboxes[i].items)
 		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X + 18, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr.first + " " + std::to_string(itr.second), false);
+			std::string str{ itr.first + ' ' + std::to_string(itr.second) };
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X + 18, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), str.c_str(), false);
 			xOffset += 18;
 		}
 	}
@@ -280,32 +275,28 @@ void ESP::DrawLootbox()
 		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, RED(255), "Lootbox", true);
 
 		int xOffset = 0;
-		/*for (auto itr : Lootboxes[i].items)
-		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
-			xOffset += 18;
-		}*/
 
 		for (const auto& itr : Lootboxes[i].items)
 		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr.first + " " + std::to_string(itr.second), false);
+			std::string str{ itr.first + ' ' + std::to_string(itr.second)};
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), str.c_str(), false);
 			xOffset += 18;
 		}
 
 
 		if (Settings::bDebugESP)
 		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address), false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address).c_str(), false);
 
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount), false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
 		}
 	}
 }
 
 std::string ESP::GetActorName(DWORD actorID)
 {
-	DWORD FNamePtr = g_pMM->read<DWORD>(Names + (actorID / 0x4000) * 4);	
-	DWORD FName = g_pMM->read<DWORD>(FNamePtr + 4 * (actorID % 0x4000));
+	DWORD FNamePtr{ g_pMM->read<DWORD>(Names + (actorID / 0x4000) * 4) };
+	DWORD FName{ g_pMM->read<DWORD>(FNamePtr + 4 * (actorID % 0x4000)) };
 	FName += 8;
 
 	char name[70] {};
@@ -319,17 +310,19 @@ std::string ESP::GetActorName(DWORD actorID)
 
 std::wstring ESP::GetPlayerName(DWORD nameAddr)
 {
-	TCHAR p[16] {};
+	TCHAR p[16]{};
 	g_pMM->readMemory((PVOID)nameAddr, &p, sizeof(p) - 1);
 
-	std::wstring result1 = p;
-	return result1;
+	/*std::wstring result1 = p;
+	return result1;*/
+
+	return std::wstring(p);
 }
 
 void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, int playerDistance)
 {
-	float size = 50.f;
-	float scale = playerDistance * 0.5;
+	float size{ 48.f };
+	float scale{ static_cast<float>(playerDistance) * 0.5f };
 	if (scale == 0) {
 		scale = 1;
 	}
@@ -556,7 +549,7 @@ void ESP::GetBoxItems(BoxData* boxData)
 			int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
 			if (Count == 0)
 				continue;
-			std::string txt = TypeID[TypeSpecificID];
+			std::string txt = DisplayName[TypeSpecificID];
 			if (txt != "")
 				boxData->items[txt] = Count + boxData->items[txt];
 			else

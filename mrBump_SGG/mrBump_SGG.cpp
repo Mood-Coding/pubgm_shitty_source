@@ -18,11 +18,14 @@ std::vector<BoxData> tmpAirDropDatas;
 
 std::vector<UnsortedActor> tmpUnsortedActors;
 
+DWORD tmpViewMatrixAddr = 0;
+
+bool bInGame = false;
+
 void inline AddToCharacters(const std::string& currActorName, const DWORD& currActorAddr, const SDK::FVector& currActorPos)
 {
 	Character character(currActorAddr, currActorPos);
 
-	// Current actor address = my player's address
 	if (currActorAddr == g_pESP->Pawn)
 	{
 		g_pESP->MyTeamID = g_pMM->read<DWORD>(g_pESP->Pawn + TEAMID);
@@ -69,17 +72,13 @@ void inline AddToItems(const std::string& currActorName, const DWORD& currActorA
 	Item item(currActorAddr, currActorPos);
 
 	item.displayName = ActorDisplayName[currActorName];
-	// std::unoreder_map will return empty string
-	// if currActorName isn't exist in ActorDisplayName
+
+	// std::unoreder_map will return empty string if currActorName isn't exist in ActorDisplayName
 	if (item.displayName == "")
 		item.displayName = currActorName;
 
 	tmpItems.emplace_back(item);
 }
-
-DWORD tmpViewMatrixAddr = 0;
-
-bool bInGame = false;
 
 void UpdateValue()
 {
@@ -108,12 +107,6 @@ void UpdateValue()
 		}
 		else
 		{
-			// Reset left over from last match
-			if (bInGame)
-			{
-				
-			}
-
 			bInGame = false;
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));

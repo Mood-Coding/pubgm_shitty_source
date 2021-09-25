@@ -235,20 +235,20 @@ void D3D::DrawString(int x, int y, unsigned int color, std::string& txt, bool bS
 	ImGui::GetBackgroundDrawList()->AddText(ImVec2(x, y), color, txt.c_str());
 }
 
-//void D3D::DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow)
-//{
-//	if (bShadow)
-//		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y + 1), BLACK(255), txt.c_str());
-//
-//	ImGui::GetBackgroundDrawList()->AddText(ImVec2(x, y), color, txt.c_str());
-//}
-
-void D3D::DrawString(float x, float y, unsigned int color, std::string txt, bool bShadow)
+void D3D::DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow)
 {
 	if (bShadow)
 		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y + 1), BLACK(255), txt.c_str());
 
 	ImGui::GetBackgroundDrawList()->AddText(ImVec2(x, y), color, txt.c_str());
+}
+
+void D3D::DrawString(float x, float y, unsigned int color, const char* txt, bool bShadow)
+{
+	if (bShadow)
+		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y + 1), BLACK(255), txt);
+
+	ImGui::GetBackgroundDrawList()->AddText(ImVec2(x, y), color, txt);
 }
 
 void D3D::DrawString(int x, int y, unsigned int color, std::wstring& txt, bool bShadow)

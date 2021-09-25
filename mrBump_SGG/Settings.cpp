@@ -37,7 +37,7 @@ namespace Settings
 	namespace ItemESP
 	{
 		bool bToggle = true;
-		bool bDistance = true;
+		bool bDistance = false;
 		bool bName = true;
 		int drawDistance = 13;
 	}
