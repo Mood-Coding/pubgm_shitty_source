@@ -22,6 +22,7 @@
 #pragma warning( pop ) 
 
 #include <unordered_map>
+#include <sstream>
 #include <array>
 #include <WinUser.h>
 #include <ctime>

@@ -47,14 +47,26 @@ bool ESP::Init(std::wstring emulator)
 
 void ESP::DrawItems()
 {
+	if (Settings::bDebugESP)
+	{
+		for (int i = 0; i < Items.size(); ++i)
+		{
+			g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance);
+
+			if (Items[i].PositionOnSc.X <= 0 || Items[i].PositionOnSc.Y <= 0 || Items[i].distance > Settings::ItemESP::drawDistance)
+				continue;
+
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Items[i].Address).c_str(), Settings::bToggleShadowText);
+		}
+
+		return;
+	}
+
 	for (int i = 0; i < Items.size(); ++i)
 	{	
 		g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance);
 
-		if (Items[i].PositionOnSc.X <= 0 || Items[i].PositionOnSc.Y <= 0)
-			continue;
-
-		if (Items[i].distance > Settings::ItemESP::drawDistance /*|| Items[i].distance < 0*/)
+		if (Items[i].PositionOnSc.X <= 0 || Items[i].PositionOnSc.Y <= 0 || Items[i].distance > Settings::ItemESP::drawDistance)
 			continue;
 
 		unsigned int color = ColorFilter[ActorColorFilterID[Items[i].displayName]];
@@ -64,20 +76,10 @@ void ESP::DrawItems()
 		std::string str;
 
 		if (Settings::ItemESP::bName)
-		{
 			str += Items[i].displayName + " ";
 
-			/*g_pD3D->DrawString(Items[i].PositionOnSc.X + xOffset, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
-			xOffset += ImGui::CalcTextSize(str.c_str()).x + 5;*/
-		}
-
 		if (Settings::ItemESP::bDistance)
-		{
 			str += std::to_string(Items[i].distance) + "m";
-
-			/*g_pD3D->DrawString(Items[i].PositionOnSc.X + xOffset, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
-			xOffset += ImGui::CalcTextSize(str.c_str()).x + 5;*/
-		}
 
 		if (str != "")
 			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
@@ -86,6 +88,12 @@ void ESP::DrawItems()
 
 void ESP::DrawVehicles()
 {
+	if (Settings::bDebugESP)
+	{
+
+		return;
+	}
+
 	for (int i = 0; i < Vehicles.size(); ++i)
 	{
 		g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance);
@@ -93,9 +101,15 @@ void ESP::DrawVehicles()
 		if (Vehicles[i].PositionOnSc.X <= 0 || Vehicles[i].PositionOnSc.Y <= 0)
 			continue;
 
+		if (Vehicles[i].displayName == "AirDrop Plane")
+		{
+			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), "AirDrop Plane", Settings::bToggleShadowText);
+			continue;
+		}
+
 		if (Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 			continue;
-		
+
 		// Footer 1st text
 		{
 			int xOffset = 0;
@@ -237,6 +251,9 @@ void ESP::DrawAirDrop()
 	{
 		g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance);
 
+		if (AirDropDatas[i].PositionOnSc.X == 0 && AirDropDatas[i].PositionOnSc.Y == 0)
+			continue;
+
 		if (Settings::bDebugESP)
 		{
 			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);
@@ -247,11 +264,13 @@ void ESP::DrawAirDrop()
 		}
 
 		int xOffset = 0;
+		/*if (Lootboxes[i].items.size() == 0)
+			continue;*/
 
-		for (const auto& itr : Lootboxes[i].items)
+		for (const auto& itr : AirDropDatas[i].items)
 		{
 			std::string str{ itr.first + ' ' + std::to_string(itr.second) };
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X + 18, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), str.c_str(), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), str.c_str(), false);
 			xOffset += 18;
 		}
 	}
@@ -259,6 +278,10 @@ void ESP::DrawAirDrop()
 	for (int i = 0; i < Airdrops.size(); ++i)
 	{
 		g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance);
+
+		if (Airdrops[i].PositionOnSc.X == 0 && Airdrops[i].PositionOnSc.Y == 0)
+			continue;
+
 		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(255), "AirDrop", true);
 	}
 }
@@ -269,9 +292,10 @@ void ESP::DrawLootbox()
 	{
 		g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance);
 
-		if (Lootboxes[i].PositionOnSc.X == 0 && Lootboxes[i].PositionOnSc.Y == 0)
+		if (Lootboxes[i].PositionOnSc.X < 1 && Lootboxes[i].PositionOnSc.Y < 1.0f)
 			continue;	
 
+		//std::string str = std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y);
 		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, RED(255), "Lootbox", true);
 
 		int xOffset = 0;
@@ -283,12 +307,14 @@ void ESP::DrawLootbox()
 			xOffset += 18;
 		}
 
-
 		if (Settings::bDebugESP)
 		{
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address).c_str(), false);
 
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
+
+			std::string str = std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18, RED(255), str, true);
 		}
 	}
 }
@@ -313,20 +339,22 @@ std::wstring ESP::GetPlayerName(DWORD nameAddr)
 	TCHAR p[16]{};
 	g_pMM->readMemory((PVOID)nameAddr, &p, sizeof(p) - 1);
 
-	/*std::wstring result1 = p;
-	return result1;*/
-
 	return std::wstring(p);
 }
 
 void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, int playerDistance)
 {
-	float size{ 48.f };
-	float scale{ static_cast<float>(playerDistance) * 0.5f };
-	if (scale == 0) {
-		scale = 1;
+	//TODO fix scale of head bone
+	float size{ 47.f };
+	if (playerDistance != 1)
+	{
+		float scale{ 0 };	
+		scale = static_cast<float>(playerDistance) * 0.40f;
+		if (scale == 0) {
+			scale = 1;
+		}
+		size /= scale;
 	}
-	size /= scale;
 	g_pD3D->DrawCircle(headScreenPosition.X, headScreenPosition.Y, size, RED(255));
 }
 
@@ -453,9 +481,9 @@ bool ESP::IsVehicle(const std::string& actorName)
 		||actorName.find("water_Plane") != std::string::npos
 		||actorName.find("AquaRail") != std::string::npos
 		||actorName.find("Rony") != std::string::npos)
-	{
 		return true;
-	}
+	if (actorName == "BP_AirDropPlane_C")
+		return true;
 
 	return false;
 }
@@ -510,15 +538,6 @@ bool ESP::IsLootbox(const std::string& actorName)
 		return true;
 
 	return false;
-}
-
-std::string BoxItemIDToDisplayName()
-{
-	std::string result{};
-
-	// TODO box item id to display name
-
-	return result;
 }
 
 void ESP::GetBoxItems(BoxData* boxData)

@@ -27,6 +27,44 @@ namespace Utils
     float DistBetween2Vector2D(SDK::FVector2D v1, SDK::FVector2D v2);
 
     void DumpActorName();
+
+    /*template<typename  T>
+    std::string DecToHex(T dec_num);*/
+    template<typename T>
+    std::string DecToHex(T dec_num)
+    {
+        std::stringstream ss;
+
+        ss << std::hex << dec_num;
+
+        return ss.str();
+    }
+
+    /*template<typename  T>
+    T HexToDec(std::string& hex_num);*/
+    template<typename T>
+    T HexToDec(std::string& hex_num)
+    {
+        T dec_num;
+        std::stringstream ss;
+
+        ss << hex_num;
+        ss >> std::hex >> dec_num;
+
+        return dec_num;
+    }
+
+    template<typename T>
+    T HexToDec(const char* hex_num)
+    {
+        T dec_num;
+        std::stringstream ss;
+
+        ss << hex_num;
+        ss >> std::hex >> dec_num;
+
+        return dec_num;
+    }
 }
 
 #endif // ! _UTILS_H_

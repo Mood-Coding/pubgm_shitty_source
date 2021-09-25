@@ -84,7 +84,7 @@ public:
 
 	Item() {}
 
-	std::string displayName = "";
+	std::string displayName{ "" };
 };
 
 class Vehicle : public Actor

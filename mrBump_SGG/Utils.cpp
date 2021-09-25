@@ -94,3 +94,25 @@ void Utils::DumpActorName()
 
     std::cout << "[Debug] Dump actor name done!" << std::endl;
 }
+
+//template<typename  T>
+//std::string Utils::DecToHex(T dec_num)
+//{
+//    std::stringstream ss;
+//
+//    ss << std::hex << dec_num;
+//
+//    return ss.str();
+//}
+
+//template<typename  T>
+//T Utils::HexToDec(std::string& hex_num)
+//{
+//    T dec_num;
+//    std::stringstream ss;
+//
+//    ss << hex_num;
+//    ss >> std::dec >> dec_num;
+//
+//    return dec_num;
+//}

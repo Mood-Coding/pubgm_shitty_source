@@ -57,8 +57,11 @@ void inline AddToVehicles(const std::string& currActorName, const DWORD& currAct
 {
 	Vehicle vehicle(currActorAddr, currActorPos);
 
-	DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
-	vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
+	if (currActorName != "BP_AirDropPlane_C")
+	{
+		DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
+		vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
+	}
 
 	vehicle.displayName = ActorDisplayName[currActorName];
 	if (vehicle.displayName == "")
@@ -82,14 +85,6 @@ void inline AddToItems(const std::string& currActorName, const DWORD& currActorA
 
 void UpdateValue()
 {
-	tmpAirDrops.reserve(20);
-	tmpAirDropDatas.reserve(20);
-	tmpCharacters.reserve(101);
-	tmpLootboxes.reserve(101);
-	tmpUnsortedActors.reserve(512);
-	tmpItems.reserve(200);
-	tmpVehicles.reserve(50);
-
 	while (g_bActive)
 	{
 		g_pESP->UWorld = g_pMM->read<DWORD>(g_pESP->GWorld);
@@ -175,14 +170,14 @@ void UpdateValue()
 			DWORD SceneComponent{ g_pMM->read<DWORD>(currActorAddr + ROOTCOMPONENT) };
 			SDK::FVector currActorPos = g_pMM->read<SDK::FVector>(SceneComponent + ACTORPOSITION);
 
-			if (g_pESP->IsPlayer(currActorName) && Settings::PlayerESP::bToggle)
+			if (g_pESP->IsPlayer(currActorName) && (Settings::PlayerESP::bToggle || Settings::bDebugESP))
 			{
 				AddToCharacters(currActorName, currActorAddr, currActorPos);
 
 				continue;
 			}
 
-			if (g_pESP->IsVehicle(currActorName) && Settings::VehicleESP::bToggle)
+			if (g_pESP->IsVehicle(currActorName) && (Settings::VehicleESP::bToggle || Settings::bDebugESP))
 			{
 				AddToVehicles(currActorName, currActorAddr, currActorPos);
 
@@ -217,7 +212,7 @@ void UpdateValue()
 				continue;
 			}
 
-			if (g_pESP->IsItem(currActorName) && Settings::ItemESP::bToggle)
+			if (g_pESP->IsItem(currActorName) && (Settings::ItemESP::bToggle || Settings::bDebugESP))
 			{
 				Item item(currActorAddr, currActorPos);
 
@@ -300,6 +295,15 @@ int main()
 		return 0;
 	}
 	
+	// Avoid reallocation
+	tmpAirDrops.reserve(20);
+	tmpAirDropDatas.reserve(20);
+	tmpCharacters.reserve(101);
+	tmpLootboxes.reserve(101);
+	tmpUnsortedActors.reserve(512);
+	tmpItems.reserve(200);
+	tmpVehicles.reserve(50);
+
 	// Start read memory loop
 	std::thread readMem(UpdateValue);
 
@@ -360,11 +364,10 @@ int main()
 
 		g_pD3D->pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0); // Clear the window alpha
 		g_pD3D->pD3DDevice->BeginScene(); // Begin the 3D scene
-
 		// Start the Dear ImGui frame
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
-		g_pD3D->MenuTheme();
+		g_pD3D->MenuTheme(); // Custom menu theme
 		ImGui::NewFrame();
 
 		// Menu draw
@@ -422,7 +425,6 @@ int main()
 		ImGui::EndFrame();
 		ImGui::Render();
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-		
 		g_pD3D->pD3DDevice->EndScene(); // End the 3D scene
 		g_pD3D->pD3DDevice->Present(NULL, NULL, NULL, NULL); // Display the created frame on the screen
 
@@ -432,11 +434,10 @@ int main()
 			long targetY = static_cast<long>(g_pAim->targetPos.Y) - g_pD3D->screenH / 2;
 
 			//nếu crosshair gần đến điểm aim trên mục tiêu thì hạ tốc độ aimbot
-			if ((targetX > -10 && targetX < 10) && (targetY > -10 && targetY < 10)) {
+			if ((targetX > -13 && targetX < 13) && (targetY > -13 && targetY < 13)) {
 				targetX *= 0.1;
 				targetY *= 0.1;
 			}
-
 
 			targetX /= Settings::Aimbot::sensitivity;
 			targetY /= Settings::Aimbot::sensitivity;
@@ -445,8 +446,7 @@ int main()
 		}
 
 		// Resume the read mem loop, let it continue its work :>
-		// We put it here because in DrawPlayer func, we use a read memory function
-		// so we need to pause the read mem loop longer
+		// We put it here because in DrawPlayer function we are using a read memory function so we need to pause the read mem loop longer
 		if (g_bDoneReadMem)
 			g_bDoneReadMem = false;
 

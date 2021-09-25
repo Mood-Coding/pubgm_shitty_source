@@ -497,256 +497,155 @@ std::unordered_map<int, std::string> DisplayName
 	{101005, "Groza"},
 	{103003, "AWM"},
 	{103002, "M24"},
+	{103010, "QBU"},
+	{103009, "SLR"},
 	{103001, "Kar98k"},
 	{103011, "Mosin"},
 	{106007, "Flaregun"},
 	{105001, "M249"},
 	{105002, "DP28"},
 	{105010, "MG3"},
-	{203014, "3X"},
+	{103004, "SKS"},
+	{103006, "Mini14"},
+	{103002, "M24"},
+	{103001, "Kar98k"},
+	{103005, "VSS"},
+	{103008, "Win94"},
+	{101009, "Mk47"},
+	{101010, "G36C"},
+	{101007, "QBZ"},
+	{101005, "Groza"},
+	{101006, "AUG"},
+	{106006, "SawedOff"},
+	{102005, "PP19 Bizon"},
+	{102004, "TommyGun"},
+	{102007, "MP5K"},
+	{102002, "UMP9"},
+	{102003, "Vector"},
+	{102001, "Uzi"},
+	{106003, "R1895"},
+	{106008, "Vz61"},
+	{106001, "P92"},
+	{106004, "P18C"},
+	{106005, "R45"},
+	{106002, "P1911"},
+	{106010, "DesertEagle"},
+	{108003, "Sickle"},
+	{108001, "Machete"},
+	{107001, "Cross Bow"},
+	{108004, "Pan"},
+	{103007, "Mk14"},
+	{302001, "7.62"},
+	{305001, "45ACP"},
+	{303001, "5.56"},
+	{301001, "9mm"},
+	{306001, "300Magnum"},
+	{304001, "12Guage"},
+	{307001, "Arrows"},
+	{104003,"S12K"},
+	{104004,"DBS"},
+	{104001,"S686"},
+	{104002,"S1897"},
 	{203004, "4x"},
 	{203015, "6x"},
 	{203005, "8x"},
-	{502002, "Helmet Lv.2"},
-	{502003, "Helmet Lv.3"},
-	{503002, "Armour Lv.2"},
-	{503003, "Armour Lv.3"},
-	{501006, "Bag Lv.3"},
-	{501005, "Bag Lv.2"},
+	{203001, "Lazer"},
+	{203014, "3X"},
+	{203002, "Holo"},
+	{105002, "DP28"},
+	{107001, "CrossBow"},
+	{105001, "M249"},
+	{602004, "Grenade"},
+	{602002, "Smoke"},
+	{602003, "Molotov"},
+	{502002, "Helmet 2"},
+	{502003, "Helmet 3"},
+	{503002, "Armor 2"},
+	{503003, "Armor 3"},
+	{501006, "Bag 3"},
+	{501005, "Bag 2"},
+	{403989, "Arctic-Suit"},
+	{403045, "Woodland-Suit"},
+	{403187, "Desert-Suit"},
+	{403188, "Desert-Suit"},
 };
 
 
-//else if (code == 101003)
-//return "SCAR-L";
-//else if (code == 101004)
-//return "M416";
-//else if (code == 101002)
-//return "M16A-4";
-//else if (code == 103003)
-//return "AWM";
-//else if (code == 103010)
-//return "QBU";
-//else if (code == 103009)
-//return "SLR";
-//else if (code == 103004)
-//return "SKS";
-//else if (code == 103006)
-//return "Mini14";
-//else if (code == 103002)
-//return "M24";
-//else if (code == 103001)
-//return "Kar98k";
-//else if (code == 103005)
-//return "VSS";
-//else if (code == 103008)
-//return "Win94";
-//else if (code == 101009)
-//return "Mk47 Mutant";
-//else if (code == 101010)
-//return "G36C";
-//else if (code == 101007)
-//return "QBZ";
-//else if (code == 101001)
-//return "AKM";
-//else if (code == 101005)
-//return "Groza";
-//else if (code == 101006)
-//return "AUG_A3";
-//else if (code == 104003)
-//return "S12K";
-//else if (code == 104004)
-//return "DBS";
-//else if (code == 104001)
-//return "S686";
-//else if (code == 104002)
-//return "S1897";
-//else if (code == 106006)
-//return "SawedOff";
-//else if (code == 102005)
-//return "PP19 Bizon";
-//else if (code == 102004)
-//return "TommyGun";
-//else if (code == 102007)
-//return "MP5K";
-//else if (code == 102002)
-//return "UMP9";
-//else if (code == 102003)
-//return "Vector";
-//else if (code == 102001)
-//return "Uzi";
-//else if (code == 106003)
-//return "R1895";
-//else if (code == 106008)
-//return "Vz61";
-//else if (code == 106001)
-//return "P92";
-//else if (code == 106004)
-//return "P18C";
-//else if (code == 106005)
-//return "R45";
-//else if (code == 106002)
-//return "P1911";
-//else if (code == 106010)
-//return "DesertEagle";
-//else if (code == 108003)
-//return "Sickle";
-//else if (code == 108001)
-//return "Machete";
-//else if (code == 107001)
-//return "Cross Bow";
-//else if (code == 108004)
-//return "Pan";
-//else if (code == 103007)
-//return "Mk14";
-//else if (code == 302001)
-//return "7.62";
-//else if (code == 305001)
-//return "45ACP";
-//else if (code == 303001)
-//return "5.56";
-//else if (code == 301001)
-//return "9mm";
-//else if (code == 306001)
-//return "300Magnum";
-//else if (code == 304001)
-//return "12Guage";
-//else if (code == 307001)
-//return "Arrows";
-//else if (code == 201010)
-//return "Rifle-FlashHider";
-//else if (code == 201009)
-//return "Rifle-Compensator";
-//else if (code == 201004)
-//return "Mid Compensator";
-//else if (code == 205002)
-//return "Tactical_Rifle";
-//else if (code == 201012)
-//return "Duckbill";
-//else if (code == 201005)
-//return "Sniper_FlashHider";
-//else if (code == 201006)
-//return "Mid_Suppressor";
-//else if (code == 205003)
-//return "Chekpad Sniper";
-//else if (code == 201001)
-//return "Choke";
-//else if (code == 205001)
-//return "UZI_Pickup";
-//else if (code == 201003)
-//return "Sniper-Compensator";
-//else if (code == 201007)
-//return "Sniper-Suppressor";
-//else if (code == 201011)
-//return "Suppressor-AR";
-//else if (code == 204009)
-//return "Sniper-Extended";
-//else if (code == 204004)
-//return "Mid_E";
-//else if (code == 204005)
-//return "Mid_Q";
-//else if (code == 204007)
-//return "Sniper_Mag";
-//else if (code == 204008)
-//return "Sniper_QuickMag";
-//else if (code == 204012)
-//return "Rifle_Mag";
-//else if (code == 204013)
-//return "Exteded AR";
-//else if (code == 204011)
-//return "Mag-AR";
-//else if (code == 204006)
-//return "Mid_EQ";
-//else if (code == 205004)
-//return "Crossbow";
-//else if (code == 204014)
-//return "ZDD_Sniper";
-//else if (code == 203005)
-//return "8x";
-//else if (code == 203003)
-//return "2x";
-//else if (code == 203001)
-//return "Lazer";
-//else if (code == 203014)
-//return "3X";
-//else if (code == 203002)
-//return "Holo";
-//else if (code == 203015)
-//return "6x";
-//else if (code == 203004)
-//return "4x";
-//else if (code == 105002)
-//return "DP28";
-//else if (code == 107001)
-//return "CrossBow";
-//else if (code == 105001)
-//return "M249";
-//else if (code == 501006)
-//return "Bag Lv.3";
-//else if (code == 501004)
-//return "Bag Lv.1";
-//else if (code == 501005)
-//return "Bag Lv.2";
-//else if (code == 503002)
-//return "Armour Lv.2";
-//else if (code == 503001)
-//return "Armour Lv.1";
-//else if (code == 503003)
-//return "Armour Lv.3";
-//else if (code == 502002)
-//return "Helmet Lv.2";
-//else if (code == 502001)
-//return "Helmet Lv.1";
-//else if (code == 502003)
-//return "Helmet Lv.3";
-//else if (code == 602004)
-//return "Grenade";
-//else if (code == 602002)
-//return "Smoke";
-//else if (code == 602003)
-//return "Molotof";
-//else if (code == 602005)
-//return "Apple";
-//else if (code == 601003)
-//return "Painkiller";
-//else if (code == 601002)
-//return "Adrenaline";
-//else if (code == 601001)
-//return "Energy Drink";
-//else if (code == 601005)
-//return "FirstaidKit";
-//else if (code == 601004)
-//return "Bandage";
-//else if (code == 202006)
-//return "ThumbGrip";
-//else if (code == 202007)
-//return "Lasersight";
-//else if (code == 202001)
-//return "Angled";
-//else if (code == 202004)
-//return "LightGrip";
-//else if (code == 106007)
-//return "Flaregun";
-//else if (code == 3000312)
-//return "GameCoin";
-//else if (code == 601006)
-//return "Medkit";
-//else if (code == 308001)
-//return "Flaregun";
-//else if (code == 501003)
-//return "Bag Lv.3";
-//else if (code == 501002)
-//return "Bag Lv.2";
-//else if (code == 501001)
-//return "Bag Lv.1";
-//else if (code == 201002)
-//return "Mid_Compensator";
-//else if (code == 502005)
-//return "Helmet Lv.2";
-//else if (code == 403989)
-//return "Arctic-Suit";
-//else if (code == 403045)
-//return "Woodland-Suit";
-//else if (code == 403187)
-//return "Desert-Suit";
-//else if (code == 403188)
-//return "Desert-Suit";
+
+
+
+
+//{201010,"Rifle-FlashHider"},
+//{201009
+//,"Rifle-Compensator"},
+//{201004
+//,"Mid Compensator"},
+//{205002
+//,"Tactical_Rifle"},
+//{201012
+//,"Duckbill"},
+//{201005
+//,"Sniper_FlashHider"},
+//{201006
+//,"Mid_Suppressor"},
+//{205003
+//,"Chekpad Sniper"},
+//{201001
+//,"Choke"},
+//{205001
+//,"UZI_Pickup"},
+//{201003
+//,"Sniper-Compensator"},
+//{201007
+//,"Sniper-Suppressor"},
+//{201011
+//,"Suppressor-AR"},
+//{204009
+//,"Sniper-Extended"},
+//{204004
+//,"Mid_E"},
+//{204005
+//,"Mid_Q"},
+//{204007
+//,"Sniper_Mag"},
+//{204008
+//,"Sniper_QuickMag"},
+//{204012
+//,"Rifle_Mag"},
+//{204013
+//,"Exteded AR"},
+//{204011
+//,"Mag-AR"},
+//{204006
+//,"Mid_EQ"},
+//{205004, "Crossbow"},
+//{204014
+//,"ZDD_Sniper"},
+//{601003
+//,"Painkiller"},
+//{601002
+//,"Adrenaline"},
+//{601001
+//,"Energy Drink"},
+//{601005
+//,"FirstaidKit"},
+//{601004
+//,"Bandage"},
+//{202006
+//,"ThumbGrip"},
+//{202007
+//,"Lasersight"},
+//{202001
+//,"Angled"},
+//{202004
+//,"LightGrip"},
+//{106007
+//,"Flaregun"},
+//{3000312
+//,"GameCoin"},
+//{601006
+//,"Medkit"},
+//{308001
+//,"Flaregun"},
+//{201002
+//,"Mid_Compensator"},
