@@ -518,4 +518,10 @@ void D3D::HandleKeyInput()
 
 		return;
 	}
+
+	if (GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState(VK_MENU) & 0x1)
+	{
+		Settings::bDebugESP = !Settings::bDebugESP;
+	}
+
 }

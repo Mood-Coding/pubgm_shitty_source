@@ -345,6 +345,7 @@ int main()
 			}
 		}
 
+		// TODO create thread for these 2 functions
 		g_pD3D->HandleWindow();
 		
 		g_pD3D->HandleKeyInput();
