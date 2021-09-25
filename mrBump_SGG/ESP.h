@@ -85,6 +85,10 @@ public:
 	Item() {}
 
 	std::string displayName{ "" };
+
+	// Only for DebugESP
+	std::string actorName{ "" };
+	SDK::ItemDefineID ItemDefineID{};
 };
 
 class Vehicle : public Actor

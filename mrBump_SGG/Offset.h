@@ -45,5 +45,8 @@ extern const DWORD ACTORPOSITION;
 // Class: PickUpListWrapperActor.PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
 extern const DWORD PICKUPDATALIST; //PickUpItemData[] PickUpDataList;//[Offset: 0x640, Size: 12]
 
+// Class: PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
+extern const DWORD ITEMDEFINEID; //ItemDefineID DefineID; [Offset: 0x3a0, Size: 24]
+
 //enum BoxType;//[Offset: 0x658, Size: 1]
 #endif

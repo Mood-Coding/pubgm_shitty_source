@@ -44,4 +44,7 @@ const DWORD ACTORPOSITION = 0x160;
 //PickUpItemData[] PickUpDataList;//[Offset: 0x640, Size: 12]
 const DWORD PICKUPDATALIST = 0x640;
 
+// Class: PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
+const DWORD ITEMDEFINEID = 0x3a0; //ItemDefineID DefineID; [Offset: 0x3a0, Size: 24]
+
 //enum BoxType;//[Offset: 0x658, Size: 1]

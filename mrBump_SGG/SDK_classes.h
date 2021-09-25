@@ -38,6 +38,17 @@ namespace SDK
 		float FuelMax; //[Offset: 0x1c8, Size: 4]
 		float Fuel; //[Offset: 0x1cc, Size: 4]
 	};
+
+	struct ItemDefineID
+	{
+		int32_t Type; //0x0000
+		int32_t TypeSpecificID; //0x0004
+		bool bValidItem; //0x0008
+		bool bValidInstance; //0x0009
+		uint64_t InstanceID; //0x000A
+	}; //Size: 0x0012
+
+
 }
 
 #endif // !_SDK_CLASSES_H_

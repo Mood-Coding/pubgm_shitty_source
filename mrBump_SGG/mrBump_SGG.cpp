@@ -222,6 +222,12 @@ void UpdateValue()
 				else
 					item.displayName = currActorName;
 
+				if (Settings::bDebugESP)
+				{
+					item.ItemDefineID = g_pMM->read<SDK::ItemDefineID>(item.Address + ITEMDEFINEID);
+					item.actorName = currActorName;
+				}
+
 				tmpItems.emplace_back(item);
 				
 				continue;

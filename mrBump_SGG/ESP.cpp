@@ -57,6 +57,9 @@ void ESP::DrawItems()
 				continue;
 
 			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Items[i].Address).c_str(), Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18, WHITE(255), Items[i].actorName, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18, WHITE(255), Items[i].displayName, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18, WHITE(255), std::to_string(Items[i].ItemDefineID.TypeSpecificID).c_str(), Settings::bToggleShadowText);
 		}
 
 		return;
@@ -167,6 +170,21 @@ void ESP::DrawVehicles()
 
 void ESP::DrawPlayers()
 {
+	if (Settings::bDebugESP)
+	{
+		for (int i = 0; i < Characters.size(); ++i)
+		{
+			g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
+
+			if ((Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
+				continue;
+
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Characters[i].Address).c_str(), Settings::bToggleShadowText);
+		}
+
+		return;
+	}
+
 	for (int i = 0; i < Characters.size(); ++i)
 	{
 		g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
