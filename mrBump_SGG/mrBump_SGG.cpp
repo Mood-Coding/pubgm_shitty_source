@@ -313,6 +313,8 @@ int main()
 	// Start read memory loop
 	std::thread readMem(UpdateValue);
 
+	// TODO handle window, keyinput loop
+
 	// Prepare FPS limiter
 	using clock = std::chrono::steady_clock;
 	auto next_frame = clock::now();
