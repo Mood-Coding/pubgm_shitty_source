@@ -294,8 +294,6 @@ void ESP::DrawAirDrop()
 		}
 
 		int xOffset = 0;
-		/*if (Lootboxes[i].items.size() == 0)
-			continue;*/
 
 		for (const auto& itr : AirDropDatas[i].items)
 		{
@@ -372,20 +370,9 @@ std::wstring ESP::GetPlayerName(DWORD nameAddr)
 	return std::wstring(p);
 }
 
-void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, int playerDistance)
+void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ)
 {
-	//TODO fix scale of head bone
-	float size{ 47.f };
-	if (playerDistance != 1)
-	{
-		float scale{ 0 };	
-		scale = static_cast<float>(playerDistance) * 0.40f;
-		if (scale == 0) {
-			scale = 1;
-		}
-		size /= scale;
-	}
-	g_pD3D->DrawCircle(headScreenPosition.X, headScreenPosition.Y, size, RED(255));
+	g_pD3D->DrawCircle(headScreenPosition.X, headScreenPosition.Y, playerZ / 7, RED(255));
 }
 
 void ESP::DrawPlayerBone(Character* character, unsigned int color)
@@ -399,7 +386,7 @@ void ESP::DrawPlayerBone(Character* character, unsigned int color)
 	if (character->BONE_PELVIS.X == 0 && character->BONE_PELVIS.Y == 0)
 		return;
 
-	DrawHeadBone(character->BONE_HEAD, character->distance);
+	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z);
 
 	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, color);
 
@@ -422,14 +409,14 @@ void ESP::GetPlayerBonePos(Character* character)
 	DWORD bodyAddr = SkeletalMeshComponent + 0x150;
 	DWORD boneAddr = g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48;
 
-	//iterate over BONES enum
+	// Iterate over BONES
 	for (int curBone = 0; curBone < 11; ++curBone) {
 		Vector3f curBoneWorldPos = g_pVMM->GetBoneWorldPosition(bodyAddr, boneAddr + Bones[curBone] * 48);
 		switch (Bones[curBone])
 		{
 		case BONE_HEAD:
 		{
-			curBoneWorldPos.z += 8;
+			curBoneWorldPos.z += 7;
 			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_HEAD);
 			break;
 		}

@@ -267,7 +267,7 @@ public:
 
 	void GetPlayerBonePos(Character* character);
 
-	void DrawHeadBone(SDK::FVector2D headScreenPosition, int playerDistance);
+	void DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ);
 	void DrawPlayerBone(Character* character, unsigned int color);
 
 	bool IsPlayer(const std::string& actorName);
