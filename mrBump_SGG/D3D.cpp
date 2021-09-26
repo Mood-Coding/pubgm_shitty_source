@@ -454,6 +454,7 @@ void D3D::MenuRender()
 		{
 			ImGui::Checkbox("Debug ESP", &Settings::bDebugESP);
 			ImGui::Checkbox("ESP unsorted actor", &Settings::bUnsortedActorESP);
+			ImGui::Checkbox("Self ESP", &Settings::bSelfESP);
 			ImGui::Text("Cached %d actorID <-> actorName", g_pESP->ActorNameCache.size());
 		}
 	}

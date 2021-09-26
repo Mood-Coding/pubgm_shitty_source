@@ -44,6 +44,7 @@ namespace Settings
 
 	bool bUnsortedActorESP = false;
 	bool bDebugESP = false;
+	bool bSelfESP = false;
 
 	namespace Aimbot
 	{

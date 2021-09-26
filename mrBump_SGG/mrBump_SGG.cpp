@@ -37,7 +37,11 @@ void inline AddToCharacters(const std::string& currActorName, const DWORD& currA
 	// This character is in my team so skip
 	if (character.STExtraCharacter.TeamID == g_pESP->MyTeamID)
 	{
-		return;
+		// But it won't skip when current character is my character and SelfESP is on
+		if (!(character.Address == g_pESP->Pawn && Settings::bSelfESP))
+		{
+			return;
+		}
 	}
 
 	if (Settings::PlayerESP::bName)
@@ -154,11 +158,13 @@ void UpdateValue()
 
 			std::string currActorName{};
 
-			DWORD currActorID = g_pMM->read<DWORD>(currActorAddr + 0x10);
+			DWORD currActorID{ g_pMM->read<DWORD>(currActorAddr + 0x10) };
 
 			// If current actorID isn't exist in ActorNameCache
 			if (g_pESP->ActorNameCache.find(currActorID) == g_pESP->ActorNameCache.end())
 			{
+				// If not found in ActorNameCache
+				// then get actorName by GetActorName func and add current actorName to ActorNameCache
 				currActorName = g_pESP->GetActorName(currActorID);
 				g_pESP->ActorNameCache.insert( std::make_pair(currActorID, currActorName) );
 			}
