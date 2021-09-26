@@ -26,7 +26,7 @@ void inline AddToCharacters(const std::string& currActorName, const DWORD& currA
 {
 	Character character(currActorAddr, currActorPos);
 
-	if (currActorAddr == g_pESP->Pawn)
+	if (character.Address == g_pESP->Pawn)
 	{
 		g_pESP->MyTeamID = g_pMM->read<DWORD>(g_pESP->Pawn + TEAMID);
 	}
@@ -36,19 +36,15 @@ void inline AddToCharacters(const std::string& currActorName, const DWORD& currA
 
 	// This character is in my team so skip
 	if (character.STExtraCharacter.TeamID == g_pESP->MyTeamID)
-	{
 		// But it won't skip when current character is my character and SelfESP is on
 		if (!(character.Address == g_pESP->Pawn && Settings::bSelfESP))
-		{
 			return;
-		}
-	}
 
 	if (Settings::PlayerESP::bName)
 		character.PlayerName = g_pESP->GetPlayerName(character.STExtraCharacter.PlayerName);
 
 	// TODO add bDead to struct STExtraCharacter
-	bool bDead = g_pMM->read<bool>(currActorAddr + 0x964);
+	bool bDead = g_pMM->read<bool>(character.Address + 0x964);
 	if (bDead)
 		return;
 
