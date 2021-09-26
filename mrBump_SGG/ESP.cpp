@@ -246,8 +246,10 @@ void ESP::DrawPlayers()
 			g_pAim->FindBestTarget(&Characters[i]);
 		}
 
+		unsigned int teamIDColor{ TeamIDColor[Characters[i].STExtraCharacter.TeamID] };
+
 		if (Settings::PlayerESP::BoneESP::bToggle)
-			DrawPlayerBone(&Characters[i]);
+			DrawPlayerBone(&Characters[i], teamIDColor);
 
 		// Knocked check (hp <= 0)
 		if (Characters[i].STExtraCharacter.Health <= 0)
@@ -386,7 +388,7 @@ void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, int playerDistance)
 	g_pD3D->DrawCircle(headScreenPosition.X, headScreenPosition.Y, size, RED(255));
 }
 
-void ESP::DrawPlayerBone(Character* character)
+void ESP::DrawPlayerBone(Character* character, unsigned int color)
 {
 	if (character->BONE_HEAD.X == 0 && character->BONE_HEAD.Y == 0)
 		return;
@@ -399,19 +401,19 @@ void ESP::DrawPlayerBone(Character* character)
 
 	DrawHeadBone(character->BONE_HEAD, character->distance);
 
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, WHITE(255));
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, color);
 
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, WHITE(255));
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, WHITE(255));
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, color);
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, color);
 
-	g_pD3D->DrawLine(character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, character->BONE_L_WRIST.X, character->BONE_L_WRIST.Y, WHITE(255));
-	g_pD3D->DrawLine(character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, character->BONE_R_WRIST.X, character->BONE_R_WRIST.Y, WHITE(255));
+	g_pD3D->DrawLine(character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, character->BONE_L_WRIST.X, character->BONE_L_WRIST.Y, color);
+	g_pD3D->DrawLine(character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, character->BONE_R_WRIST.X, character->BONE_R_WRIST.Y, color);
 
-	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, WHITE(255));
-	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, WHITE(255));
+	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, color);
+	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, color);
 
-	g_pD3D->DrawLine(character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, character->BONE_L_FOOT.X, character->BONE_L_FOOT.Y, WHITE(255));
-	g_pD3D->DrawLine(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, WHITE(255));
+	g_pD3D->DrawLine(character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, character->BONE_L_FOOT.X, character->BONE_L_FOOT.Y, color);
+	g_pD3D->DrawLine(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, color);
 }
 
 void ESP::GetPlayerBonePos(Character* character)

@@ -31,4 +31,6 @@
 #define PURPLE(alpha)        IM_COL32(125, 0, 25, alpha)
 #define PINK(alpha)          IM_COL32(255, 20, 14, alpha)
 
+extern std::array<unsigned int, 100> TeamIDColor;
+
 #endif

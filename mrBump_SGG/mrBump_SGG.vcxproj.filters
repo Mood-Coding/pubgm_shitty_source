@@ -156,6 +156,9 @@
     <ClCompile Include="Offset.cpp">
       <Filter>Source Files\Offset</Filter>
     </ClCompile>
+    <ClCompile Include="Colors.cpp">
+      <Filter>Source Files\D3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ESP.h">

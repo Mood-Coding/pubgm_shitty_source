@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="ActorName.cpp" />
     <ClCompile Include="Aimbot.cpp" />
+    <ClCompile Include="Colors.cpp" />
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="ESP.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
