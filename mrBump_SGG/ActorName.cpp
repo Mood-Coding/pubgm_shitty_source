@@ -180,29 +180,30 @@ std::unordered_map<std::string, std::string> ActorDisplayName
 
 	//helmet
 	{"PickUp_BP_Helmet_Lv3_C", "Helmet 3"},
-	{"PickUp_BP_Helmet_Lv3_C_Recycled", "Helmet 3"},
+	{"PickUp_BP_Helmet_Lv3_B_C", "Helmet 3"},
 	{"PickUp_BP_Helmet_Lv2_C", "Helmet 2"},
-	{"PickUp_BP_Helmet_Lv2_C_Recycled", "Helmet 2"},
 	{"PickUp_BP_Helmet_Lv2_B_C", "Helmet 2"},
 	{"PickUp_BP_Helmet_Lv1_C", "Helmet 1"},
-	{"PickUp_BP_Helmet_Lv1_C_Recycled", "Helmet 1"},
 	{"PickUp_BP_Helmet_Lv1_B_C", "Helmet 1"},
+	{"PickUp_BP_Helmet_Lv3_C_Recycled", "Helmet 3"},
+	{"PickUp_BP_Helmet_Lv2_C_Recycled", "Helmet 2"},
+	{"PickUp_BP_Helmet_Lv1_C_Recycled", "Helmet 1"},
 
 	//sr mag
-	{"BP_DJ_Sniper_E_Pickup_C", "SR-Mag Extended"},
-	{"BP_DJ_Sniper_Q_Pickup_C", "SR-Mag Quickdraw"},
-	{"BP_DJ_Sniper_EQ_Pickup_C", "SR-Mag Extended Quickdraw"},
+	{"BP_DJ_Sniper_E_Pickup_C", "SR Extended"},
+	{"BP_DJ_Sniper_Q_Pickup_C", "SR Quickdraw"},
+	{"BP_DJ_Sniper_EQ_Pickup_C", "SR Extended Quickdraw"},
 
 	//ar mag
-	{"BP_DJ_Large_E_Pickup_C", "AR-Mag Extended"},
-	{"BP_DJ_Large_E_Pickup_C_Recycled", "AR-Mag Extended"},
-	{"BP_DJ_Large_EQ_Pickup_C", "AR-Mag Extended Quickdraw"},
-	{"BP_DJ_Large_Q_Pickup_C", "AR-Mag QuickDraw"},
+	{"BP_DJ_Large_E_Pickup_C", "AR Extended"},
+	{"BP_DJ_Large_E_Pickup_C_Recycled", "AR Extended"},
+	{"BP_DJ_Large_EQ_Pickup_C", "AR Extended Quickdraw"},
+	{"BP_DJ_Large_Q_Pickup_C", "AR QuickDraw"},
 
 	//smg mag
-	{"BP_DJ_Mid_E_Pickup_C", "SMG-Mag Extended"},
-	{"BP_DJ_Mid_EQ_Pickup_C", "SMG-Mag Extended Quickdraw"},
-	{"BP_DJ_Mid_Q_Pickup_C", "SMG-Mag QuickDraw"},
+	{"BP_DJ_Mid_E_Pickup_C", "SMG Extended"},
+	{"BP_DJ_Mid_EQ_Pickup_C", "SMG Extended Quickdraw"},
+	{"BP_DJ_Mid_Q_Pickup_C", "SMG QuickDraw"},
 
 	//compensator
 	{"BP_QK_Sniper_Compensator_Pickup_C", "SR Compensator"},
@@ -266,15 +267,14 @@ std::unordered_map<std::string, std::string> ActorDisplayName
 	// BP_Weapon_GrenadePackage_Bandage_C
 	//boom
 	{"BP_Grenade_Shoulei_Weapon_Wrapper_C", "Bomb"},
-	{"BP_Grenade_Shoulei_C", "<!> Bomb <!>"},
 	{"BP_Grenade_Smoke_Weapon_Wrapper_C", "Smoke"},
 	{"BP_Grenade_Burn_Weapon_Wrapper_C", "Molotov" },
 	{"BP_Grenade_Stun_Weapon_Wrapper_C", "Stun" },
 	{"BP_Grenade_Apple_Weapon_Wrapper_C", "Apple"},
 
-	{"BP_Grenade_Smoke_C", "Smoke" }
-
-		//BP_AirDropPlane_C
+	// In hand
+	{"BP_Grenade_Shoulei_C", "<!> Bomb <!>"},
+	{"BP_Grenade_Smoke_C", "Smoke"},
 };
 
 // ActorName -> Color filter ID
@@ -283,7 +283,6 @@ std::unordered_map<std::string, byte> ActorColorFilterID
 	//air drop
 	{"Flare", 8},
 	{"Flaregun", 8},
-
 
 	//melee
 	{"Sickle", 1},
@@ -396,19 +395,19 @@ std::unordered_map<std::string, byte> ActorColorFilterID
 	{"Helmet 1", 2},
 
 	//sr mag
-	{"SR-Mag Extended", 5 },
-	{"SR-Mag Quickdraw", 5 },
-	{"SR-Mag Extended Quickdraw", 6 },
+	{"SR Extended", 5 },
+	{"SR Quickdraw", 5 },
+	{"SR Extended Quickdraw", 6 },
 
 	//ar mag
-	{"AR-Mag Extended", 5 },
-	{"AR-Mag Extended Quickdraw", 6 },
-	{"AR-Mag QuickDraw",5 },
+	{"AR Extended", 5 },
+	{"AR Extended Quickdraw", 6 },
+	{"AR QuickDraw",5 },
 
 	//smg mag
-	{"SMG-Mag Extended", 5 },
-	{"SMG-Mag Extended Quickdraw", 6 },
-	{"SMG-Mag QuickDraw", 5 },
+	{"SMG Extended", 5 },
+	{"SMG Extended Quickdraw", 6 },
+	{"SMG QuickDraw", 5 },
 
 	//compensator
 	{"SR Compensator", 5 },
