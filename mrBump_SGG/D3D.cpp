@@ -448,6 +448,7 @@ void D3D::MenuRender()
 			ImGui::SliderInt("Read mem delay", &Settings::readMemloopDelay, 0, 100);
 			ImGui::Text("Read mem loop delay = Read mem delay + Draw loop delay");
 			ImGui::Text("= %d", Settings::drawLoopDelay + Settings::readMemloopDelay);
+			ImGui::Checkbox("Toogle global text shadow effect", &Settings::bToggleShadowText);
 		}
 
 		if (Settings::tab == DEBUG_TAB_ID)
