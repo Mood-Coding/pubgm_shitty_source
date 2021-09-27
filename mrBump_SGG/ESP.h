@@ -247,7 +247,7 @@ public:
 	std::vector<UnsortedActor> UnsortedActors;
 	std::vector<BoxData> AirDropDatas;
 
-	// ActorID <-> ActorName
+	// ActorID -> ActorName
 	std::unordered_map<DWORD, std::string> ActorNameCache;	
 	
 	void DrawPlayers();
@@ -263,21 +263,18 @@ public:
 	std::string GetActorName(DWORD actorID);
 	std::wstring GetPlayerName(DWORD nameAddr);
 
-	static int Bones[11];
-
 	void GetPlayerBonePos(Character* character);
+
+	static int Bones[11];
 
 	void DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ);
 	void DrawPlayerBone(Character* character, unsigned int color);
 
 	bool IsPlayer(const std::string& actorName);
-	
-
 	bool IsVehicle(const std::string& actorName);
 	bool IsItem(const std::string& actorName);
-	bool IsAirDropData(const std::string& actorName);
 	bool IsAirdrop(const std::string& actorName);
-
+	bool IsAirDropData(const std::string& actorName);
 	bool IsLootbox(const std::string& actorName);
 };
 
