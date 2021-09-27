@@ -193,13 +193,6 @@ void UpdateValue()
 				continue;
 			}
 
-			if (g_pESP->IsPlayer(currActorName) && (Settings::PlayerESP::bToggle || Settings::bDebugESP))
-			{
-				AddToCharacters(currActorName, currActorAddr, currActorPos);
-
-				continue;
-			}
-
 			if (g_pESP->IsVehicle(currActorName) && (Settings::VehicleESP::bToggle || Settings::bDebugESP))
 			{
 				AddToVehicles(currActorName, currActorAddr, currActorPos);
@@ -207,9 +200,17 @@ void UpdateValue()
 				continue;
 			}
 
+			if (g_pESP->IsPlayer(currActorName) && (Settings::PlayerESP::bToggle || Settings::bDebugESP))
+			{
+				AddToCharacters(currActorName, currActorAddr, currActorPos);
+
+				continue;
+			}
+
 			if (g_pESP->IsAirdrop(currActorName) && (Settings::AirDropESP::bToggle || Settings::bDebugESP))
 			{
 				Airdrop airdrop(currActorAddr, currActorPos);
+
 				tmpAirDrops.emplace_back(airdrop);
 
 				continue;
@@ -225,7 +226,7 @@ void UpdateValue()
 				continue;
 			}
 
-			if (g_pESP->IsLootbox(currActorName))
+			if (g_pESP->IsLootbox(currActorName) && (Settings::LootboxESP::bToggle || Settings::bDebugESP))
 			{
 				BoxData lootboxData(currActorName, currActorAddr, currActorPos);
 				g_pESP->GetBoxItems(&lootboxData);
@@ -238,6 +239,7 @@ void UpdateValue()
 			if (Settings::bUnsortedActorESP)
 			{
 				UnsortedActor unsortedActor(currActorName, currActorPos);
+
 				tmpUnsortedActors.emplace_back(unsortedActor);
 
 				continue;

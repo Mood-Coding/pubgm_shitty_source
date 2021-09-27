@@ -320,10 +320,12 @@ void ESP::DrawLootbox()
 	{
 		g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance);
 
-		if (Lootboxes[i].PositionOnSc.X < 1 && Lootboxes[i].PositionOnSc.Y < 1.0f)
+		if ((Lootboxes[i].PositionOnSc.X < 1 && Lootboxes[i].PositionOnSc.Y < 1.0f)
+			|| (Lootboxes[i].distance > Settings::LootboxESP::drawDistance))
+		{
 			continue;	
+		}
 
-		//std::string str = std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y);
 		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, RED(255), "Lootbox", true);
 
 		int xOffset = 0;
@@ -355,7 +357,7 @@ std::string ESP::GetActorName(DWORD actorID)
 
 	char name[70] {};
 
-	// minus 1 : if not string will end with |||||||||||||||||||||||||||||||| or some other shit :O
+	// minus 1 : for null terminated. If not string will end with |||||||||||||||||||||||||||||||| 
 	g_pMM->readMemory((PVOID)FName, &name, sizeof(name)-1);
 
 	std::string result = std::string(name);

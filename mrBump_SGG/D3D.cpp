@@ -433,6 +433,21 @@ void D3D::MenuRender()
 				ImGui::SliderInt("Draw distance", &Settings::ItemESP::drawDistance, 1, 100);
 				ImGui::EndChild();
 			}
+
+			if (ImGui::CollapsingHeader("AirDrop ESP"))
+			{
+				ImGui::BeginChild("", ImVec2(325, 65), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
+				ImGui::Checkbox("Toggle", &Settings::AirDropESP::bToggle);
+				ImGui::EndChild();
+			}
+
+			if (ImGui::CollapsingHeader("LootBox ESP"))
+			{
+				ImGui::BeginChild("", ImVec2(325, 65), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
+				ImGui::Checkbox("Toggle", &Settings::LootboxESP::bToggle);
+				ImGui::SliderInt("Draw distance", &Settings::LootboxESP::drawDistance, 1, 200);
+				ImGui::EndChild();
+			}
 		}
 
 		if (Settings::tab == AIMBOT_TAB_ID)
