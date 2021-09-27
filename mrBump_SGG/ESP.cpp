@@ -384,7 +384,7 @@ void ESP::DrawPlayerBone(Character* character, unsigned int color)
 		return;
 	}
 
-	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z);
+	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z / 2);
 
 	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, color);
 
@@ -403,9 +403,9 @@ void ESP::DrawPlayerBone(Character* character, unsigned int color)
 
 void ESP::GetPlayerBonePos(Character* character)
 {
-	DWORD SkeletalMeshComponent = g_pMM->read<DWORD>(character->Address + g_pESP->MeshOffset);
-	DWORD bodyAddr = SkeletalMeshComponent + 0x150;
-	DWORD boneAddr = g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48;
+	DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(character->Address + g_pESP->MeshOffset) };
+	DWORD bodyAddr{ SkeletalMeshComponent + 0x150 };
+	DWORD boneAddr{ g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48 };
 
 	// Iterate over BONES
 	for (int curBone = 0; curBone < 11; ++curBone) {
@@ -414,7 +414,7 @@ void ESP::GetPlayerBonePos(Character* character)
 		{
 		case BONE_HEAD:
 		{
-			curBoneWorldPos.z += 6;
+			curBoneWorldPos.z += 5;
 			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_HEAD);
 			break;
 		}

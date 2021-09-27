@@ -33,7 +33,7 @@ bool ViewMatrixManager::WorldToScreenPlayer(SDK::FVector pos, SDK::FVector& scre
 	
 	float screenX = (viewMatrix._11 * pos.X) + (viewMatrix._21 * pos.Y) + (viewMatrix._31 * pos.Z + viewMatrix._41);
 	float screenY = (viewMatrix._12 * pos.X) + (viewMatrix._22 * pos.Y) + (viewMatrix._32 * (pos.Z + 85) + viewMatrix._42);
-	float y1 = (g_pD3D->screenH / 2) - (viewMatrix._12 * pos.X + viewMatrix._22 * pos.Y + viewMatrix._32 * (pos.Z /*- 95*/) + viewMatrix._42) * (g_pD3D->screenH / 2) / screenW;
+	float y1 = (g_pD3D->screenH / 2) - (viewMatrix._12 * pos.X + viewMatrix._22 * pos.Y + viewMatrix._32 * (pos.Z - 95) + viewMatrix._42) * (g_pD3D->screenH / 2) / screenW;
 
 	screen.X = (g_pD3D->screenW / 2) + (g_pD3D->screenW / 2) * screenX / screenW;
 	screen.Y = (g_pD3D->screenH / 2) - (g_pD3D->screenH / 2) * screenY / screenW;
