@@ -47,6 +47,19 @@ namespace Settings
 		extern int drawDistance;
 	}
 
+	namespace LootboxESP
+	{
+		extern bool bToggle;
+		extern int drawDistance;
+	}
+
+	namespace AirDropESP
+	{
+		extern bool bToggle;
+	}
+
+	extern bool bOnlyShowBoxDataWhenMouseNearby;
+
 	extern bool bUnsortedActorESP;
 	extern bool bDebugESP;
 	extern bool bSelfESP;
@@ -57,6 +70,9 @@ namespace Settings
 		extern int targetBone;
 		extern int sensitivity;
 	}
+
+	extern bool bFightMode;
+
 
 	extern int readMemloopDelay;
 	extern int drawLoopDelay;

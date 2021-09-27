@@ -172,48 +172,6 @@ void UpdateValue()
 			DWORD SceneComponent{ g_pMM->read<DWORD>(currActorAddr + ROOTCOMPONENT) };
 			SDK::FVector currActorPos = g_pMM->read<SDK::FVector>(SceneComponent + ACTORPOSITION);
 
-			if (g_pESP->IsPlayer(currActorName) && (Settings::PlayerESP::bToggle || Settings::bDebugESP))
-			{
-				AddToCharacters(currActorName, currActorAddr, currActorPos);
-
-				continue;
-			}
-
-			if (g_pESP->IsVehicle(currActorName) && (Settings::VehicleESP::bToggle || Settings::bDebugESP))
-			{
-				AddToVehicles(currActorName, currActorAddr, currActorPos);
-
-				continue;
-			}
-
-			if (g_pESP->IsAirdrop(currActorName))
-			{
-				Airdrop airdrop(currActorAddr, currActorPos);
-				tmpAirDrops.emplace_back(airdrop);
-
-				continue;
-			}
-
-			if (g_pESP->IsAirDropData(currActorName))
-			{	
-				BoxData airDropData{ currActorName, currActorAddr, currActorPos };
-				g_pESP->GetBoxItems(&airDropData);
-
-				tmpAirDropDatas.emplace_back(airDropData);
-
-				continue;
-			}
-
-			if (g_pESP->IsLootbox(currActorName))
-			{
-				BoxData lootboxData(currActorName, currActorAddr, currActorPos);
-				g_pESP->GetBoxItems(&lootboxData);
-
-				tmpLootboxes.emplace_back(lootboxData);
-
-				continue;
-			}
-
 			if (g_pESP->IsItem(currActorName) && (Settings::ItemESP::bToggle || Settings::bDebugESP))
 			{
 				Item item(currActorAddr, currActorPos);
@@ -235,11 +193,56 @@ void UpdateValue()
 				continue;
 			}
 
+			if (g_pESP->IsPlayer(currActorName) && (Settings::PlayerESP::bToggle || Settings::bDebugESP))
+			{
+				AddToCharacters(currActorName, currActorAddr, currActorPos);
+
+				continue;
+			}
+
+			if (g_pESP->IsVehicle(currActorName) && (Settings::VehicleESP::bToggle || Settings::bDebugESP))
+			{
+				AddToVehicles(currActorName, currActorAddr, currActorPos);
+
+				continue;
+			}
+
+			if (g_pESP->IsAirdrop(currActorName) && (Settings::AirDropESP::bToggle || Settings::bDebugESP))
+			{
+				Airdrop airdrop(currActorAddr, currActorPos);
+				tmpAirDrops.emplace_back(airdrop);
+
+				continue;
+			}
+
+			if (g_pESP->IsAirDropData(currActorName) && (Settings::AirDropESP::bToggle || Settings::bDebugESP))
+			{	
+				BoxData airDropData{ currActorName, currActorAddr, currActorPos };
+				g_pESP->GetBoxItems(&airDropData);
+
+				tmpAirDropDatas.emplace_back(airDropData);
+
+				continue;
+			}
+
+			if (g_pESP->IsLootbox(currActorName))
+			{
+				BoxData lootboxData(currActorName, currActorAddr, currActorPos);
+				g_pESP->GetBoxItems(&lootboxData);
+
+				tmpLootboxes.emplace_back(lootboxData);
+
+				continue;
+			}
+
 			if (Settings::bUnsortedActorESP)
 			{
 				UnsortedActor unsortedActor(currActorName, currActorPos);
 				tmpUnsortedActors.emplace_back(unsortedActor);
+
+				continue;
 			}
+
 		}
 
 		g_bDoneReadMem = true;

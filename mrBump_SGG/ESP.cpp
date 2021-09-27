@@ -519,6 +519,11 @@ bool ESP::IsPlayer(const std::string& actorName)
 
 bool ESP::IsItem(const std::string& actorName)
 {
+	if (actorName == "PickUpListWrapperActor" || actorName == "PickUpListWrapperActor_Recycled"
+		|| actorName == "AirDropListWrapperActor" || actorName == "AirDropListWrapperActor_Recycled"
+		|| actorName == "BP_AirDropBox_C" || actorName == "BP_AirDropBox_C_Recycled")
+		return false;
+
 	if (actorName.find("Wrapper") == std::string::npos
 		&& actorName.find("PickUp") == std::string::npos
 		&& actorName.find("Pickup") == std::string::npos)

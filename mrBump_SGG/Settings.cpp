@@ -53,7 +53,7 @@ namespace Settings
 		bool bToggle = true;
 	}
 
-	bool bOnlyShowDataWhenMouseNearby = true;
+	bool bOnlyShowBoxDataWhenMouseNearby = true;
 
 	bool bUnsortedActorESP = false;
 	bool bDebugESP = false;
@@ -65,6 +65,9 @@ namespace Settings
 		int targetBone = BONE_HEAD;
 		int sensitivity = 2;
 	}
+
+	bool bFightMode = false;
+
 
 	int readMemloopDelay = 30;
 	int drawLoopDelay = 16;
