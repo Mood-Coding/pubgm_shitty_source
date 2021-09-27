@@ -42,6 +42,19 @@ namespace Settings
 		int drawDistance = 13;
 	}
 
+	namespace LootboxESP
+	{
+		bool bToggle = true;
+		int drawDistance = 50;
+	}
+
+	namespace AirDropESP
+	{
+		bool bToggle = true;
+	}
+
+	bool bOnlyShowDataWhenMouseNearby = true;
+
 	bool bUnsortedActorESP = false;
 	bool bDebugESP = false;
 	bool bSelfESP = false;
