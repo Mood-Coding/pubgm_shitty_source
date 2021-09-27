@@ -153,29 +153,27 @@ void UpdateValue()
 			// TODO read array of pActorAddrs then loop through it
 			// instead reading every single pActorAddr value
 			DWORD currActorAddr = g_pMM->read<DWORD>(pActorAddr);
-
 			if (currActorAddr == NULL)
 				continue;
 
 			std::string currActorName{};
 
 			DWORD currActorID{ g_pMM->read<DWORD>(currActorAddr + 0x10) };
-
-			// If current actorID isn't exist in ActorNameCache
-			if (g_pESP->ActorNameCache.find(currActorID) == g_pESP->ActorNameCache.end())
-			{
-				// If not found in ActorNameCache
-				// then get actorName by GetActorName func and add current actorName to ActorNameCache
-				currActorName = g_pESP->GetActorName(currActorID);
-				g_pESP->ActorNameCache.insert( std::make_pair(currActorID, currActorName) );
-			}
-			else
+			// If current actorID is exist in ActorNameCache
+			if (g_pESP->ActorNameCache.find(currActorID) != g_pESP->ActorNameCache.end())
 			{
 				currActorName = g_pESP->ActorNameCache[currActorID];
 			}
+			else
+			{
+				// Not found in ActorNameCache so get actorName by GetActorName function
+				// and add current actorName to ActorNameCache
+				currActorName = g_pESP->GetActorName(currActorID);
+				g_pESP->ActorNameCache.insert( std::make_pair(currActorID, currActorName) );
+			}
 
 			DWORD SceneComponent{ g_pMM->read<DWORD>(currActorAddr + ROOTCOMPONENT) };
-			SDK::FVector currActorPos = g_pMM->read<SDK::FVector>(SceneComponent + ACTORPOSITION);
+			SDK::FVector currActorPos{ g_pMM->read<SDK::FVector>(SceneComponent + ACTORPOSITION) };
 
 			if (g_pESP->IsItem(currActorName) && (Settings::ItemESP::bToggle || Settings::bDebugESP))
 			{
