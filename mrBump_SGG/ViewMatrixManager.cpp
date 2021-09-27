@@ -111,7 +111,7 @@ void ViewMatrixManager::WorldToScreenBone(Vector3f pos, SDK::FVector2D& screen)
 }
 
 D3DMatrix ViewMatrixManager::MatrixMultiplication(D3DMatrix pM1, D3DMatrix pM2) {
-	D3DMatrix pOut =
+	D3DMatrix pOut 
 	{
 		pM1._11 * pM2._11 + pM1._12 * pM2._21 + pM1._13 * pM2._31 + pM1._14 * pM2._41,
 		pM1._11 * pM2._12 + pM1._12 * pM2._22 + pM1._13 * pM2._32 + pM1._14 * pM2._42,
