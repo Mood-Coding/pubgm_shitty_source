@@ -414,7 +414,7 @@ void ESP::GetPlayerBonePos(Character* character)
 		{
 		case BONE_HEAD:
 		{
-			curBoneWorldPos.z += 7;
+			curBoneWorldPos.z += 6;
 			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_HEAD);
 			break;
 		}
