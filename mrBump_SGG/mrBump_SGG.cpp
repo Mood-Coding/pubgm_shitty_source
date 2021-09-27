@@ -75,10 +75,15 @@ void inline AddToItems(const std::string& currActorName, const DWORD& currActorA
 	Item item(currActorAddr, currActorPos);
 
 	item.displayName = ActorDisplayName[currActorName];
-
 	// std::unoreder_map will return empty string if currActorName isn't exist in ActorDisplayName
 	if (item.displayName == "")
 		item.displayName = currActorName;
+
+	if (Settings::bDebugESP)
+	{
+		item.ItemDefineID = g_pMM->read<SDK::ItemDefineID>(item.Address + ITEMDEFINEID);
+		item.actorName = currActorName;
+	}
 
 	tmpItems.emplace_back(item);
 }
@@ -174,21 +179,7 @@ void UpdateValue()
 
 			if (g_pESP->IsItem(currActorName) && (Settings::ItemESP::bToggle || Settings::bDebugESP))
 			{
-				Item item(currActorAddr, currActorPos);
-
-				std::string actorDisplayName = ActorDisplayName[currActorName];
-				if (actorDisplayName != "")
-					item.displayName = actorDisplayName;
-				else
-					item.displayName = currActorName;
-
-				if (Settings::bDebugESP)
-				{
-					item.ItemDefineID = g_pMM->read<SDK::ItemDefineID>(item.Address + ITEMDEFINEID);
-					item.actorName = currActorName;
-				}
-
-				tmpItems.emplace_back(item);
+				AddToItems(currActorName, currActorAddr, currActorPos);
 				
 				continue;
 			}
