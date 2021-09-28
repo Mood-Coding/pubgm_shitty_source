@@ -5,6 +5,8 @@
 bool g_bDoneReadMem = false;
 bool g_bActive = true;
 
+std::array<int, MAX_ACTORS> ActorArray;
+
 std::vector<Character> tmpCharacters;
 int g_tmpCharacterCount = 0;
 
@@ -17,7 +19,6 @@ std::vector<BoxData> tmpLootboxes;
 std::vector<BoxData> tmpAirDropDatas;
 
 std::vector<UnsortedActor> tmpUnsortedActors;
-
 DWORD tmpViewMatrixAddr = 0;
 
 bool bInGame = false;
@@ -94,11 +95,11 @@ void UpdateValue()
 	{
 		g_pESP->UWorld = g_pMM->read<DWORD>(g_pESP->GWorld);
 
-		// When UWorld == 0, if we read the next value (NetDriver), it will break the hack
+		// When UWorld == 0, if we read the next value (NetDriver), it will crash the hack (undefined behavior)
 		if (g_pESP->UWorld == 0)
 			continue;
 
-		DWORD NetDriver = g_pMM->read<DWORD>(g_pESP->UWorld + NETDRIVER);
+		DWORD NetDriver{ g_pMM->read<DWORD>(g_pESP->UWorld + NETDRIVER) };
 		
 		// If player is in a match, NetDriver != 0 
 		if (NetDriver != 0)
@@ -140,19 +141,26 @@ void UpdateValue()
 		g_pESP->Level = g_pMM->read<DWORD>(g_pESP->UWorld + PERSISTENTLEVEL);
 		g_pESP->ActorList = g_pMM->read<DWORD>(g_pESP->Level + g_pESP->ActorListOffset);
 		g_pESP->maxActorCount = g_pMM->read<DWORD>(g_pESP->Level + g_pESP->maxActorCountOffset);
-
+		
 		// Match info
 		/*DWORD AuthorityGameMode = 0x168;
 		DWORD GameModeBase = g_pMM->read<DWORD>(g_pESP->UWorld + 0x168);
 		DWORD GameStateBase = g_pMM->read<DWORD>(GameModeBase + 0x2ec);*/
 
+		if (g_pESP->maxActorCount > MAX_ACTORS)
+			g_pESP->maxActorCount = MAX_ACTORS;
+
+		memset(&ActorArray, 0, sizeof(ActorArray));
+		g_pMM->readMemory((PVOID)g_pESP->ActorList, &ActorArray, static_cast<SIZE_T>(g_pESP->maxActorCount)*4);
+
+		for (int i = 0; i < g_pESP->maxActorCount; ++i)
 		// Loop through actorlist
 		// maxActorCount * 4 : Because size of actor address is 4 byte 
-		for (DWORD pActorAddr = g_pESP->ActorList; pActorAddr <= g_pESP->ActorList + g_pESP->maxActorCount * 4; pActorAddr += 4)
+		//for (DWORD pActorAddr = g_pESP->ActorList; pActorAddr <= g_pESP->ActorList + g_pESP->maxActorCount * 4; pActorAddr += 4)
 		{
-			// TODO read array of pActorAddrs then loop through it
-			// instead reading every single pActorAddr value
-			DWORD currActorAddr = g_pMM->read<DWORD>(pActorAddr);
+			DWORD currActorAddr = ActorArray[i];
+			
+			//DWORD currActorAddr = g_pMM->read<DWORD>(pActorAddr);
 			if (currActorAddr == NULL)
 				continue;
 
@@ -254,7 +262,7 @@ int main()
 	HWND targetHWND = FindWindow(L"TitanRenderWindowClass", NULL);
 	targetHWND = FindWindowEx(targetHWND, 0, L"TitanOpenglWindowClass", NULL);
 
-	if (targetHWND)
+	if (targetHWND > 0)
 	{
 		g_pPM->emuProcName = L"AndroidProcess.exe";
 	}
@@ -309,7 +317,8 @@ int main()
 	// Start read memory loop
 	std::thread readMem(UpdateValue);
 
-	// TODO handle window, keyinput loop
+	// HandleWindow, HandleKeyInput
+	std::thread windowManager(WindowManager, &g_bActive);
 
 	// Prepare FPS limiter
 	using clock = std::chrono::steady_clock;
@@ -327,26 +336,13 @@ int main()
 
 			if (msg.message == WM_QUIT)
 			{
-				ImGui_ImplDX9_Shutdown();
-				ImGui_ImplWin32_Shutdown();
-				ImGui::DestroyContext();
-
-				g_pD3D->CleanupDeviceD3D();
-
 				// Stop draw loop + read mem loop
 				g_bActive = false;
 
 				// Stop read mem loop
 				g_bDoneReadMem = false;
-
-				break;
 			}
 		}
-
-		// TODO create thread for these 2 functions
-		g_pD3D->HandleWindow();
-		
-		g_pD3D->HandleKeyInput();
 
 		// Get data from read mem loop data when it complete reading memory
 		if (g_bDoneReadMem)
@@ -458,6 +454,12 @@ int main()
 		next_frame += std::chrono::milliseconds(Settings::drawLoopDelay);
 		std::this_thread::sleep_until(next_frame); // Wait for end of frame
 	}
+
+	ImGui_ImplDX9_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
+	g_pD3D->CleanupDeviceD3D();
 
 	return 0;
 }

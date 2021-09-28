@@ -11,6 +11,8 @@
 #include "Settings.h"
 #include "ActorName.h"
 
+#define MAX_ACTORS 1024
+
 #ifndef ESP_H
 #define ESP_H
 

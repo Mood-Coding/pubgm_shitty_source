@@ -189,9 +189,9 @@ void D3D::CleanupDeviceD3D()
 	::UnregisterClass(wc.lpszClassName, wc.hInstance);
 }
 
-void D3D::DrawLine(float x1, float y1, float x2, float y2, unsigned int color)
+void D3D::DrawLine(float x1, float y1, float x2, float y2, unsigned int color, float thickness)
 {
-	ImGui::GetBackgroundDrawList()->AddLine(ImVec2(x1, y1), ImVec2(x2, y2), color, 1);
+	ImGui::GetBackgroundDrawList()->AddLine(ImVec2(x1, y1), ImVec2(x2, y2), color, thickness);
 }
 
 void D3D::DrawRect(int x, int y, int width, int height, unsigned int color, float rounding, float thickness)
@@ -519,7 +519,7 @@ void D3D::HandleWindow()
 		::PostQuitMessage(0);
 }
 
-void D3D::HandleKeyInput()
+void D3D::HandleKeyInput(bool* bActive)
 {
 	if (GetAsyncKeyState(VK_HOME) & 1)
 	{
@@ -531,7 +531,8 @@ void D3D::HandleKeyInput()
 
 	if (GetAsyncKeyState(VK_END) & 1)
 	{
-		::PostQuitMessage(0);
+		*bActive = false;
+		//PostQuitMessage(0);
 
 		return;
 	}
@@ -541,4 +542,16 @@ void D3D::HandleKeyInput()
 		Settings::bDebugESP = !Settings::bDebugESP;
 	}
 
+}
+
+void WindowManager(bool* bActive)
+{
+	while (*bActive)
+	{
+		g_pD3D->HandleWindow();
+
+		g_pD3D->HandleKeyInput(bActive);
+
+		Sleep(50);
+	}
 }

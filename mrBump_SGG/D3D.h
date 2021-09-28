@@ -16,6 +16,8 @@
 
 #define M_PI 3.14159265358979323846264338327950288419716939937510
 
+void WindowManager(bool* bActive);
+
 template <class T> void SafeRelease(T** ppT)
 {
 	if (*ppT)
@@ -53,7 +55,7 @@ public:
 	bool SetupHWND(HWND processHWND);
 	bool InitD3D();
 
-	void DrawLine(float x1, float y1, float x2, float y2, unsigned int color);
+	void DrawLine(float x1, float y1, float x2, float y2, unsigned int color, float thickness = 1);
 
 	void DrawRect(int x, int y, int width, int height, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
 	void DrawRect(ImVec2 topleft, ImVec2 botright, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
@@ -78,7 +80,7 @@ public:
 	void MenuRender();
 
 	void HandleWindow();
-	void HandleKeyInput();
+	void HandleKeyInput(bool* bActive);
 
 	void TestDraw();
 };
