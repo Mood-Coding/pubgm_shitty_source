@@ -152,8 +152,9 @@ void UpdateValue()
 
 		// Fast fill array with 0
 		memset(&ActorArray, 0, sizeof(ActorArray));
+
 		// Read all ActorAddr
-		// * 4 because size of 1 address is 4 bytes.
+		// multiply 4: because size of 1 address is 4 bytes.
 		g_pMM->readMemory((PVOID)g_pESP->ActorList, &ActorArray, static_cast<SIZE_T>(g_pESP->maxActorCount)*4);
 
 		// Loop through ActorArray
@@ -173,8 +174,8 @@ void UpdateValue()
 			}
 			else
 			{
-				// Not found in ActorNameCache so get actorName by GetActorName function
-				// and add current actorName to ActorNameCache
+				// Not found in ActorNameCache
+				// So we will get actorName and add it to ActorNameCache
 				currActorName = g_pESP->GetActorName(currActorID);
 				g_pESP->ActorNameCache.insert( std::make_pair(currActorID, currActorName) );
 			}
