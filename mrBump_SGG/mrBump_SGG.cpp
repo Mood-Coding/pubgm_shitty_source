@@ -150,17 +150,16 @@ void UpdateValue()
 		if (g_pESP->maxActorCount > MAX_ACTORS)
 			g_pESP->maxActorCount = MAX_ACTORS;
 
+		// Fast fill array with 0
 		memset(&ActorArray, 0, sizeof(ActorArray));
+		// Read all ActorAddr
+		// * 4 because size of 1 address is 4 bytes.
 		g_pMM->readMemory((PVOID)g_pESP->ActorList, &ActorArray, static_cast<SIZE_T>(g_pESP->maxActorCount)*4);
 
+		// Loop through ActorArray
 		for (int i = 0; i < g_pESP->maxActorCount; ++i)
-		// Loop through actorlist
-		// maxActorCount * 4 : Because size of actor address is 4 byte 
-		//for (DWORD pActorAddr = g_pESP->ActorList; pActorAddr <= g_pESP->ActorList + g_pESP->maxActorCount * 4; pActorAddr += 4)
 		{
 			DWORD currActorAddr = ActorArray[i];
-			
-			//DWORD currActorAddr = g_pMM->read<DWORD>(pActorAddr);
 			if (currActorAddr == NULL)
 				continue;
 
