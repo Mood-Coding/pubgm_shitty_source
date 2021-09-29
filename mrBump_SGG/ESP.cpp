@@ -295,10 +295,10 @@ void ESP::DrawAirDrop()
 
 		int xOffset = 0;
 
-		for (const auto& itr : AirDropDatas[i].items)
+		for (auto& itr : AirDropDatas[i].items)
 		{
-			std::string str{ itr.first + ' ' + std::to_string(itr.second) };
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), str.c_str(), false);
+			/*std::string str{ itr.first + ' ' + std::to_string(itr.second) };*/
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
 			xOffset += 18;
 		}
 	}
@@ -330,10 +330,10 @@ void ESP::DrawLootbox()
 
 		int xOffset = 0;
 
-		for (const auto& itr : Lootboxes[i].items)
+		for (auto& itr : Lootboxes[i].items)
 		{
-			std::string str{ itr.first + ' ' + std::to_string(itr.second)};
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), str.c_str(), false);
+			/*std::string str{ itr.first + ' ' + std::to_string(itr.second)};*/
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
 			xOffset += 18;
 		}
 
@@ -592,10 +592,19 @@ void ESP::GetBoxItems(BoxData* boxData)
 				continue;
 
 			std::string txt = DisplayName[TypeSpecificID];
-			if (txt != "")
+
+			// Check if given string is not exist in items vector
+			if (std::find(boxData->items.begin(), boxData->items.end(), txt) == boxData->items.end())
+			{
+				boxData->items.emplace_back(txt);
+			}
+			
+			
+
+			/*if (txt != "")
 				boxData->items[txt] = Count + boxData->items[txt];
 			else
-				boxData->items[std::to_string(TypeSpecificID)] = Count + boxData->items[std::to_string(TypeSpecificID)];
+				boxData->items[std::to_string(TypeSpecificID)] = Count + boxData->items[std::to_string(TypeSpecificID)];*/
 			
 			++boxData->itemCount;
 		}
