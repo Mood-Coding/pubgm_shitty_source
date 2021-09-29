@@ -95,13 +95,15 @@ void UpdateValue()
 	{
 		g_pESP->UWorld = g_pMM->read<DWORD>(g_pESP->GWorld);
 
-		// When UWorld == 0, if we read the next value (NetDriver), it will crash the hack (undefined behavior)
+		// When UWorld == 0, if we read the next value (NetDriver)
+		// it will crash the hack (undefined behavior)
 		if (g_pESP->UWorld == 0)
 			continue;
 
 		DWORD NetDriver{ g_pMM->read<DWORD>(g_pESP->UWorld + NETDRIVER) };
 		
 		// If player is in a match, NetDriver != 0 
+		// It will be glitche when ...
 		if (NetDriver != 0)
 		{
 			bInGame = true;
@@ -110,19 +112,15 @@ void UpdateValue()
 		{
 			bInGame = false;
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 			continue;
 		}
 
 		tmpUnsortedActors.clear();
-
 		tmpCharacters.clear();
-
 		tmpVehicles.clear();
-
 		tmpItems.clear();
-
 		tmpAirDrops.clear();
 		tmpAirDropDatas.clear();
 		tmpLootboxes.clear();
@@ -131,7 +129,6 @@ void UpdateValue()
 
 		tmpViewMatrixAddr = g_pMM->read<DWORD>(g_pMM->read<DWORD>(g_pESP->viewWorld) + 32) + 512;
 		
-
 		// Get my character address
 		DWORD NetConnection = g_pMM->read<DWORD>(NetDriver + SERVERCONNECTION);
 		DWORD PlayerController = g_pMM->read<DWORD>(NetConnection + PLAYERCONTROLLER);

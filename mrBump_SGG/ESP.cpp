@@ -357,7 +357,7 @@ std::string ESP::GetActorName(DWORD actorID)
 
 	char name[70] {};
 
-	// minus 1 : for null terminated. If not string will end with |||||||||||||||||||||||||||||||| 
+	// minus 1 : for null terminated. If not string will end with |||||||||||||||||| 
 	g_pMM->readMemory((PVOID)FName, &name, sizeof(name)-1);
 
 	std::string result = std::string(name);
@@ -555,13 +555,13 @@ bool ESP::IsAirdrop(const std::string& actorName)
 // Instead, we will use PickUpListWrapperActor
 bool ESP::IsLootbox(const std::string& actorName)
 {
-	// F :) PlayerDeadInventoryBox_C
 	if (actorName == "PickUpListWrapperActor" || actorName == "PickUpListWrapperActor_Recycled")
 		return true;
 
 	return false;
 }
 
+// TODO reformat void ESP::GetBoxItems(BoxData* boxData)
 void ESP::GetBoxItems(BoxData* boxData)
 {
 	// Class: PickUpListWrapperActor.PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
@@ -590,12 +590,13 @@ void ESP::GetBoxItems(BoxData* boxData)
 			int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
 			if (Count == 0)
 				continue;
+
 			std::string txt = DisplayName[TypeSpecificID];
 			if (txt != "")
 				boxData->items[txt] = Count + boxData->items[txt];
 			else
 				boxData->items[std::to_string(TypeSpecificID)] = Count + boxData->items[std::to_string(TypeSpecificID)];
-			/*boxData->items.push_back(std::to_string(TypeSpecificID) + " " + std::to_string(Count));*/
+			
 			++boxData->itemCount;
 		}
 	}

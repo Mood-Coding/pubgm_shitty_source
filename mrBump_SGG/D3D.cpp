@@ -532,7 +532,6 @@ void D3D::HandleKeyInput(bool* bActive)
 	if (GetAsyncKeyState(VK_END) & 1)
 	{
 		*bActive = false;
-		//PostQuitMessage(0);
 
 		return;
 	}
