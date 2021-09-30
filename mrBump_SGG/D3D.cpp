@@ -543,7 +543,7 @@ void D3D::HandleKeyInput(bool* bActive)
 
 }
 
-void WindowManager(bool* bActive)
+void EventManager(bool* bActive)
 {
 	while (*bActive)
 	{

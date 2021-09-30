@@ -315,7 +315,7 @@ int main()
 	std::thread readMem(UpdateValue);
 
 	// HandleWindow, HandleKeyInput
-	std::thread windowManager(WindowManager, &g_bActive);
+	std::thread windowManager(EventManager, &g_bActive);
 
 	// Prepare FPS limiter
 	using clock = std::chrono::steady_clock;
