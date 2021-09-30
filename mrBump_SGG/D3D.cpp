@@ -495,7 +495,7 @@ void ChangeClickability(bool canclick, HWND hwnd)
 void D3D::HandleWindow()
 {
 	// When we minimized emulator window, its current hwnd will be invalid
-		// So we need to get the new emulator hwnd
+	// So we need to get the new emulator hwnd
 	if (g_pPM->emuProcName == L"aow_exe.exe")
 	{
 		g_pD3D->gameHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
@@ -509,10 +509,13 @@ void D3D::HandleWindow()
 
 	GetWindowRect(g_pD3D->gameHWND, &g_pD3D->gameScreenRct);
 
-	// Move overlay window when we move emulator window
-	MoveWindow(g_pD3D->overlayHWND, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->screenW, g_pD3D->screenH, true);
+	SetWindowPos(g_pD3D->overlayHWND, NULL, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top, 3u);
 
-	UpdateWindow(g_pD3D->overlayHWND);
+	// Move overlay window when we move emulator window
+	MoveWindow(g_pD3D->overlayHWND, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top, true);
+
+	MARGINS margins{ -1, -1, -1, -1 };
+	DwmExtendFrameIntoClientArea(g_pD3D->overlayHWND, &margins);
 
 	// Auto close hack when emulator process is closed
 	if (g_pD3D->gameHWND == NULL)
@@ -551,6 +554,6 @@ void EventManager(bool* bActive)
 
 		g_pD3D->HandleKeyInput(bActive);
 
-		Sleep(50);
+		Sleep(25);
 	}
 }
