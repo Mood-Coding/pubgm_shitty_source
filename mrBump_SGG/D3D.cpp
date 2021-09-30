@@ -509,10 +509,23 @@ void D3D::HandleWindow()
 
 	GetWindowRect(g_pD3D->gameHWND, &g_pD3D->gameScreenRct);
 
-	SetWindowPos(g_pD3D->overlayHWND, NULL, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top, 3u);
+	SetWindowPos(
+		g_pD3D->overlayHWND,
+		NULL,
+		g_pD3D->gameScreenRct.left,
+		g_pD3D->gameScreenRct.top,
+		g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left,
+		g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top,
+		3u);
 
 	// Move overlay window when we move emulator window
-	MoveWindow(g_pD3D->overlayHWND, g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top, g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top, true);
+	MoveWindow(
+		g_pD3D->overlayHWND, 
+		g_pD3D->gameScreenRct.left, 
+		g_pD3D->gameScreenRct.top, 
+		g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left,
+		g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top, 
+		true);
 
 	MARGINS margins{ -1, -1, -1, -1 };
 	DwmExtendFrameIntoClientArea(g_pD3D->overlayHWND, &margins);
