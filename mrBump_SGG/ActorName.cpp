@@ -564,7 +564,7 @@ std::unordered_map<int, std::string> DisplayName
 	{501006, "Bag 3"},
 	{501005, "Bag 2"},
 	{403989, "Arctic-Suit"},
-	{403045, "Woodland-Suit"},
+	{403045, "Ghillie Suit"},
 	{403187, "Desert-Suit"},
 	{403188, "Desert-Suit"},
 };

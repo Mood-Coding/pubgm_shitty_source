@@ -293,14 +293,19 @@ void ESP::DrawAirDrop()
 			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
 		}
 
-		int xOffset = 0;
-
-		for (auto& itr : AirDropDatas[i].items)
+		// AirDrop items
+		if (AirDropDatas[i].items.size() == 0)
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), "Empty", false);
+		else
 		{
-			/*std::string str{ itr.first + ' ' + std::to_string(itr.second) };*/
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
-			xOffset += 18;
+			int xOffset = 0;
+			for (auto& itr : AirDropDatas[i].items)
+			{
+				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + xOffset, RED(255), itr, false);
+				xOffset += 18;
+			}
 		}
+		
 	}
 
 	for (int i = 0; i < Airdrops.size(); ++i)
@@ -310,7 +315,8 @@ void ESP::DrawAirDrop()
 		if (Airdrops[i].PositionOnSc.X == 0 && Airdrops[i].PositionOnSc.Y == 0)
 			continue;
 
-		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(255), "AirDrop", true);
+		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
+		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(255), txt, true);
 	}
 }
 
@@ -330,9 +336,13 @@ void ESP::DrawLootbox()
 
 		int xOffset = 0;
 
+		if (Lootboxes[i].items.size() == 0)
+		{
+
+		}
+
 		for (auto& itr : Lootboxes[i].items)
 		{
-			/*std::string str{ itr.first + ' ' + std::to_string(itr.second)};*/
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
 			xOffset += 18;
 		}
@@ -592,7 +602,11 @@ void ESP::GetBoxItems(BoxData* boxData)
 				continue;
 
 			std::string txt = DisplayName[TypeSpecificID];
-
+			if (txt == "")
+			{
+				continue;
+				txt = std::to_string(TypeSpecificID);
+			}
 			// Check if given string is not exist in items vector
 			if (std::find(boxData->items.begin(), boxData->items.end(), txt) == boxData->items.end())
 			{
