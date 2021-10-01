@@ -333,22 +333,22 @@ std::unordered_map<std::string, byte> ActorColorFilterID
 	{"MG3", 7},
 
 	//shotgun
-	{"DP12", 6},
-	{"S12K", 6},
-	{"S686", 6},
-	{"S1897", 6},
-	{"Sawed Off", 6},
-	{"M1014", 6},
+	{"DP12", 7},
+	{"S12K", 7},
+	{"S686", 7},
+	{"S1897", 7},
+	{"Sawed Off", 7},
+	{"M1014", 7},
 
 	//smg
-	{"PP19", 6},
-	{"Tommy Gun", 6},
-	{"MP5K", 6},
-	{"UMP9", 6},
-	{"Vector", 6},
-	{"Vz61", 6},
-	{"Uzi", 6},
-	{"P90", 6},
+	{"PP19", 7},
+	{"Tommy Gun", 7},
+	{"MP5K", 7},
+	{"UMP9", 7},
+	{"Vector", 7},
+	{"Vz61", 7},
+	{"Uzi", 7},
+	{"P90", 7},
 
 	//pistol
 	{"R1895", 4},
@@ -362,12 +362,12 @@ std::unordered_map<std::string, byte> ActorColorFilterID
 	{"Desert Eagle", 4},
 
 	//ammo
-	{"7.62mm", 4},
-	{".45ACP", 4},
-	{"5.56mm", 4},
-	{"9mm", 4},
+	{"7.62mm", 5},
+	{".45ACP", 5},
+	{"5.56mm", 5},
+	{"9mm", 5},
 	{"300Magnum", 8},
-	{"12Guage", 4 },
+	{"12Guage", 5},
 
 	//scope
 	{"x8", 8 },
