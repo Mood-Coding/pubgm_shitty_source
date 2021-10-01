@@ -198,12 +198,12 @@ std::unordered_map<std::string, std::string> ActorDisplayName
 	{"BP_DJ_Large_E_Pickup_C", "AR Extended"},
 	{"BP_DJ_Large_E_Pickup_C_Recycled", "AR Extended"},
 	{"BP_DJ_Large_EQ_Pickup_C", "AR Extended Quickdraw"},
-	{"BP_DJ_Large_Q_Pickup_C", "AR QuickDraw"},
+	{"BP_DJ_Large_Q_Pickup_C", "AR Quickdraw"},
 
 	//smg mag
 	{"BP_DJ_Mid_E_Pickup_C", "SMG Extended"},
 	{"BP_DJ_Mid_EQ_Pickup_C", "SMG Extended Quickdraw"},
-	{"BP_DJ_Mid_Q_Pickup_C", "SMG QuickDraw"},
+	{"BP_DJ_Mid_Q_Pickup_C", "SMG Quickdraw"},
 
 	//compensator
 	{"BP_QK_Sniper_Compensator_Pickup_C", "SR Compensator"},
@@ -211,9 +211,9 @@ std::unordered_map<std::string, std::string> ActorDisplayName
 	{"BP_QK_Mid_Compensator_Pickup_C", "SMG Compensator"},
 
 	//flashhider
-	{"BP_QK_Sniper_FlashHider_Pickup_C", "SR FlashHider"},
-	{"BP_QK_Large_FlashHider_Pickup_C", "AR FlashHider"},
-	{"BP_QK_Mid_FlashHider_Pickup_C", "SMG FlashHider"},
+	{"BP_QK_Sniper_FlashHider_Pickup_C", "SR Flash Hider"},
+	{"BP_QK_Large_FlashHider_Pickup_C", "AR Flash Hider"},
+	{"BP_QK_Mid_FlashHider_Pickup_C", "SMG Flash Hider"},
 
 	//suppressor
 	{"BP_QK_Sniper_Suppressor_Pickup_C", "SR Suppressor"},
@@ -402,12 +402,12 @@ std::unordered_map<std::string, byte> ActorColorFilterID
 	//ar mag
 	{"AR Extended", 5 },
 	{"AR Extended Quickdraw", 6 },
-	{"AR QuickDraw",5 },
+	{"AR Quickdraw",5 },
 
 	//smg mag
 	{"SMG Extended", 5 },
 	{"SMG Extended Quickdraw", 6 },
-	{"SMG QuickDraw", 5 },
+	{"SMG Quickdraw", 5 },
 
 	//compensator
 	{"SR Compensator", 5 },
@@ -415,9 +415,9 @@ std::unordered_map<std::string, byte> ActorColorFilterID
 	{"SMG Compensator", 5 },
 
 	//flashhider
-	{"SR FlashHider", 5 },
-	{"AR FlashHider", 5 },
-	{"SMG FlashHider", 5 },
+	{"SR Flash Hider", 5 },
+	{"AR Flash Hider", 5 },
+	{"SMG Flash Hider", 5 },
 
 	//suppressor
 	{"SR Suppressor", 5 },
@@ -485,6 +485,8 @@ std::unordered_map<int, unsigned int> ColorFilter
 // TypeSpecificID -> Display Name
 std::unordered_map<int, std::string> DisplayName
 {
+	{101101, "AN94"},
+	{101100, "FAMAS"},
 	{101008, "M762"},
 	{101002, "M16A4"},
 	{101003, "SCAR"},
@@ -515,10 +517,11 @@ std::unordered_map<int, std::string> DisplayName
 	{101007, "QBZ"},
 	{101005, "Groza"},
 	{101006, "AUG"},
-	{106006, "SawedOff"},
-	{102005, "PP19 Bizon"},
-	{102004, "TommyGun"},
+	{106006, "Sawed Off"},
+	{102005, "PP19"},
+	{102004, "Tommy Gun"},
 	{102007, "MP5K"},
+	{105010, "MG3"},
 	{102002, "UMP9"},
 	{102003, "Vector"},
 	{102001, "Uzi"},
@@ -529,8 +532,8 @@ std::unordered_map<int, std::string> DisplayName
 	{106005, "R45"},
 	{106002, "P1911"},
 	{106010, "DesertEagle"},
-	{108003, "Sickle"},
-	{108001, "Machete"},
+	/*{108003, "Sickle"},
+	{108001, "Machete"},*/
 	{107001, "Cross Bow"},
 	{108004, "Pan"},
 	{103007, "Mk14"},
@@ -541,14 +544,14 @@ std::unordered_map<int, std::string> DisplayName
 	{306001, "300Magnum"},
 	{304001, "12Guage"},
 	{307001, "Arrows"},
-	{104003,"S12K"},
-	{104004,"DBS"},
-	{104001,"S686"},
-	{104002,"S1897"},
+	{104003, "S12K"},
+	{104004, "DBS"},
+	{104001, "S686"},
+	{104002, "S1897"},
 	{203004, "4x"},
 	{203015, "6x"},
 	{203005, "8x"},
-	{203001, "Lazer"},
+	//{203001, "Lazer"},
 	{203014, "3X"},
 	{203002, "Holo"},
 	{105002, "DP28"},
@@ -567,6 +570,33 @@ std::unordered_map<int, std::string> DisplayName
 	{403045, "Ghillie Suit"},
 	{403187, "Desert-Suit"},
 	{403188, "Desert-Suit"},
+	{601005, "FirstaidKit"},
+
+	{202005, "Half Grip"},
+	{202001, "Angled Foregrip"},
+	{202002, "Vertical Foregrip"},
+	{202006, "Thumb Grip"},
+	{202004, "Light Grip"},
+	{202007, "Lasersight"},
+
+	{205003, "Check Pad"},
+	{205002, "Tactical Stock"},
+
+	{204006, "SMG Extended Quickdraw"},
+	{204013, "AR Extended Quickdraw"},
+	{204009, "SR Extended Quickdraw"},
+
+	{201006, "SMG Suppressor"},
+	{201011, "AR Suppressor"},
+	{201007, "SR Suppressor"},
+
+	{201003, "SR Compensator"},
+	{201009, "AR Compensator"},
+	{201002, "SMG Compensator"},
+
+	{201005, "SR Flash Hider"},
+	{201010, "AR Flash Hider"},
+	{201004, "SMG Flash Hider"},
 };
 
 
@@ -617,7 +647,6 @@ std::unordered_map<int, std::string> DisplayName
 //,"Mag-AR"},
 //{204006
 //,"Mid_EQ"},
-//{205004, "Crossbow"},
 //{204014
 //,"ZDD_Sniper"},
 //{601003
@@ -626,8 +655,7 @@ std::unordered_map<int, std::string> DisplayName
 //,"Adrenaline"},
 //{601001
 //,"Energy Drink"},
-//{601005
-//,"FirstaidKit"},
+
 //{601004
 //,"Bandage"},
 //{202006

@@ -286,11 +286,11 @@ void ESP::DrawAirDrop()
 
 		if (Settings::bDebugESP)
 		{
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address).c_str(), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), false);
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 18, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
 		}
 
 		// AirDrop items
@@ -334,12 +334,14 @@ void ESP::DrawLootbox()
 
 		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, RED(255), "Lootbox", true);
 
-		int xOffset = 0;
 
 		if (Lootboxes[i].items.size() == 0)
 		{
-
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + 18, RED(255), "Empty", false);
+			continue;
 		}
+
+		int xOffset = 0;
 
 		for (auto& itr : Lootboxes[i].items)
 		{
@@ -349,7 +351,7 @@ void ESP::DrawLootbox()
 
 		if (Settings::bDebugESP)
 		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), std::to_string(Lootboxes[i].address).c_str(), false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), false);
 
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
 
@@ -582,7 +584,7 @@ void ESP::GetBoxItems(BoxData* boxData)
 	if (itemCount > 60)
 		itemCount = 60;
 
-	for (DWORD itemAddr = PickUpDataList; itemAddr <= PickUpDataList + itemCount * 0x30; itemAddr += 0x30)
+	for (DWORD itemAddr = PickUpDataList; itemAddr < PickUpDataList + itemCount * 0x30; itemAddr += 0x30)
 	{
 		//Class: PickUpItemData
 		//Class: ItemDefineID //ItemDefineID ID;//[Offset: 0x0, Size: 24]
