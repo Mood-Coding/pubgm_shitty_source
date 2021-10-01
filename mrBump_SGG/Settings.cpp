@@ -39,7 +39,7 @@ namespace Settings
 		bool bToggle = true;
 		bool bDistance = false;
 		bool bName = true;
-		int drawDistance = 13;
+		int drawDistance = 18;
 	}
 
 	namespace LootboxESP
