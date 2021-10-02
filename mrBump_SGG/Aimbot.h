@@ -14,17 +14,19 @@ class Aimbot
 public:
 	float nearestDist2Cross = 9999.0f;
 	SDK::FVector2D targetPos{};
-	DWORD targetAddr = 0;
+	Character character;
 
 	float tmpNearestDist2Cross = 0.0f;
 	SDK::FVector2D tmpTargetPos{};
-	DWORD tmpTargetAddr = 0;
+	Character tmpCharacter;
 
 	void MoveMouse(long x,long y);
 
 	void FindBestTarget(Character* character);
+
+	void GetTmpBestTarget();
 	
-	void ResetTarget();
+	void ResetTmpTarget();
 };
 
 extern Aimbot* g_pAim;

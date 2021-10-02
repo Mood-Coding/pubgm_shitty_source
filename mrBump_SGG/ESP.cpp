@@ -271,14 +271,14 @@ void ESP::DrawPlayers()
 	// Found a valid best target
 	if (g_pAim->tmpNearestDist2Cross != 9999.0f)
 	{
-		g_pAim->nearestDist2Cross = g_pAim->tmpNearestDist2Cross;
-		g_pAim->targetPos = g_pAim->tmpTargetPos;
-		g_pAim->targetAddr = g_pAim->tmpTargetAddr;
+		g_pAim->GetTmpBestTarget();
 
 		g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->targetPos.X, g_pAim->targetPos.Y, RED(255));
 
+		g_pAim->ResetTmpTarget();
+
 		// Reset nearest dist 2 crosshair
-		g_pAim->tmpNearestDist2Cross = 9999.0f;
+		/*g_pAim->tmpNearestDist2Cross = 9999.0f;*/
 	}
 }
 

@@ -30,11 +30,18 @@ void Aimbot::FindBestTarget(Character* character)
 	{
 		tmpNearestDist2Cross = distToCross;
 		tmpTargetPos = posToCheck;
-		tmpTargetAddr = character->Address;
+		tmpCharacter = *character;
 	}
 }
 
-void Aimbot::ResetTarget()
+void Aimbot::GetTmpBestTarget()
+{
+	g_pAim->nearestDist2Cross = g_pAim->tmpNearestDist2Cross;
+	g_pAim->targetPos = g_pAim->tmpTargetPos;
+	g_pAim->character = g_pAim->tmpCharacter;
+}
+
+void Aimbot::ResetTmpTarget()
 {
 	tmpNearestDist2Cross = 9999.0f;
 }

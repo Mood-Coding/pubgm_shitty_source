@@ -258,7 +258,7 @@ int main()
 	HWND targetHWND = FindWindow(L"TitanRenderWindowClass", NULL);
 	targetHWND = FindWindowEx(targetHWND, 0, L"TitanOpenglWindowClass", NULL);
 
-	if (targetHWND > 0)
+	if (targetHWND)
 	{
 		g_pPM->emuProcName = L"AndroidProcess.exe";
 	}
@@ -312,7 +312,6 @@ int main()
 
 	// aimbot thread
 	std::thread aimBot(AimbotLoop, &g_bActive);
-
 
 	// Prepare FPS limiter
 	using clock = std::chrono::steady_clock;
@@ -399,9 +398,7 @@ int main()
 			{
 				ImGui::Begin("Game Status", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
 				ImGui::TextColored(ImVec4(0.33f, 1.0f, 1.0f, 1.0f), "In Game");
-				int nearby = 0;
-				nearby = g_pESP->CharacterCount;
-				std::string txt{ "Nearby " + std::to_string(g_pESP->CharacterCount) };
+				std::string txt{ "Nearby: " + std::to_string(g_pESP->CharacterCount) };
 				ImGui::Text(txt.c_str());
 				ImGui::End();
 			}
