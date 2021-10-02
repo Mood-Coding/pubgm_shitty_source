@@ -319,6 +319,8 @@ int main()
 	using clock = std::chrono::steady_clock;
 	auto next_frame = clock::now();
 
+	g_pD3D->MenuTheme(); // Custom menu theme
+
 	// Main draw loop
 	while (g_bActive)
 	{
@@ -363,7 +365,6 @@ int main()
 		// Start the Dear ImGui frame
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
-		g_pD3D->MenuTheme(); // Custom menu theme
 		ImGui::NewFrame();
 
 		// Menu draw
