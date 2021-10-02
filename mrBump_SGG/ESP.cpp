@@ -273,12 +273,10 @@ void ESP::DrawPlayers()
 	{
 		g_pAim->GetTmpBestTarget();
 
-		g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->targetPos.X, g_pAim->targetPos.Y, RED(255));
+		if (g_pAim->character.PositionOnSc.X != 0 && g_pAim->character.PositionOnSc.Y != 0)
+			g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->character.PositionOnSc.X, g_pAim->character.PositionOnSc.Y + g_pAim->character.PositionOnSc.Z , RED(255));
 
 		g_pAim->ResetTmpTarget();
-
-		// Reset nearest dist 2 crosshair
-		/*g_pAim->tmpNearestDist2Cross = 9999.0f;*/
 	}
 }
 
