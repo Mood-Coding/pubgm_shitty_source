@@ -170,11 +170,15 @@ void ESP::DrawVehicles()
 
 void ESP::DrawPlayers()
 {
+	CharacterCount = 0;
+
 	// Debug ESP
 	if (Settings::bDebugESP)
 	{
 		for (int i = 0; i < Characters.size(); ++i)
 		{
+			++CharacterCount;
+
 			g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
 
 			if ((Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
@@ -187,8 +191,11 @@ void ESP::DrawPlayers()
 		return;
 	}
 
+	
 	for (int i = 0; i < Characters.size(); ++i)
 	{
+		++CharacterCount;
+
 		g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
 
 		if ( (Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
@@ -268,11 +275,10 @@ void ESP::DrawPlayers()
 		g_pAim->targetPos = g_pAim->tmpTargetPos;
 		g_pAim->targetAddr = g_pAim->tmpTargetAddr;
 
-		//std::cout << g_pAim->targetPos.X << ' ' << g_pAim->targetPos.Y << '\n';
 		g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->targetPos.X, g_pAim->targetPos.Y, RED(255));
 
+		// Reset nearest dist 2 crosshair
 		g_pAim->tmpNearestDist2Cross = 9999.0f;
-		/*g_pAim->ResetTarget();*/
 	}
 }
 

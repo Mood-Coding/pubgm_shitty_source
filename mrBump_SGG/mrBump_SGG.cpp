@@ -8,7 +8,7 @@ bool g_bActive = true;
 std::array<int, MAX_ACTORS> ActorArray;
 
 std::vector<Character> tmpCharacters;
-int g_tmpCharacterCount = 0;
+//int g_tmpCharacterCount = 0;
 
 std::vector<Vehicle> tmpVehicles;
 
@@ -51,7 +51,6 @@ void inline AddToCharacters(const std::string& currActorName, const DWORD& currA
 
 	// emplace_back a local object is faster than push_back a local object :v
 	tmpCharacters.emplace_back(character);
-	++g_tmpCharacterCount;
 }
 
 void inline AddToVehicles(const std::string& currActorName, const DWORD& currActorAddr, const SDK::FVector& currActorPos)
@@ -125,7 +124,7 @@ void UpdateValue()
 		tmpAirDropDatas.clear();
 		tmpLootboxes.clear();
 
-		g_tmpCharacterCount = 0;
+		/*g_tmpCharacterCount = 0;*/
 
 		tmpViewMatrixAddr = g_pMM->read<DWORD>(g_pMM->read<DWORD>(g_pESP->viewWorld) + 32) + 512;
 		
@@ -347,7 +346,7 @@ int main()
 			g_pESP->UnsortedActors = tmpUnsortedActors;
 
 			g_pESP->Characters = tmpCharacters;
-			g_pESP->CharacterCount = g_tmpCharacterCount;
+			//g_pESP->CharacterCount = g_tmpCharacterCount;
 
 			g_pESP->Items = tmpItems;
 
@@ -402,7 +401,7 @@ int main()
 				ImGui::TextColored(ImVec4(0.33f, 1.0f, 1.0f, 1.0f), "In Game");
 				int nearby = 0;
 				nearby = g_pESP->CharacterCount;
-				std::string txt{ "Nearby " + std::to_string(nearby) };
+				std::string txt{ "Nearby " + std::to_string(g_pESP->CharacterCount) };
 				ImGui::Text(txt.c_str());
 				ImGui::End();
 			}
