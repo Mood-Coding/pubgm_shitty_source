@@ -170,6 +170,7 @@ void ESP::DrawVehicles()
 
 void ESP::DrawPlayers()
 {
+	// Debug ESP
 	if (Settings::bDebugESP)
 	{
 		for (int i = 0; i < Characters.size(); ++i)
@@ -190,7 +191,7 @@ void ESP::DrawPlayers()
 	{
 		g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
 
-		if ( (Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0) /*|| Characters[i].distance >= 1000*/)
+		if ( (Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
 			continue;
 
 		// Player name + Bot check
@@ -253,15 +254,23 @@ void ESP::DrawPlayers()
 
 		// Knocked check (hp <= 0)
 		if (Characters[i].STExtraCharacter.Health <= 0)
-		{
 			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z * 2, RED(255), "Knocked", Settings::bToggleShadowText);
-		}
 
 		// Line
 		if (Settings::PlayerESP::LineESP::bToggle)
-		{
 			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 29, g_pD3D->screenW / 2, 0, WHITE(255));
-		}
+	}
+
+	// Found a valid best target
+	if (g_pAim->tmpTargetAddr != 0)
+	{
+		g_pAim->nearestDist2Cross = g_pAim->tmpNearestDist2Cross;
+		g_pAim->targetPos = g_pAim->tmpTargetPos;
+		g_pAim->targetAddr = g_pAim->tmpTargetAddr;
+
+		g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->targetPos.X, g_pAim->targetPos.Y, RED(255));
+
+		g_pAim->ResetTarget();
 	}
 }
 

@@ -295,12 +295,6 @@ int main()
 		system("pause");
 		return 0;
 	}
-
-	if (!g_pAim->Init())
-	{
-		system("pause");
-		return 0;
-	}
 	
 	// Avoid reallocation
 	tmpAirDrops.reserve(20);
@@ -316,6 +310,10 @@ int main()
 
 	// HandleWindow, HandleKeyInput
 	std::thread windowManager(EventManager, &g_bActive);
+
+	// aimbot thread
+	std::thread aimBot(AimbotLoop, &g_bActive);
+
 
 	// Prepare FPS limiter
 	using clock = std::chrono::steady_clock;
@@ -392,12 +390,8 @@ int main()
 
 				g_pESP->DrawVehicles();
 
-				// Reset then in DrawPlayers function, we will find new target for aimbot
-				g_pAim->ResetTargetValue();
 				g_pESP->DrawPlayers();
 
-				//if (g_pAim->targetPos.X != -999 && g_pAim->targetPos.Y != -999)
-				//	g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH / 2, g_pAim->targetPos.X - g_pD3D->screenW / 2, g_pAim->targetPos.Y - g_pD3D->screenH / 2, RED(255));
 			}
 			
 			
@@ -420,33 +414,17 @@ int main()
 			ImGui::End();
 		}
 
+		// Resume the read mem loop, let it continue its work :>
+		// There are some functions that are reading memory in Draw functions
+		// so we need to pause the read mem loop longer.
+		if (g_bDoneReadMem)
+			g_bDoneReadMem = false;
+
 		ImGui::EndFrame();
 		ImGui::Render();
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 		g_pD3D->pD3DDevice->EndScene(); // End the 3D scene
 		g_pD3D->pD3DDevice->Present(NULL, NULL, NULL, NULL); // Display the created frame on the screen
-
-		if ((GetAsyncKeyState(VK_XBUTTON2) & 0x8000) && (g_pAim->targetPos.X > 0 && g_pAim->targetPos.Y > 0))
-		{
-			long targetX = static_cast<long>(g_pAim->targetPos.X) - g_pD3D->screenW / 2;
-			long targetY = static_cast<long>(g_pAim->targetPos.Y) - g_pD3D->screenH / 2;
-
-			//nếu crosshair gần đến điểm aim trên mục tiêu thì hạ tốc độ aimbot
-			if ((targetX > -13 && targetX < 13) && (targetY > -13 && targetY < 13)) {
-				targetX *= 0.1;
-				targetY *= 0.1;
-			}
-
-			targetX /= Settings::Aimbot::sensitivity;
-			targetY /= Settings::Aimbot::sensitivity;
-
-			mouse_event(MOUSEEVENTF_MOVE, (DWORD)(targetX), (DWORD)(targetY), 0, 0);
-		}
-
-		// Resume the read mem loop, let it continue its work :>
-		// We put it here because in DrawPlayer function we are using a read memory function so we need to pause the read mem loop longer
-		if (g_bDoneReadMem)
-			g_bDoneReadMem = false;
 
 		next_frame += std::chrono::milliseconds(Settings::drawLoopDelay);
 		std::this_thread::sleep_until(next_frame); // Wait for end of frame

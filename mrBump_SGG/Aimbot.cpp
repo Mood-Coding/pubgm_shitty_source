@@ -24,65 +24,153 @@ void Aimbot::FindBestTarget(Character* character)
 	if (Settings::Aimbot::targetBone == BONE_HEAD)
 		posToCheck = character->BONE_HEAD;
 
-	//std::cout << character->BONE_HEAD.X << " " << character->BONE_HEAD.Y << '\n';
+	float distToCross{ Utils::DistBetween2Vector2D(posToCheck, SDK::FVector2D(static_cast<float>(g_pD3D->screenW) / 2.0f, static_cast<float>(g_pD3D->screenH) / 2))};
 
-	float distToCross = Utils::DistBetween2Vector2D(posToCheck, SDK::FVector2D(static_cast<float>(g_pD3D->screenW) / 2.0f, static_cast<float>(g_pD3D->screenH) / 2));
-
-	if (distToCross < nearestDistToCross)
+	if (distToCross < nearestDist2Cross)
 	{
-		nearestDistToCross = distToCross;
-
-		targetPos = posToCheck;
-
-		targetAddr = character->Address;
+		tmpNearestDist2Cross = distToCross;
+		tmpTargetPos = posToCheck;
+		tmpTargetAddr = character->Address;
 	}
 }
 
-void Aimbot::ResetTargetValue()
+void Aimbot::ResetTarget()
 {
-	nearestDistToCross = 9999.0f;
-	targetAddr = 0;
-	targetPos.X = -999;
-	targetPos.Y = -999;
+	tmpNearestDist2Cross = 9999.0f;
+	/*tmpTargetPos.X = -999;
+	tmpTargetPos.Y = -999;*/
+	/*tmpTargetAddr = 0;*/
+
+	//targetAddr = 0;
 }
 
-void AimbotLoop()
+void AimbotLoop(bool* g_bActive)
 {
 	while (g_bActive)
 	{
-		//std::cout << g_pAim->targetPos.X << " " << g_pAim->targetPos.Y << "\n";
-
-		if ((GetAsyncKeyState(VK_XBUTTON2) & 0x8000) && (g_pAim->targetPos.X > 0 && g_pAim->targetPos.Y > 0))
+		if (!(GetAsyncKeyState(VK_XBUTTON2) & 0x8000))
 		{
-			long targetX = static_cast<long>(g_pAim->targetPos.X) - g_pD3D->screenW / 2;
-			long targetY = static_cast<long>(g_pAim->targetPos.Y) - g_pD3D->screenH / 2;
+			continue;
+		}
 
-			//nếu crosshair gần đến điểm aim trên mục tiêu thì hạ tốc độ aimbot
-			if ((targetX > -5 && targetX < 5) && (targetY > -5 && targetY < 5)) {
-				targetX *= 0.1;
-				targetY *= 0.1;
+		//std::cout << g_pAim->targetPos.X << ' ' << g_pAim->targetPos.Y << '\n';
+
+		float half_width{ static_cast<float>(g_pD3D->screenW) / 2 };
+		float half_height{ static_cast<float>(g_pD3D->screenH) / 2 };
+		float smooth_value{ static_cast<float>(Settings::Aimbot::sensitivity) };
+		float aimX{ 0.0f };
+		float aimY{ 0.0f };
+
+		if (g_pAim->targetPos.X != 0.0f)
+		{
+			if (g_pAim->targetPos.X > half_width)
+			{
+				aimX = -(half_width - g_pAim->targetPos.X);
+				aimX /= smooth_value;
+
+				if (aimX + half_width > half_width * 2)
+					aimX = 0.0f;
+			}
+
+			if (g_pAim->targetPos.X < half_width)
+			{
+				aimX = g_pAim->targetPos.X - half_width;
+				aimX /= smooth_value;
+
+				if (aimX + half_width < 0.0f)
+					aimX = 0.0f;
+			}
+		}
+
+		if (g_pAim->targetPos.Y != 0.0f)
+		{
+			if (g_pAim->targetPos.Y > half_height)
+			{
+				aimY = -(half_height - g_pAim->targetPos.Y);
+				aimY /= smooth_value;
+
+				if (aimY + half_height > half_height * 2)
+					aimY = 0.0f;
+			}
+
+			if (g_pAim->targetPos.Y < half_height)
+			{
+				aimY = g_pAim->targetPos.Y - half_height;
+				aimY /= smooth_value;
+
+				if (aimY + (float)half_height < 0.0f)
+					aimY = 0.0f;
+			}
+		}
+
+		// FOV check
+
+		mouse_event(1UL, static_cast<DWORD>(aimX), static_cast<DWORD>(aimY), 0UL, NULL);
+
+		//	//nếu crosshair gần đến điểm aim trên mục tiêu thì hạ tốc độ aimbot
+		//	if ((targetX > -13 && targetX < 13) && (targetY > -13 && targetY < 13)) {
+		//		targetX *= 0.1;
+		//		targetY *= 0.1;
+		//	}
+		/*
+	
+			if (Program.AimOptions.bDrawLock == 1)
+			{
+				gfx.DrawCircle(FlatSDKInternal.IRenderer._white, x, y, 5f, 5f);
 			}
 			
-
-			targetX /= Settings::Aimbot::sensitivity;
-			targetY /= Settings::Aimbot::sensitivity;
-
-			mouse_event(MOUSEEVENTF_MOVE, (DWORD)(targetX), (DWORD)(targetY), 0, 0);
-		}
+			if (Math.Abs(aimX) < 1f)
+			{
+				if (aimX > 0f)
+				{
+					Program.deltamult = Program.offset_check_result * 100f;
+				}
+				if (aimX < 0f)
+				{
+					Program.deltamult = Program.offset_check_result * 10f;
+				}
+			}
+			if (Math.Abs(aimY) < 1f)
+			{
+				if (aimY > 0f)
+				{
+					Program.deltamult = Program.offset_check_result * 10f;
+				}
+				if (aimY < 0f)
+				{
+					Program.deltamult = Program.offset_check_result * 10f;
+				}
+			}
+			if (!smooth)
+			{
+				FlatSDKInternal.mouse_event(1U, (int)aimX, (int)aimY, 0U, UIntPtr.Zero);
+				return;
+			}
+			if (Math.Abs(aimX) < 1f)
+			{
+				if (aimX > 0f)
+				{
+					aimX = 1f;
+				}
+				if (aimX < 0f)
+				{
+					aimX = -1f;
+				}
+			}
+			if (Math.Abs(aimY) < 1f)
+			{
+				if (aimY > 0f)
+				{
+					aimY = 1f;
+				}
+				if (aimY < 0f)
+				{
+					aimY = -1f;
+				}
+			}
+			FlatSDKInternal.mouse_event(1U, (int)aimX, (int)aimY, 0U, UIntPtr.Zero);
+		}*/
 
 		Sleep(1);
 	}
-
-	
-}
-
-bool Aimbot::Init()
-{
-
-	//std::thread aimBot(AimbotLoop);
-
-	// When this function is out of scope, this function won't crash
-	//aimBot.detach();
-
-	return 1;
 }
