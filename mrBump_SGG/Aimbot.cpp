@@ -36,15 +36,7 @@ void Aimbot::FindBestTarget(Character* character)
 
 void Aimbot::ResetTarget()
 {
-	/*tmpTargetAddr = 0;*/
 	tmpNearestDist2Cross = 9999.0f;
-	//tmpTargetPos.X = 0;
-	//tmpTargetPos.Y = 0;
-
-	///*tmpTargetAddr = 0;*/
-	//targetPos.X = 0;
-	//targetPos.Y = 0;
-	//targetAddr = 0;
 }
 
 void AimbotLoop(bool* g_bActive)
@@ -57,11 +49,8 @@ void AimbotLoop(bool* g_bActive)
 			continue;
 		}
 
-		//std::cout << g_pAim->targetPos.X << ' ' << g_pAim->targetPos.Y << '\n';
-
 		float half_width{ static_cast<float>(g_pD3D->screenW) / 2 };
 		float half_height{ static_cast<float>(g_pD3D->screenH) / 2 };
-		float smooth_value{ static_cast<float>(Settings::Aimbot::sensitivity) + 1.0f};
 		float aimX{ 0.0f };
 		float aimY{ 0.0f };
 
@@ -70,7 +59,6 @@ void AimbotLoop(bool* g_bActive)
 			if (g_pAim->targetPos.X > half_width)
 			{
 				aimX = -(half_width - g_pAim->targetPos.X);
-				//aimX /= smooth_value;
 				aimX /= Settings::Aimbot::sensitivity;
 
 				if (aimX + half_width > half_width * 2)
@@ -80,7 +68,6 @@ void AimbotLoop(bool* g_bActive)
 			if (g_pAim->targetPos.X < half_width)
 			{
 				aimX = g_pAim->targetPos.X - half_width;
-				//aimX /= smooth_value;
 				aimX /= Settings::Aimbot::sensitivity;
 
 				if (aimX + half_width < 0.0f)
@@ -93,7 +80,6 @@ void AimbotLoop(bool* g_bActive)
 			if (g_pAim->targetPos.Y > half_height)
 			{
 				aimY = -(half_height - g_pAim->targetPos.Y);
-				/*aimY /= smooth_value;*/
 				aimY /= Settings::Aimbot::sensitivity;
 
 				if (aimY + half_height > half_height * 2)
@@ -103,7 +89,6 @@ void AimbotLoop(bool* g_bActive)
 			if (g_pAim->targetPos.Y < half_height)
 			{
 				aimY = g_pAim->targetPos.Y - half_height;
-				/*aimY /= smooth_value;*/
 				aimY /= Settings::Aimbot::sensitivity;
 
 				if (aimY + (float)half_height < 0.0f)
@@ -115,9 +100,9 @@ void AimbotLoop(bool* g_bActive)
 
 		// Avoid shaking when very near to aim position
 		if (abs(aimX) < 1.0f)
-			aimX = 0;
+			aimX = 0.0f;
 		if (abs(aimY) < 1.0f)
-			aimY = 0;
+			aimY = 0.0f;
 
 		mouse_event(MOUSEEVENTF_MOVE, static_cast<DWORD>(aimX), static_cast<DWORD>(aimY), 0UL, NULL);
 	
@@ -126,6 +111,6 @@ void AimbotLoop(bool* g_bActive)
 				gfx.DrawCircle(FlatSDKInternal.IRenderer._white, x, y, 5f, 5f);
 			}*/
 
-		Sleep(1);
+		Sleep(10);
 	}
 }
