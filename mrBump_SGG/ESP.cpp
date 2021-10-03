@@ -331,7 +331,6 @@ void ESP::DrawPlayers()
 				g_pAim->GetTmpBestTarget();
 			}
 
-
 			/*float BulletDrop(float TravelTime) {
 				return (TravelTime * TravelTime * 980 / 2);
 			}*/
