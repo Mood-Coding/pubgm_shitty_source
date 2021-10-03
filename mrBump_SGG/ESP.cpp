@@ -47,9 +47,10 @@ void ESP::DrawItems()
 	{
 		for (int i = 0; i < Items.size(); ++i)
 		{
-			g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance);
+			if (!g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance))
+				continue;
 
-			if (Items[i].PositionOnSc.X <= 0.0f || Items[i].PositionOnSc.Y <= 0.0f || Items[i].distance > Settings::ItemESP::drawDistance)
+			if (Items[i].distance > Settings::ItemESP::drawDistance)
 				continue;
 
 			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Items[i].Address).c_str(), Settings::bToggleShadowText);
@@ -65,14 +66,15 @@ void ESP::DrawItems()
 
 	for (int i = 0; i < Items.size(); ++i)
 	{	
-		g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance);
-
-		if (Items[i].PositionOnSc.X <= 0.0f || Items[i].PositionOnSc.Y <= 0.0f || Items[i].distance > Settings::ItemESP::drawDistance)
+		if (!g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance))
 			continue;
 
-		unsigned int color = ColorFilter[ActorColorFilterID[Items[i].displayName]];
-		if (color == 0)
-			color = DARKRED(255);
+		if (Items[i].distance > Settings::ItemESP::drawDistance)
+			continue;
+
+		unsigned int itemDisplayColor{ ColorFilter[ActorColorFilterID[Items[i].displayName]] };
+		if (itemDisplayColor == 0)
+			itemDisplayColor = DARKRED(255);
 
 		std::string str;
 
@@ -83,7 +85,7 @@ void ESP::DrawItems()
 			str += std::to_string(Items[i].distance) + "m";
 
 		if (str != "")
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, color, str, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, itemDisplayColor, str, Settings::bToggleShadowText);
 	}
 }
 
@@ -93,9 +95,10 @@ void ESP::DrawVehicles()
 	{
 		for (int i = 0; i < Vehicles.size(); ++i)
 		{
-			g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance);
+			if (!g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance))
+				continue;
 
-			if (Vehicles[i].PositionOnSc.X <= 0.0f || Vehicles[i].PositionOnSc.Y <= 0.0f || Vehicles[i].distance > Settings::VehicleESP::drawDistance)
+			if (Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 				continue;
 
 			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), Settings::bToggleShadowText);
@@ -106,9 +109,7 @@ void ESP::DrawVehicles()
 
 	for (int i = 0; i < Vehicles.size(); ++i)
 	{
-		g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance);
-
-		if (Vehicles[i].PositionOnSc.X <= 0.0f || Vehicles[i].PositionOnSc.Y <= 0.0f)
+		if (!g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance))
 			continue;
 
 		if (Vehicles[i].displayName == "AirDrop Plane")
@@ -175,11 +176,9 @@ void ESP::DrawPlayers()
 	{
 		for (int i = 0; i < Characters.size(); ++i)
 		{
-			g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
-
 			++CharacterCount;
 
-			if ((Characters[i].PositionOnSc.X <= 0.0f && Characters[i].PositionOnSc.Y <= 0.0f))
+			if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 				continue;
 
 			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Characters[i].Address).c_str(), Settings::bToggleShadowText);
@@ -192,11 +191,9 @@ void ESP::DrawPlayers()
 	
 	for (int i = 0; i < Characters.size(); ++i)
 	{
-		g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
-
 		++CharacterCount;
 
-		if ( (Characters[i].PositionOnSc.X <= 0.0f && Characters[i].PositionOnSc.Y <= 0.0f))
+		if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 			continue;
 
 		unsigned int teamIDColor{ TeamIDColor[Characters[i].STExtraCharacter.TeamID] };

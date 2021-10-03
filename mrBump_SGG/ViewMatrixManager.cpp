@@ -4,10 +4,12 @@
 
 ViewMatrixManager* g_pVMM = new ViewMatrixManager();
 
-bool ViewMatrixManager::WorldToScreen(SDK::FVector pos, SDK::FVector &screen, int& distance) {
-	float ScreenW = (viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44);
+// For item, vehicle
+bool ViewMatrixManager::WorldToScreen(SDK::FVector pos, SDK::FVector &screen, int& distance)
+{
+	float ScreenW{ (viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44) };
 
-	//entity is behind player
+	// Entity is behind player
 	if (ScreenW < 0.0001f)
 		return false;
 
@@ -18,14 +20,15 @@ bool ViewMatrixManager::WorldToScreen(SDK::FVector pos, SDK::FVector &screen, in
 
 	screen.X = (g_pD3D->screenW / 2) + (g_pD3D->screenW / 2) * ScreenX / ScreenW;
 	screen.Y = (g_pD3D->screenH / 2) - (g_pD3D->screenH / 2) * ScreenY / ScreenW;
+
 	return true;
 }
 
-//bool ViewMatrixManager::WorldToScreenPlayer(Vector3f pos, Vector3f& screen, int& distance) {
 bool ViewMatrixManager::WorldToScreenPlayer(SDK::FVector pos, SDK::FVector& screen, int& distance)
 {
-	float screenW = (viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44);
-	//entity is behind player
+	float screenW{ (viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44) };
+
+	// Entity is behind player
 	if (screenW < 0.0001f)
 		return false;
 
@@ -38,6 +41,7 @@ bool ViewMatrixManager::WorldToScreenPlayer(SDK::FVector pos, SDK::FVector& scre
 	screen.X = (g_pD3D->screenW / 2) + (g_pD3D->screenW / 2) * screenX / screenW;
 	screen.Y = (g_pD3D->screenH / 2) - (g_pD3D->screenH / 2) * screenY / screenW;
 	screen.Z = y1 - screen.Y;
+
 	return true;
 }
 
