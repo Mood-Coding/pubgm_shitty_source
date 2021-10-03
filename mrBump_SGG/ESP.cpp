@@ -272,16 +272,11 @@ void ESP::DrawPlayers()
 			// Line to aimbot enemy target
 			g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z, RED(255));
 
-			/*DWORD WeaponEntity = g_pMM->read<DWORD>(g_pESP->Pawn + 0x1740);*/
 			// Pawn is holding a valid firearm
 			if (PawnBulletFireSpeed > 0.0f)
-			{
-				// BulletFireSpeed of pawn's weapon
-				/*DWORD ShootWeaponEntity = g_pMM->read<DWORD>(WeaponEntity + 0xCDC);
-				float BulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4) ;*/
-				
+			{	
 				// Enemy head bone pos
-				SDK::FVector EnemyHeadBonePos;
+				/*SDK::FVector EnemyHeadBonePos;
 				{
 					DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + g_pESP->MeshOffset) };
 					DWORD bodyAddr{ SkeletalMeshComponent + 0x150 };
@@ -291,10 +286,10 @@ void ESP::DrawPlayers()
 					EnemyHeadBonePos.Y = headBoneWorldPos.y;
 					EnemyHeadBonePos.Z = headBoneWorldPos.z + 5;
 				}
-				SDK::FVector OriginEnemyHeadBonePos = EnemyHeadBonePos;
+				SDK::FVector OriginEnemyHeadBonePos = EnemyHeadBonePos;*/
 
 				// Distance in game position between: Pawn head bone and Enemy aimbot target bone
-				float distance{ Utils::DistBetween2Vector3D(EnemyHeadBonePos, g_pESP->PawnHeadBoneGamePos) };
+				float distance{ Utils::DistBetween2Vector3D(g_pAim->tmpCharacter.GAME_BONE_HEAD, g_pESP->PawnHeadBoneGamePos) };
 
 				// t = S / V
 				float BulletTravelTime{ distance / PawnBulletFireSpeed };
@@ -303,18 +298,19 @@ void ESP::DrawPlayers()
 				DWORD SceneComponent = g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + 0x14C);
 				SDK::FVector ComponentVelocity = g_pMM->read<SDK::FVector>(SceneComponent + 0x1B0);
 
+				SDK::FVector PredictEnemyBonePos = g_pAim->tmpCharacter.GAME_BONE_HEAD;
 				// S = V * t
-				EnemyHeadBonePos.X += ComponentVelocity.X * BulletTravelTime;
-				EnemyHeadBonePos.Y += ComponentVelocity.Y * BulletTravelTime;
-				EnemyHeadBonePos.Z += ComponentVelocity.Z * BulletTravelTime;
+				PredictEnemyBonePos.X += ComponentVelocity.X * BulletTravelTime;
+				PredictEnemyBonePos.Y += ComponentVelocity.Y * BulletTravelTime;
+				PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime;
 
-				g_pVMM->GameToScreenBone(EnemyHeadBonePos, g_pAim->tmpTargetPos);
+				g_pVMM->GameToScreenBone(PredictEnemyBonePos, g_pAim->tmpTargetPos);
 
-				SDK::FVector2D OriginEnemyHeadBoneScPos;
-				g_pVMM->GameToScreenBone(OriginEnemyHeadBonePos, OriginEnemyHeadBoneScPos);
+				/*SDK::FVector2D OriginEnemyHeadBoneScPos;
+				g_pVMM->GameToScreenBone(OriginEnemyHeadBonePos, OriginEnemyHeadBoneScPos);*/
 
 				// Enemy predict movement line
-				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, OriginEnemyHeadBoneScPos.X, OriginEnemyHeadBoneScPos.Y, WHITE(255), 1.3);
+				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.3);
 
 				g_pAim->GetTmpBestTarget();
 			}
