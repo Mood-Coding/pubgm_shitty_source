@@ -1,9 +1,8 @@
 ﻿#include "pch.h"
+
 #include "Aimbot.h"
 
 Aimbot* g_pAim = new Aimbot();
-
-
 
 void Aimbot::MoveMouse(long x, long y)
 {

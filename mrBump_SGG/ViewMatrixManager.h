@@ -21,6 +21,7 @@ public:
 	//bool WorldToScreenPlayer(Vector3f pos, Vector3f& screen, int& distance);
 	bool WorldToScreenPlayer(SDK::FVector pos, SDK::FVector& screen, int& distance);
 	void WorldToScreenBone(Vector3f pos, SDK::FVector2D& screen);
+	void GameToScreenBone(SDK::FVector pos, SDK::FVector2D& screen);
 
 	Vector3f GetBoneWorldPosition(DWORD bodyAddr, DWORD boneAddr);
 	SDK::FVector GetBoneGamePosition(DWORD bodyAddr, DWORD boneAddr);

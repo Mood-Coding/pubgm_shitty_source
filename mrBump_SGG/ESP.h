@@ -62,6 +62,10 @@ public:
 	
 	std::wstring PlayerName = L"";
 
+	SDK::FVector GAME_BONE_HEAD;
+	SDK::FVector GAME_BONE_CHEST;
+	SDK::FVector GAME_BONE_PELVIS;
+
 	SDK::FVector2D BONE_HEAD;
 	SDK::FVector2D BONE_CHEST;
 	SDK::FVector2D BONE_PELVIS;

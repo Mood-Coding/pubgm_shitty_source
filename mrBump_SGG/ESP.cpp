@@ -253,8 +253,6 @@ void ESP::DrawPlayers()
 			g_pAim->FindBestTarget(&Characters[i]);
 		}
 
-		
-
 		if (Settings::PlayerESP::BoneESP::bToggle)
 			DrawPlayerBone(&Characters[i], teamIDColor);
 
@@ -502,64 +500,67 @@ void ESP::GetPlayerBonePos(Character* character)
 	// Iterate over BONES
 	for (int curBone = 0; curBone < 11; ++curBone)
 	{
-		Vector3f curBoneWorldPos = g_pVMM->GetBoneWorldPosition(bodyAddr, boneAddr + Bones[curBone] * 48);
+		SDK::FVector curBoneGamePos{ g_pVMM->GetBoneGamePosition(bodyAddr, boneAddr + Bones[curBone] * 48) };
 		switch (Bones[curBone])
 		{
-		case BONE_HEAD:
-		{
-			curBoneWorldPos.z += 5;
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_HEAD);
-			break;
-		}
-		case BONE_CHEST:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_CHEST);
-			break;
-		}
-		case BONE_PELVIS:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_PELVIS);
-			break;
-		}
-		case BONE_L_ELBOW:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_L_ELBOW);
-			break;
-		}
-		case BONE_L_WRIST:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_L_WRIST);
-			break;
-		}
-		case BONE_R_ELBOW:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_R_ELBOW);
-			break;
-		}
-		case BONE_R_WRIST:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_R_WRIST);
-			break;
-		}
-		case BONE_L_KNEE:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_L_KNEE);
-			break;
-		}
-		case BONE_L_FOOT:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_L_FOOT);
-			break;
-		}
-		case BONE_R_KNEE:
-		{
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_R_KNEE);
-			break;
-		}
-		case BONE_R_FOOT: {
-			g_pVMM->WorldToScreenBone(curBoneWorldPos, character->BONE_R_FOOT);
-			break;
-		}
+			case BONE_HEAD:
+			{
+				curBoneGamePos.Z += 5;
+				character->GAME_BONE_HEAD = curBoneGamePos;
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_HEAD);
+				break;
+			}
+			case BONE_CHEST:
+			{
+				character->GAME_BONE_CHEST = curBoneGamePos;
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_CHEST);
+				break;
+			}
+			case BONE_PELVIS:
+			{
+				character->GAME_BONE_PELVIS = curBoneGamePos;
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_PELVIS);
+				break;
+			}
+			case BONE_L_ELBOW:
+			{
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_ELBOW);
+				break;
+			}
+			case BONE_L_WRIST:
+			{
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_WRIST);
+				break;
+			}
+			case BONE_R_ELBOW:
+			{
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_ELBOW);
+				break;
+			}
+			case BONE_R_WRIST:
+			{
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_WRIST);
+				break;
+			}
+			case BONE_L_KNEE:
+			{
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_KNEE);
+				break;
+			}
+			case BONE_L_FOOT:
+			{
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_FOOT);
+				break;
+			}
+			case BONE_R_KNEE:
+			{
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_KNEE);
+				break;
+			}
+			case BONE_R_FOOT: {
+				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_FOOT);
+				break;
+			}
 		}
 	}
 }
