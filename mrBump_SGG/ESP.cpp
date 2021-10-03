@@ -49,13 +49,15 @@ void ESP::DrawItems()
 		{
 			g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance);
 
-			if (Items[i].PositionOnSc.X <= 0 || Items[i].PositionOnSc.Y <= 0 || Items[i].distance > Settings::ItemESP::drawDistance)
+			if (Items[i].PositionOnSc.X <= 0.0f || Items[i].PositionOnSc.Y <= 0.0f || Items[i].distance > Settings::ItemESP::drawDistance)
 				continue;
 
 			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Items[i].Address).c_str(), Settings::bToggleShadowText);
 			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18, WHITE(255), Items[i].actorName, Settings::bToggleShadowText);
 			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18, WHITE(255), Items[i].displayName, Settings::bToggleShadowText);
 			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18, WHITE(255), std::to_string(Items[i].ItemDefineID.TypeSpecificID).c_str(), Settings::bToggleShadowText);
+			std::string txt{ std::to_string(Items[i].PositionOnSc.X) + ' ' + std::to_string(Items[i].PositionOnSc.Y) };
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18 + 18, WHITE(255), txt.c_str(), Settings::bToggleShadowText);
 		}
 
 		return;
@@ -65,7 +67,7 @@ void ESP::DrawItems()
 	{	
 		g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance);
 
-		if (Items[i].PositionOnSc.X <= 0 || Items[i].PositionOnSc.Y <= 0 || Items[i].distance > Settings::ItemESP::drawDistance)
+		if (Items[i].PositionOnSc.X <= 0.0f || Items[i].PositionOnSc.Y <= 0.0f || Items[i].distance > Settings::ItemESP::drawDistance)
 			continue;
 
 		unsigned int color = ColorFilter[ActorColorFilterID[Items[i].displayName]];
@@ -197,6 +199,8 @@ void ESP::DrawPlayers()
 		if ( (Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
 			continue;
 
+		unsigned int teamIDColor{ TeamIDColor[Characters[i].STExtraCharacter.TeamID] };
+
 		// Player name + Bot check
 		{
 			long txtBotCheckOffset = 0;
@@ -208,7 +212,7 @@ void ESP::DrawPlayers()
 				g_pD3D->pPlayerNameFont->DrawText(NULL, Characters[i].PlayerName.c_str(), Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
 
 				// We use D3D draw string API because ImGui doesn't support UNICODE string :<
-				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 32, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 32, teamIDColor, Characters[i].PlayerName, Settings::bToggleShadowText);
 			}
 
 			if (Characters[i].STExtraCharacter.bIsAI)
@@ -249,7 +253,7 @@ void ESP::DrawPlayers()
 			g_pAim->FindBestTarget(&Characters[i]);
 		}
 
-		unsigned int teamIDColor{ TeamIDColor[Characters[i].STExtraCharacter.TeamID] };
+		
 
 		if (Settings::PlayerESP::BoneESP::bToggle)
 			DrawPlayerBone(&Characters[i], teamIDColor);
