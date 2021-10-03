@@ -117,30 +117,32 @@ D3DMatrix ViewMatrixManager::ToMatrixWithScale(Vector3f translation, Vector3f sc
 	return m;
 }
 
-void ViewMatrixManager::WorldToScreenBone(Vector3f pos, SDK::FVector2D& screen)
-{
-	float screenW{  ( (viewMatrix._14 * pos.x) + (viewMatrix._24 * pos.y) + (viewMatrix._34 * pos.z + viewMatrix._44) )};
+//void ViewMatrixManager::WorldToScreenBone(Vector3f pos, SDK::FVector2D& screen)
+//{
+//	float screenW{  ( (viewMatrix._14 * pos.x) + (viewMatrix._24 * pos.y) + (viewMatrix._34 * pos.z + viewMatrix._44) )};
+//
+//	//entity is behind player
+//	if (screenW < 0.0001f)
+//		return;
+//
+//	screenW = 1 / screenW;
+//	screen.X = (g_pD3D->screenW / 2) + (viewMatrix._11 * pos.x + viewMatrix._21 * pos.y + viewMatrix._31 * pos.z + viewMatrix._41) * screenW * (g_pD3D->screenW / 2);
+//	screen.Y = (g_pD3D->screenH / 2) - (viewMatrix._12 * pos.x + viewMatrix._22 * pos.y + viewMatrix._32 * pos.z + viewMatrix._42) * screenW * (g_pD3D->screenH / 2);
+//}
 
-	//entity is behind player
-	if (screenW < 0.0001f)
-		return;
-
-	screenW = 1 / screenW;
-	screen.X = (g_pD3D->screenW / 2) + (viewMatrix._11 * pos.x + viewMatrix._21 * pos.y + viewMatrix._31 * pos.z + viewMatrix._41) * screenW * (g_pD3D->screenW / 2);
-	screen.Y = (g_pD3D->screenH / 2) - (viewMatrix._12 * pos.x + viewMatrix._22 * pos.y + viewMatrix._32 * pos.z + viewMatrix._42) * screenW * (g_pD3D->screenH / 2);
-}
-
-void ViewMatrixManager::GameToScreenBone(SDK::FVector pos, SDK::FVector2D& screen)
+bool ViewMatrixManager::GameToScreenBone(SDK::FVector pos, SDK::FVector2D& screen)
 {
 	float screenW{ ((viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44)) };
 
-	// Entity is behind player
+	// Current bone is behind player
 	if (screenW < 0.0001f)
-		return;
+		return false;
 
 	screenW = 1 / screenW;
 	screen.X = (g_pD3D->screenW / 2) + (viewMatrix._11 * pos.X + viewMatrix._21 * pos.Y + viewMatrix._31 * pos.Z + viewMatrix._41) * screenW * (g_pD3D->screenW / 2);
 	screen.Y = (g_pD3D->screenH / 2) - (viewMatrix._12 * pos.X + viewMatrix._22 * pos.Y + viewMatrix._32 * pos.Z + viewMatrix._42) * screenW * (g_pD3D->screenH / 2);
+
+	return true;
 }
 
 D3DMatrix ViewMatrixManager::MatrixMultiplication(D3DMatrix pM1, D3DMatrix pM2) {

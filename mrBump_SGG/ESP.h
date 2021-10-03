@@ -271,7 +271,7 @@ public:
 	std::string GetActorName(DWORD actorID);
 	std::wstring GetPlayerName(DWORD nameAddr);
 
-	void GetPlayerBonePos(Character* character);
+	bool GetPlayerBonePos(Character* character);
 
 	static int Bones[11];
 

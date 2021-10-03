@@ -245,13 +245,15 @@ void ESP::DrawPlayers()
 		{
 			// Because read mem loop has high delay than draw loop
 			// Puting GetPlayerBonePos here so BoneESP will be more smoother than putting this in read mem loop
-			GetPlayerBonePos(&Characters[i]);
+			if (GetPlayerBonePos(&Characters[i]))
+			{
+				if (Settings::Aimbot::bToggle)
+					g_pAim->FindBestTarget(&Characters[i]);
 
-			g_pAim->FindBestTarget(&Characters[i]);
+				if (Settings::PlayerESP::BoneESP::bToggle)
+					DrawPlayerBone(&Characters[i], teamIDColor);
+			}
 		}
-
-		if (Settings::PlayerESP::BoneESP::bToggle)
-			DrawPlayerBone(&Characters[i], teamIDColor);
 
 		// Knocked check (hp <= 0)
 		if (Characters[i].STExtraCharacter.Health <= 0)
@@ -306,19 +308,10 @@ void ESP::DrawPlayers()
 				EnemyHeadBonePos.Y += ComponentVelocity.Y * BulletTravelTime;
 				EnemyHeadBonePos.Z += ComponentVelocity.Z * BulletTravelTime;
 
-				Vector3f enemyheadBonePos;
-				enemyheadBonePos.x = EnemyHeadBonePos.X;
-				enemyheadBonePos.y = EnemyHeadBonePos.Y;
-				enemyheadBonePos.z = EnemyHeadBonePos.Z;
-
-				g_pVMM->WorldToScreenBone(enemyheadBonePos, g_pAim->tmpTargetPos);
+				g_pVMM->GameToScreenBone(EnemyHeadBonePos, g_pAim->tmpTargetPos);
 
 				SDK::FVector2D OriginEnemyHeadBoneScPos;
-				Vector3f tmp;
-				tmp.x = OriginEnemyHeadBonePos.X;
-				tmp.y = OriginEnemyHeadBonePos.Y;
-				tmp.z = OriginEnemyHeadBonePos.Z;
-				g_pVMM->WorldToScreenBone(tmp, OriginEnemyHeadBoneScPos);
+				g_pVMM->GameToScreenBone(OriginEnemyHeadBonePos, OriginEnemyHeadBoneScPos);
 
 				// Enemy predict movement line
 				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, OriginEnemyHeadBoneScPos.X, OriginEnemyHeadBoneScPos.Y, WHITE(255), 1.3);
@@ -464,12 +457,12 @@ void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ)
 
 void ESP::DrawPlayerBone(Character* character, unsigned int color)
 {
-	if ((character->BONE_HEAD.X == 0 && character->BONE_HEAD.Y == 0)
+	/*if ((character->BONE_HEAD.X == 0 && character->BONE_HEAD.Y == 0)
 		|| (character->BONE_CHEST.X == 0 && character->BONE_CHEST.Y == 0)
 		|| (character->BONE_PELVIS.X == 0 && character->BONE_PELVIS.Y == 0))
 	{
 		return;
-	}
+	}*/
 
 	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z / 2);
 
@@ -488,11 +481,13 @@ void ESP::DrawPlayerBone(Character* character, unsigned int color)
 	g_pD3D->DrawLine(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, color, 1.2);
 }
 
-void ESP::GetPlayerBonePos(Character* character)
+bool ESP::GetPlayerBonePos(Character* character)
 {
 	DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(character->Address + g_pESP->MeshOffset) };
 	DWORD bodyAddr{ SkeletalMeshComponent + 0x150 };
 	DWORD boneAddr{ g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48 };
+
+	bool bBadBonePosition = false;
 
 	// Iterate over BONES
 	for (int curBone = 0; curBone < 11; ++curBone)
@@ -504,62 +499,78 @@ void ESP::GetPlayerBonePos(Character* character)
 			{
 				curBoneGamePos.Z += 5;
 				character->GAME_BONE_HEAD = curBoneGamePos;
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_HEAD);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_HEAD))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_CHEST:
 			{
 				character->GAME_BONE_CHEST = curBoneGamePos;
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_CHEST);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_CHEST))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_PELVIS:
 			{
 				character->GAME_BONE_PELVIS = curBoneGamePos;
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_PELVIS);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_PELVIS))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_L_ELBOW:
 			{
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_ELBOW);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_ELBOW))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_L_WRIST:
 			{
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_WRIST);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_WRIST))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_R_ELBOW:
 			{
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_ELBOW);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_ELBOW))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_R_WRIST:
 			{
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_WRIST);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_WRIST))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_L_KNEE:
 			{
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_KNEE);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_KNEE))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_L_FOOT:
 			{
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_FOOT);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_FOOT))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_R_KNEE:
 			{
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_KNEE);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_KNEE))
+					bBadBonePosition = true;
 				break;
 			}
 			case BONE_R_FOOT: {
-				g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_FOOT);
+				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_FOOT))
+					bBadBonePosition = true;
 				break;
 			}
 		}
+
+		if (bBadBonePosition)
+			return false;
 	}
+
+	return true;
 }
 
 int ESP::Bones[11]
