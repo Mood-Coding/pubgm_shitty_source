@@ -457,13 +457,6 @@ void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ)
 
 void ESP::DrawPlayerBone(Character* character, unsigned int color)
 {
-	/*if ((character->BONE_HEAD.X == 0 && character->BONE_HEAD.Y == 0)
-		|| (character->BONE_CHEST.X == 0 && character->BONE_CHEST.Y == 0)
-		|| (character->BONE_PELVIS.X == 0 && character->BONE_PELVIS.Y == 0))
-	{
-		return;
-	}*/
-
 	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z / 2);
 
 	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, color, 1.2);
