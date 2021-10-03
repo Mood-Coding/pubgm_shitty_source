@@ -177,9 +177,9 @@ void ESP::DrawPlayers()
 	{
 		for (int i = 0; i < Characters.size(); ++i)
 		{
-			++CharacterCount;
-
 			g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
+
+			++CharacterCount;
 
 			if ((Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
 				continue;
@@ -194,9 +194,9 @@ void ESP::DrawPlayers()
 	
 	for (int i = 0; i < Characters.size(); ++i)
 	{
-		++CharacterCount;
-
 		g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance);
+
+		++CharacterCount;
 
 		if ( (Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
 			continue;
@@ -213,7 +213,6 @@ void ESP::DrawPlayers()
 
 				// We use D3D draw string API because ImGui doesn't support UNICODE string :<
 				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 32, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
-
 			}
 
 			if (Characters[i].STExtraCharacter.bIsAI)
@@ -271,12 +270,75 @@ void ESP::DrawPlayers()
 	// Found a valid best target
 	if (g_pAim->tmpNearestDist2Cross != 9999.0f)
 	{
-		g_pAim->GetTmpBestTarget();
+		if (g_pAim->tmpCharacter.PositionOnSc.X != 0 && g_pAim->tmpCharacter.PositionOnSc.Y != 0)
+		{
+			// Line to aimbot enemy target
+			g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z, RED(255));
 
-		if (g_pAim->character.PositionOnSc.X != 0 && g_pAim->character.PositionOnSc.Y != 0)
-			g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->character.PositionOnSc.X, g_pAim->character.PositionOnSc.Y + g_pAim->character.PositionOnSc.Z , RED(255));
+			DWORD WeaponEntity = g_pMM->read<DWORD>(g_pESP->Pawn + 0x1740);
 
-		g_pAim->ResetTmpTarget();
+			if (WeaponEntity)
+			{
+				// BulletFireSpeed of pawn's weapon
+				DWORD ShootWeaponEntity = g_pMM->read<DWORD>(WeaponEntity + 0xCDC);
+				float BulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4) ;
+				
+				// Enemy head bone pos
+				SDK::FVector EnemyHeadBonePos;
+				{
+					DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + g_pESP->MeshOffset) };
+					DWORD bodyAddr{ SkeletalMeshComponent + 0x150 };
+					DWORD boneAddr{ g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48 };
+					Vector3f headBoneWorldPos{ g_pVMM->GetBoneWorldPosition(bodyAddr, boneAddr + 5 * 48) };
+					EnemyHeadBonePos.X = headBoneWorldPos.x;
+					EnemyHeadBonePos.Y = headBoneWorldPos.y;
+					EnemyHeadBonePos.Z = headBoneWorldPos.z + 5;
+				}
+				SDK::FVector OriginEnemyHeadBonePos = EnemyHeadBonePos;
+
+				// Distance in game position between: Pawn head bone and Enemy aimbot target bone
+				float distance{ Utils::DistBetween2Vector3D(EnemyHeadBonePos, g_pESP->PawnHeadBoneGamePos) };
+
+				// t = S / V
+				float BulletTravelTime{ distance / BulletFireSpeed };
+
+				// Enemy velocity
+				DWORD SceneComponent = g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + 0x14C);
+				SDK::FVector ComponentVelocity = g_pMM->read<SDK::FVector>(SceneComponent + 0x1B0);
+
+				// S = V * t
+				EnemyHeadBonePos.X += ComponentVelocity.X * BulletTravelTime;
+				EnemyHeadBonePos.Y += ComponentVelocity.Y * BulletTravelTime;
+				EnemyHeadBonePos.Z += ComponentVelocity.Z * BulletTravelTime;
+
+				Vector3f enemyheadBonePos;
+				enemyheadBonePos.x = EnemyHeadBonePos.X;
+				enemyheadBonePos.y = EnemyHeadBonePos.Y;
+				enemyheadBonePos.z = EnemyHeadBonePos.Z;
+
+				g_pVMM->WorldToScreenBone(enemyheadBonePos, g_pAim->tmpTargetPos);
+
+				SDK::FVector2D OriginEnemyHeadBoneScPos;
+				Vector3f tmp;
+				tmp.x = OriginEnemyHeadBonePos.X;
+				tmp.y = OriginEnemyHeadBonePos.Y;
+				tmp.z = OriginEnemyHeadBonePos.Z;
+				g_pVMM->WorldToScreenBone(tmp, OriginEnemyHeadBoneScPos);
+
+				// Enemy predict movement line
+				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, OriginEnemyHeadBoneScPos.X, OriginEnemyHeadBoneScPos.Y, WHITE(255), 1.3);
+			}
+
+
+			/*float BulletDrop(float TravelTime) {
+				return (TravelTime * TravelTime * 980 / 2);
+			}*/
+
+			//Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object	
+			g_pAim->GetTmpBestTarget();
+		}
+		
+		g_pAim->ResetTmpNearestTargetDist2Cross();
 	}
 }
 
@@ -437,7 +499,8 @@ void ESP::GetPlayerBonePos(Character* character)
 	DWORD boneAddr{ g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48 };
 
 	// Iterate over BONES
-	for (int curBone = 0; curBone < 11; ++curBone) {
+	for (int curBone = 0; curBone < 11; ++curBone)
+	{
 		Vector3f curBoneWorldPos = g_pVMM->GetBoneWorldPosition(bodyAddr, boneAddr + Bones[curBone] * 48);
 		switch (Bones[curBone])
 		{

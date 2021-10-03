@@ -472,7 +472,7 @@ void D3D::MenuRender()
 		if (Settings::tab == AIMBOT_TAB_ID)
 		{
 			ImGui::Checkbox("Toggle", &Settings::Aimbot::bToggle);
-			ImGui::SliderInt("Sensitivity", &Settings::Aimbot::sensitivity, 2, 10);
+			ImGui::SliderInt("Sensitivity", &Settings::Aimbot::sensitivity, 2, 30);
 		}
 
 		if (Settings::tab == SETTINGS_TAB_ID)

@@ -23,6 +23,8 @@ public:
 	void WorldToScreenBone(Vector3f pos, SDK::FVector2D& screen);
 
 	Vector3f GetBoneWorldPosition(DWORD bodyAddr, DWORD boneAddr);
+	SDK::FVector GetBoneGamePosition(DWORD bodyAddr, DWORD boneAddr);
+
 	D3DMatrix ToMatrixWithScale(Vector3f translation, Vector3f scale, Vector4f rot);
 	D3DMatrix MatrixMultiplication(D3DMatrix pM1, D3DMatrix pM2);
 	DWORD GetViewWorld(std::wstring emulator);

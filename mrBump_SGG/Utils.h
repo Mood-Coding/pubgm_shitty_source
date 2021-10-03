@@ -25,11 +25,10 @@ namespace Utils
     bool is_digits(const std::string& str);
 
     float DistBetween2Vector2D(SDK::FVector2D v1, SDK::FVector2D v2);
+    float DistBetween2Vector3D(SDK::FVector v1, SDK::FVector v2);
 
     void DumpActorName();
 
-    /*template<typename  T>
-    std::string DecToHex(T dec_num);*/
     template<typename T>
     std::string DecToHex(T dec_num)
     {
@@ -40,8 +39,6 @@ namespace Utils
         return ss.str();
     }
 
-    /*template<typename  T>
-    T HexToDec(std::string& hex_num);*/
     template<typename T>
     T HexToDec(std::string& hex_num)
     {

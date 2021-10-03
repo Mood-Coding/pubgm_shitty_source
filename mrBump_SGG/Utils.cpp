@@ -60,8 +60,12 @@ bool Utils::is_digits(const std::string& str)
 
 float Utils::DistBetween2Vector2D(SDK::FVector2D v1, SDK::FVector2D v2)
 {
-    //float distance = sqrt(pow(point1.x - point2.x, 2) + pow(point1.y - point1.y, 2));
     return sqrt(pow(v2.X - v1.X, 2) + pow(v2.Y - v1.Y, 2));
+}
+
+float Utils::DistBetween2Vector3D(SDK::FVector v1, SDK::FVector v2)
+{
+    return sqrt( pow(v2.X - v1.X, 2) + pow(v2.Y - v1.Y, 2) + pow(v2.Z - v1.Z, 2) );
 }
 
 // convert UTF-8 string to wstring
@@ -94,25 +98,3 @@ void Utils::DumpActorName()
 
     std::cout << "[Debug] Dump actor name done!" << std::endl;
 }
-
-//template<typename  T>
-//std::string Utils::DecToHex(T dec_num)
-//{
-//    std::stringstream ss;
-//
-//    ss << std::hex << dec_num;
-//
-//    return ss.str();
-//}
-
-//template<typename  T>
-//T Utils::HexToDec(std::string& hex_num)
-//{
-//    T dec_num;
-//    std::stringstream ss;
-//
-//    ss << hex_num;
-//    ss >> std::dec >> dec_num;
-//
-//    return dec_num;
-//}

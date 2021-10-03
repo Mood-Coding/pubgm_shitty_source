@@ -57,6 +57,22 @@ Vector3f ViewMatrixManager::GetBoneWorldPosition(DWORD bodyAddr, DWORD boneAddr)
 	return boneWorldPosition;
 }
 
+SDK::FVector ViewMatrixManager::GetBoneGamePosition(DWORD bodyAddr, DWORD boneAddr)
+{
+	FTransform body = g_pMM->ftRead(bodyAddr);
+	FTransform bone = g_pMM->ftRead(boneAddr);
+	D3DMatrix boneMatrix = ToMatrixWithScale(bone.Translation, bone.Scale3D, bone.Rotation);
+	D3DMatrix componentToWorldMatrix = ToMatrixWithScale(body.Translation, body.Scale3D, body.Rotation);
+	D3DMatrix newMatrix = MatrixMultiplication(boneMatrix, componentToWorldMatrix);
+
+	SDK::FVector boneWorldPosition;
+	boneWorldPosition.X = newMatrix._41;
+	boneWorldPosition.Y = newMatrix._42;
+	boneWorldPosition.Z = newMatrix._43;
+
+	return boneWorldPosition;
+}
+
 D3DMatrix ViewMatrixManager::ToMatrixWithScale(Vector3f translation, Vector3f scale, Vector4f rot) {
 	D3DMatrix m;
 	m._41 = translation.x;

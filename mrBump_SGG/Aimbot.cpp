@@ -29,19 +29,17 @@ void Aimbot::FindBestTarget(Character* character)
 	if (distToCross < tmpNearestDist2Cross)
 	{
 		tmpNearestDist2Cross = distToCross;
-		tmpTargetPos = posToCheck;
 		tmpCharacter = *character;
 	}
 }
 
 void Aimbot::GetTmpBestTarget()
 {
-	g_pAim->nearestDist2Cross = g_pAim->tmpNearestDist2Cross;
-	g_pAim->targetPos = g_pAim->tmpTargetPos;
-	g_pAim->character = g_pAim->tmpCharacter;
+	targetPos = tmpTargetPos;
+	character = tmpCharacter;
 }
 
-void Aimbot::ResetTmpTarget()
+void Aimbot::ResetTmpNearestTargetDist2Cross()
 {
 	tmpNearestDist2Cross = 9999.0f;
 }
@@ -111,6 +109,9 @@ void AimbotLoop(bool* g_bActive)
 		if (abs(aimY) < 1.0f)
 			aimY = 0.0f;
 
+		if (aimX == 0.0f && aimY == 0.0f)
+			continue;
+
 		mouse_event(MOUSEEVENTF_MOVE, static_cast<DWORD>(aimX), static_cast<DWORD>(aimY), 0UL, NULL);
 	
 			/*if (Program.AimOptions.bDrawLock == 1)
@@ -118,6 +119,7 @@ void AimbotLoop(bool* g_bActive)
 				gfx.DrawCircle(FlatSDKInternal.IRenderer._white, x, y, 5f, 5f);
 			}*/
 
-		Sleep(10);
+		/*Sleep(5);*/
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
 }

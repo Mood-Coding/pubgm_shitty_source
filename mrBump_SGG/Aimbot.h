@@ -12,11 +12,11 @@ void AimbotLoop(bool* g_bActive);
 class Aimbot
 {
 public:
-	float nearestDist2Cross = 9999.0f;
+	//float nearestDist2Cross = 9999.0f;
 	SDK::FVector2D targetPos{};
 	Character character;
 
-	float tmpNearestDist2Cross = 0.0f;
+	float tmpNearestDist2Cross = 9999.0f;
 	SDK::FVector2D tmpTargetPos{};
 	Character tmpCharacter;
 
@@ -26,7 +26,7 @@ public:
 
 	void GetTmpBestTarget();
 	
-	void ResetTmpTarget();
+	void ResetTmpNearestTargetDist2Cross();
 };
 
 extern Aimbot* g_pAim;

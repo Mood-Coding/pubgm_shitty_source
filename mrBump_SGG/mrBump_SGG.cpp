@@ -129,9 +129,16 @@ void UpdateValue()
 		tmpViewMatrixAddr = g_pMM->read<DWORD>(g_pMM->read<DWORD>(g_pESP->viewWorld) + 32) + 512;
 		
 		// Get my character address
-		DWORD NetConnection = g_pMM->read<DWORD>(NetDriver + SERVERCONNECTION);
-		DWORD PlayerController = g_pMM->read<DWORD>(NetConnection + PLAYERCONTROLLER);
+		DWORD NetConnection{ g_pMM->read<DWORD>(NetDriver + SERVERCONNECTION) };
+		DWORD PlayerController{ g_pMM->read<DWORD>(NetConnection + PLAYERCONTROLLER) };
 		g_pESP->Pawn = g_pMM->read<DWORD>(PlayerController + ACKNOWLEDGEDPAWN);
+
+		// Get my character head bone world position
+		DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(g_pESP->Pawn + g_pESP->MeshOffset) };
+		DWORD bodyAddr{ SkeletalMeshComponent + 0x150 };
+		DWORD boneAddr{ g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48 };
+		g_pESP->PawnHeadBoneGamePos = g_pVMM->GetBoneGamePosition(bodyAddr, boneAddr + 5 * 48);
+		g_pESP->PawnHeadBoneGamePos.Z += 5;
 
 		// Get ActorList and maxActorCount
 		g_pESP->Level = g_pMM->read<DWORD>(g_pESP->UWorld + PERSISTENTLEVEL);
