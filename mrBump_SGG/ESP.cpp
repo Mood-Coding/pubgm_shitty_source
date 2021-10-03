@@ -327,6 +327,8 @@ void ESP::DrawPlayers()
 
 				// Enemy predict movement line
 				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, OriginEnemyHeadBoneScPos.X, OriginEnemyHeadBoneScPos.Y, WHITE(255), 1.3);
+
+				g_pAim->GetTmpBestTarget();
 			}
 
 
@@ -335,7 +337,7 @@ void ESP::DrawPlayers()
 			}*/
 
 			//Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object	
-			g_pAim->GetTmpBestTarget();
+			
 		}
 		
 		g_pAim->ResetTmpNearestTargetDist2Cross();
