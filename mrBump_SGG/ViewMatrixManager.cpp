@@ -160,7 +160,7 @@ DWORD ViewMatrixManager::GetViewWorld(std::wstring emulator)
 
 	if (emulator == L"AndroidProcess.exe")
 	{
-		g_pMM->search(pattern, sizeof(pattern), 0x80000000, 0x90000000, false, 0, foundedBases);
+		g_pMM->search(pattern, sizeof(pattern), /*0x80000000*/0x7D000000, 0x90000000, false, 0, foundedBases);
 
 		for (int i = 0; i < foundedBases.size(); i++) {
 			DWORD cand = foundedBases[i] - 0x20;

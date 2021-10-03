@@ -31,13 +31,9 @@ bool ESP::Init(std::wstring emulator)
 	Airdrops.reserve(20);
 	AirDropDatas.reserve(20);
 	Lootboxes.reserve(101);
-
 	UnsortedActors.reserve(512);
-
 	Characters.reserve(101);
-
 	Items.reserve(200);
-
 	Vehicles.reserve(50);
 
 	ActorNameCache.reserve(512);
@@ -275,13 +271,13 @@ void ESP::DrawPlayers()
 			// Line to aimbot enemy target
 			g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z, RED(255));
 
-			DWORD WeaponEntity = g_pMM->read<DWORD>(g_pESP->Pawn + 0x1740);
-
-			if (WeaponEntity)
+			/*DWORD WeaponEntity = g_pMM->read<DWORD>(g_pESP->Pawn + 0x1740);*/
+			// Pawn is holding a valid firearm
+			if (PawnBulletFireSpeed > 0.0f)
 			{
 				// BulletFireSpeed of pawn's weapon
-				DWORD ShootWeaponEntity = g_pMM->read<DWORD>(WeaponEntity + 0xCDC);
-				float BulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4) ;
+				/*DWORD ShootWeaponEntity = g_pMM->read<DWORD>(WeaponEntity + 0xCDC);
+				float BulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4) ;*/
 				
 				// Enemy head bone pos
 				SDK::FVector EnemyHeadBonePos;
@@ -300,7 +296,7 @@ void ESP::DrawPlayers()
 				float distance{ Utils::DistBetween2Vector3D(EnemyHeadBonePos, g_pESP->PawnHeadBoneGamePos) };
 
 				// t = S / V
-				float BulletTravelTime{ distance / BulletFireSpeed };
+				float BulletTravelTime{ distance / PawnBulletFireSpeed };
 
 				// Enemy velocity
 				DWORD SceneComponent = g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + 0x14C);

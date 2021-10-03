@@ -235,6 +235,7 @@ public:
 	// Current player acdress
 	DWORD Pawn = 0;
 	SDK::FVector PawnHeadBoneGamePos{};
+	float PawnBulletFireSpeed{ 0.0f };
 
 	DWORD viewMatrixAddr = 0;
 

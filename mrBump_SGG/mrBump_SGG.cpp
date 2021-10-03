@@ -124,8 +124,6 @@ void UpdateValue()
 		tmpAirDropDatas.clear();
 		tmpLootboxes.clear();
 
-		/*g_tmpCharacterCount = 0;*/
-
 		tmpViewMatrixAddr = g_pMM->read<DWORD>(g_pMM->read<DWORD>(g_pESP->viewWorld) + 32) + 512;
 		
 		// Get my character address
@@ -140,7 +138,19 @@ void UpdateValue()
 		g_pESP->PawnHeadBoneGamePos = g_pVMM->GetBoneGamePosition(bodyAddr, boneAddr + 5 * 48);
 		g_pESP->PawnHeadBoneGamePos.Z += 5;
 
-		// TODO get current pawn's weapon (BulletFireSpeed)
+		// Get BulletFireSpeed of Pawn's current weapon
+		DWORD WeaponEntity{ g_pMM->read<DWORD>(g_pESP->Pawn + 0x1740) };
+		// It will be NULL when Pawn doesn't hold any firearm
+		if (WeaponEntity)
+		{
+			DWORD ShootWeaponEntity{ g_pMM->read<DWORD>(WeaponEntity + 0xCDC) };
+			g_pESP->PawnBulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4);
+		}
+		else
+		{
+			g_pESP->PawnBulletFireSpeed = 0.0f;
+		}
+
 
 		// Get ActorList and maxActorCount
 		g_pESP->Level = g_pMM->read<DWORD>(g_pESP->UWorld + PERSISTENTLEVEL);
@@ -161,6 +171,16 @@ void UpdateValue()
 		// Read all ActorAddr
 		// multiply 4: because size of 1 address is 4 bytes.
 		g_pMM->readMemory((PVOID)g_pESP->ActorList, &ActorArray, static_cast<SIZE_T>(g_pESP->maxActorCount)*4);
+
+		/*std::cout << "UWorld " << g_pESP->UWorld << '\n';
+		std::cout << "NetDriver " << NetDriver << '\n';
+		std::cout << "tmpViewMatrixAddr " << tmpViewMatrixAddr << '\n';
+		std::cout << "Pawn " << g_pESP->Pawn << '\n';
+		std::cout << "Level " << g_pESP->Level << '\n';
+		std::cout << "ActorList " << g_pESP->ActorList << '\n';
+		std::cout << "ActorArray " << ActorArray.size() << '\n';
+		std::cout << "maxActorCount " << g_pESP->maxActorCount << '\n';*/
+
 
 		// Loop through ActorArray
 		for (int i = 0; i < g_pESP->maxActorCount; ++i)

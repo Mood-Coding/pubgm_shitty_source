@@ -112,9 +112,10 @@ void AimbotLoop(bool* g_bActive)
 
 		if (aimX == 0.0f && aimY == 0.0f)
 			continue;
+		
 
 		mouse_event(MOUSEEVENTF_MOVE, static_cast<DWORD>(aimX), static_cast<DWORD>(aimY), 0UL, NULL);
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }
