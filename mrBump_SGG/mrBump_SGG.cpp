@@ -140,6 +140,8 @@ void UpdateValue()
 		g_pESP->PawnHeadBoneGamePos = g_pVMM->GetBoneGamePosition(bodyAddr, boneAddr + 5 * 48);
 		g_pESP->PawnHeadBoneGamePos.Z += 5;
 
+		// TODO get current pawn's weapon (BulletFireSpeed)
+
 		// Get ActorList and maxActorCount
 		g_pESP->Level = g_pMM->read<DWORD>(g_pESP->UWorld + PERSISTENTLEVEL);
 		g_pESP->ActorList = g_pMM->read<DWORD>(g_pESP->Level + g_pESP->ActorListOffset);
