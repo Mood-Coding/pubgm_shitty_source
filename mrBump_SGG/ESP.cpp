@@ -211,8 +211,18 @@ void ESP::DrawPlayers()
 				// Calculate PlayerName text rect
 				g_pD3D->pPlayerNameFont->DrawText(NULL, Characters[i].PlayerName.c_str(), Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
 
+				//Get and set the pixel channel values from/to int  //TODO OPTIMIZE!
+				
+				/*unsigned int argb = teamIDColor & 0xFFFFFF00;
+				argb += (teamIDColor & 0x000000FF) << 24;*/
+
+				
+				//unsigned int argb = /*teamIDColor << 8;*/
+				//(teamIDColor << (3 * 8)) | ((teamIDColor >> 8) & 0x00FFFFFF)
+				/*(teamIDColor << (8 * 3) | teamIDColor >> 8)*/;
+
 				// We use D3D draw string API because ImGui doesn't support UNICODE string :<
-				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 32, teamIDColor, Characters[i].PlayerName, Settings::bToggleShadowText);
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 32, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
 			}
 
 			if (Characters[i].STExtraCharacter.bIsAI)

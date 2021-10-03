@@ -269,7 +269,7 @@ void D3D::DrawString(int x, int y, unsigned int color, std::wstring& txt, bool b
 	}
 	
 	RECT rect2 = { x, y, x + 80, y + 50 };
-	pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect2, DT_NOCLIP | DT_LEFT, color);
+	pPlayerNameFont->DrawTextW(NULL, txt.c_str(), -1, &rect2, DT_NOCLIP | DT_LEFT, color);
 }
 
 void D3D::DrawCircle(int x, int y, int radius, unsigned int Color)
