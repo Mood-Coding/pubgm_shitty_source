@@ -95,7 +95,7 @@ void ESP::DrawVehicles()
 		{
 			g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance);
 
-			if (Vehicles[i].PositionOnSc.X < 1 || Vehicles[i].PositionOnSc.Y < 1 || Vehicles[i].distance > Settings::VehicleESP::drawDistance)
+			if (Vehicles[i].PositionOnSc.X <= 0.0f || Vehicles[i].PositionOnSc.Y <= 0.0f || Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 				continue;
 
 			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), Settings::bToggleShadowText);
@@ -108,7 +108,7 @@ void ESP::DrawVehicles()
 	{
 		g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance);
 
-		if (Vehicles[i].PositionOnSc.X <= 0 || Vehicles[i].PositionOnSc.Y <= 0)
+		if (Vehicles[i].PositionOnSc.X <= 0.0f || Vehicles[i].PositionOnSc.Y <= 0.0f)
 			continue;
 
 		if (Vehicles[i].displayName == "AirDrop Plane")
@@ -179,7 +179,7 @@ void ESP::DrawPlayers()
 
 			++CharacterCount;
 
-			if ((Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
+			if ((Characters[i].PositionOnSc.X <= 0.0f && Characters[i].PositionOnSc.Y <= 0.0f))
 				continue;
 
 			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Characters[i].Address).c_str(), Settings::bToggleShadowText);
@@ -196,7 +196,7 @@ void ESP::DrawPlayers()
 
 		++CharacterCount;
 
-		if ( (Characters[i].PositionOnSc.X == 0 && Characters[i].PositionOnSc.Y == 0))
+		if ( (Characters[i].PositionOnSc.X <= 0.0f && Characters[i].PositionOnSc.Y <= 0.0f))
 			continue;
 
 		unsigned int teamIDColor{ TeamIDColor[Characters[i].STExtraCharacter.TeamID] };
