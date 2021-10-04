@@ -3,7 +3,7 @@
 #include "Colors.h"
 
 // ActorName -> DisplayName
-std::unordered_map<std::string, std::string> ActorDisplayName
+std::unordered_map<std::string, std::string> LootItemDisplayName
 {
 	//Vehicle
 	{"BP_VH_Buggy_2_C", "Buggy"},
@@ -483,7 +483,7 @@ std::unordered_map<int, unsigned int> ColorFilter
 };
 
 // TypeSpecificID -> Display Name
-std::unordered_map<int, std::string> LootItemDisplayName
+std::unordered_map<int, std::string> BoxItemDisplayName
 {
 	{101101, "AN94"},
 	{101100, "FAMAS"},

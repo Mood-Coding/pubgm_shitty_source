@@ -1,6 +1,6 @@
 #pragma once
 // ActorName -> DisplayName
-extern std::unordered_map<std::string, std::string> ActorDisplayName;
+extern std::unordered_map<std::string, std::string> LootItemDisplayName;
 
 // ActorName -> Color filter ID
 extern std::unordered_map<std::string, byte> ActorColorFilterID;
@@ -9,4 +9,4 @@ extern std::unordered_map<std::string, byte> ActorColorFilterID;
 extern std::unordered_map<int, unsigned int> ColorFilter;
 
 // TypeSpecificID -> Display Name
-extern std::unordered_map<int, std::string> LootItemDisplayName;
+extern std::unordered_map<int, std::string> BoxItemDisplayName;

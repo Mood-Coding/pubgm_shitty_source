@@ -267,44 +267,39 @@ void ESP::DrawPlayers()
 	// Found a valid best target
 	if (g_pAim->tmpNearestDist2Cross != 9999.0f)
 	{
-		// Line to aimbot enemy target
+		// Line to aimbot's target
 		g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z, RED(255));
 
 		// Pawn is holding a valid firearm
 		if (PawnBulletFireSpeed > 0.0f)
 		{	
-			// Distance in game position between: Pawn head bone and Enemy aimbot target bone
+			// Distance in game position between: Pawn head bone vs Enemy bone
 			float distance{ Utils::DistBetween2Vector3D(g_pAim->tmpCharacter.GAME_BONE_HEAD, g_pESP->PawnHeadBoneGamePos) };
-
 			if (distance > 0.0001f)
 			{
-				// t = S / V
-				float BulletTravelTime{ distance / PawnBulletFireSpeed };
+				float BulletTravelTime{ distance / PawnBulletFireSpeed }; // t = S / V
 
 				// Get enemy Velocity
 				DWORD SceneComponent{ g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + 0x14C) };
 				SDK::FVector ComponentVelocity{ g_pMM->read<SDK::FVector>(SceneComponent + 0x1B0) };
 
 				SDK::FVector PredictEnemyBonePos{ g_pAim->tmpCharacter.GAME_BONE_HEAD };
-				// S = V * t
-				PredictEnemyBonePos.X += ComponentVelocity.X * BulletTravelTime;
-				PredictEnemyBonePos.Y += ComponentVelocity.Y * BulletTravelTime;
-				PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime;
+				PredictEnemyBonePos.X += ComponentVelocity.X * BulletTravelTime; // S = V * t
+				PredictEnemyBonePos.Y += ComponentVelocity.Y * BulletTravelTime; // S = V * t
+				PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime; // S = V * t
 
 				// Get predicted enemy bone position on screen
-				g_pVMM->GameToScreenBone(PredictEnemyBonePos, g_pAim->tmpTargetPos);
+				if (!g_pVMM->GameToScreenBone(PredictEnemyBonePos, g_pAim->tmpTargetPos))
+					return;
 
 				// Enemy predict movement line
 				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.5);
 			}
 		}
-		
 			/*float BulletDrop(float TravelTime) {
 				return (TravelTime * TravelTime * 980 / 2);
 			}*/
-
-			//Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object	
-		
+			//Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object
 	}
 	g_pAim->GetTmpBestTarget();
 	g_pAim->ResetTmpNearestTargetDist2Cross();
@@ -660,7 +655,7 @@ void ESP::GetBoxItems(BoxData* boxData)
 			if (Count == 0)
 				continue;
 
-			std::string txt{ LootItemDisplayName[TypeSpecificID] };
+			std::string txt{ BoxItemDisplayName[TypeSpecificID] };
 			if (txt == "")
 			{
 				continue;
