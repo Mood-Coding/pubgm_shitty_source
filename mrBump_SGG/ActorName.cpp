@@ -552,7 +552,7 @@ std::unordered_map<int, std::string> DisplayName
 	{203015, "6x"},
 	{203005, "8x"},
 	//{203001, "Lazer"},
-	{203014, "3X"},
+	{203014, "3x"},
 	{203002, "Holo"},
 	{105002, "DP28"},
 	{107001, "CrossBow"},
@@ -570,7 +570,12 @@ std::unordered_map<int, std::string> DisplayName
 	{403045, "Ghillie Suit"},
 	{403187, "Desert-Suit"},
 	{403188, "Desert-Suit"},
-	{601005, "FirstaidKit"},
+
+	{601005, "Firstaid"},
+	{202006, "Pain Killer"},
+	{601002, "Adrenaline"},
+	{601001, "Energy Drink"},
+	{601004, "Bandage"},
 
 	{202005, "Half Grip"},
 	{202001, "Angled Foregrip"},
@@ -604,61 +609,9 @@ std::unordered_map<int, std::string> DisplayName
 
 
 
-//{201010,"Rifle-FlashHider"},
-//{201009
-//,"Rifle-Compensator"},
-//{201004
-//,"Mid Compensator"},
-//{205002
-//,"Tactical_Rifle"},
-//{201012
-//,"Duckbill"},
-//{201005
-//,"Sniper_FlashHider"},
-//{201006
-//,"Mid_Suppressor"},
-//{205003
-//,"Chekpad Sniper"},
-//{201001
-//,"Choke"},
-//{205001
-//,"UZI_Pickup"},
-//{201003
-//,"Sniper-Compensator"},
-//{201007
-//,"Sniper-Suppressor"},
-//{201011
-//,"Suppressor-AR"},
-//{204009
-//,"Sniper-Extended"},
-//{204004
-//,"Mid_E"},
-//{204005
-//,"Mid_Q"},
-//{204007
-//,"Sniper_Mag"},
-//{204008
-//,"Sniper_QuickMag"},
-//{204012
-//,"Rifle_Mag"},
-//{204013
-//,"Exteded AR"},
-//{204011
-//,"Mag-AR"},
-//{204006
-//,"Mid_EQ"},
-//{204014
-//,"ZDD_Sniper"},
-//{601003
-//,"Painkiller"},
-//{601002
-//,"Adrenaline"},
-//{601001
-//,"Energy Drink"},
 
-//{601004
-//,"Bandage"},
-//{202006
+
+
 //,"ThumbGrip"},
 //{202007
 //,"Lasersight"},
