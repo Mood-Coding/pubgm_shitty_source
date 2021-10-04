@@ -13,7 +13,7 @@
 
 #define GREEN(alpha)         IM_COL32(0, 255, 0, alpha)
 #define LIMEGREEN(alpha)	 IM_COL32(33, 100, 33, alpha)
-#define LAWNGREEN(alpha)     IM_COL32(49, 99, 0, alpha)
+#define LAWNGREEN(alpha)     IM_COL32(124, 252, 0, alpha)
 
 #define AQUA(alpha)			 IM_COL32(85, 255, 25, alpha)
 #define BLUE(alpha)          IM_COL32(0, 0, 255, alpha)
