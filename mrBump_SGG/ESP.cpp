@@ -188,7 +188,8 @@ void ESP::DrawPlayers()
 		return;
 	}
 
-	
+	int yOffset;
+
 	for (int i = 0; i < Characters.size(); ++i)
 	{
 		++CharacterCount;
@@ -196,50 +197,67 @@ void ESP::DrawPlayers()
 		if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 			continue;
 
-		unsigned int teamIDColor{ TeamIDColor[Characters[i].STExtraCharacter.TeamID] };
+		unsigned int teamIDColor;
 
-		// Player name + Bot check
+		if (Characters[i].STExtraCharacter.bIsAI)
+			teamIDColor = CYAN(255);
+		else
+			teamIDColor = TeamIDColor[Characters[i].STExtraCharacter.TeamID];
+
+		yOffset = 0;
+
+		// Player name
+		if (Settings::PlayerESP::bName && !Characters[i].STExtraCharacter.bIsAI)
 		{
-			long txtBotCheckOffset = 0;
 			RECT txtRct{};
+			// Calculate PlayerName text rect
+			g_pD3D->pPlayerNameFont->DrawText(NULL, Characters[i].PlayerName.c_str(), Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
 
-			if (Settings::PlayerESP::bName)
-			{
-				// Calculate PlayerName text rect
-				g_pD3D->pPlayerNameFont->DrawText(NULL, Characters[i].PlayerName.c_str(), Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
+			// We use D3D draw string API because ImGui doesn't support UNICODE string :<
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
 
-				// We use D3D draw string API because ImGui doesn't support UNICODE string :<
-				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y - 32, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
-			}
-
-			if (Characters[i].STExtraCharacter.bIsAI)
-			{
-				txtBotCheckOffset += floor((txtRct.right - txtRct.left) / 2) + 10;
-				g_pD3D->DrawString(Characters[i].PositionOnSc.X - txtBotCheckOffset, Characters[i].PositionOnSc.Y - 32, CYAN(255), "B", Settings::bToggleShadowText);
-			}
+			// Next text line will be under Player name + Bot check
+			yOffset += 18;
 		}
 		
 		// Distance + HP
 		{
-			std::string topTxt{};
+			std::string str{};
 
+			// Distance
 			if (Settings::PlayerESP::bDistance)
-				topTxt += std::to_string(Characters[i].distance) + "m";
+				str += std::to_string(Characters[i].distance) + "m ";
 
+			// Hp
 			if (Settings::PlayerESP::bHp)
-			{
-				if (!topTxt.empty())
-					topTxt += " ";
+				str += std::to_string((int)(Characters[i].STExtraCharacter.Health)) + "HP";
 
-				topTxt += std::to_string((int)(Characters[i].STExtraCharacter.Health)) + "HP";
-			}
-
-			if (!topTxt.empty())
+			// Draw distance + hp
+			if (str != " ")
 			{
-				ImVec2 size = ImGui::CalcTextSize(topTxt.c_str());
-				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y - 18, WHITE(255), topTxt, Settings::bToggleShadowText);
+				ImVec2 size{ ImGui::CalcTextSize(str.c_str()) };
+
+				// Bot has distance + hp with cyan color, human is white
+				if (!Characters[i].STExtraCharacter.bIsAI)
+					g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, WHITE(255), str, Settings::bToggleShadowText);
+				else
+					g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, CYAN(255), str, Settings::bToggleShadowText);
+
+				yOffset += 18;
 			}
 		}
+
+		// Knocked check (hp <= 0)
+		if (Characters[i].STExtraCharacter.Health <= 0)
+		{
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, RED(255), "Knocked", Settings::bToggleShadowText);
+
+			yOffset += 18;
+		}
+
+		// Line
+		if (Settings::PlayerESP::LineESP::bToggle)
+			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 29, g_pD3D->screenW / 2, 0, WHITE(255));
 
 		if (Settings::PlayerESP::BoneESP::bToggle || Settings::Aimbot::bToggle)
 		{
@@ -253,15 +271,7 @@ void ESP::DrawPlayers()
 				if (Settings::PlayerESP::BoneESP::bToggle)
 					DrawPlayerBone(&Characters[i], teamIDColor);
 			}
-		}
-
-		// Knocked check (hp <= 0)
-		if (Characters[i].STExtraCharacter.Health <= 0)
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z * 2, RED(255), "Knocked", Settings::bToggleShadowText);
-
-		// Line
-		if (Settings::PlayerESP::LineESP::bToggle)
-			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 29, g_pD3D->screenW / 2, 0, WHITE(255));
+		}		
 	}
 
 	// Found a valid best target

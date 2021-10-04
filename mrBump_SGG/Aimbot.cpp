@@ -45,16 +45,19 @@ void Aimbot::ResetTmpNearestTargetDist2Cross()
 
 void AimbotLoop(bool* g_bActive)
 {
+	float half_width{}, half_height{};
+
 	while (g_bActive)
 	{
 		if (!(GetAsyncKeyState(VK_XBUTTON2) & 0x8000))
 		{
+			half_width = static_cast<float>(g_pD3D->screenW) / 2;
+			half_height = static_cast<float>(g_pD3D->screenH) / 2;
+
 			Sleep(1);
 			continue;
 		}
 
-		float half_width{ static_cast<float>(g_pD3D->screenW) / 2 };
-		float half_height{ static_cast<float>(g_pD3D->screenH) / 2 };
 		float aimX{ 0.0f };
 		float aimY{ 0.0f };
 
@@ -69,8 +72,7 @@ void AimbotLoop(bool* g_bActive)
 				if (aimX + half_width > half_width * 2)
 					aimX = 0.0f;
 			}
-
-			if (g_pAim->targetPos.X < half_width)
+			else if (g_pAim->targetPos.X < half_width)
 			{
 				aimX = g_pAim->targetPos.X - half_width;
 				aimX /= Settings::Aimbot::sensitivity;
@@ -78,6 +80,10 @@ void AimbotLoop(bool* g_bActive)
 				if (aimX + half_width < 0.0f)
 					aimX = 0.0f;
 			}
+
+			// Avoid shaking when very near to aim position
+			if (abs(aimX) < 1.0f)
+				aimX = 0.0f;
 		}
 
 		if (g_pAim->targetPos.Y != 0.0f)
@@ -90,8 +96,7 @@ void AimbotLoop(bool* g_bActive)
 				if (aimY + half_height > half_height * 2)
 					aimY = 0.0f;
 			}
-
-			if (g_pAim->targetPos.Y < half_height)
+			else if (g_pAim->targetPos.Y < half_height)
 			{
 				aimY = g_pAim->targetPos.Y - half_height;
 				aimY /= Settings::Aimbot::sensitivity;
@@ -99,15 +104,17 @@ void AimbotLoop(bool* g_bActive)
 				if (aimY + half_height < 0.0f)
 					aimY = 0.0f;
 			}
+
+			// Avoid shaking when very near to aim position
+			if (abs(aimY) < 1.0f)
+				aimY = 0.0f;
 		}
 
 		// TODO FOV check
 
-		// Avoid shaking when very near to aim position
-		if (abs(aimX) < 1.0f)
-			aimX = 0.0f;
-		if (abs(aimY) < 1.0f)
-			aimY = 0.0f;
+		
+		
+		
 
 		if (aimX == 0.0f && aimY == 0.0f)
 			continue;
