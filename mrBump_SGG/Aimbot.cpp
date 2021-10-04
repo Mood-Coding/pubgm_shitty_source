@@ -41,6 +41,8 @@ void Aimbot::GetTmpBestTarget()
 void Aimbot::ResetTmpNearestTargetDist2Cross()
 {
 	tmpNearestDist2Cross = 9999.0f;
+	tmpTargetPos.X = 0.0f;
+	tmpTargetPos.Y = 0.0f;
 }
 
 void AimbotLoop(bool* g_bActive)
@@ -57,6 +59,8 @@ void AimbotLoop(bool* g_bActive)
 			Sleep(1);
 			continue;
 		}
+
+//		std::cout << g_pAim->targetPos.X << ' ' << g_pAim->targetPos.Y << '\n';
 
 		float aimX{ 0.0f };
 		float aimY{ 0.0f };
@@ -112,14 +116,9 @@ void AimbotLoop(bool* g_bActive)
 
 		// TODO FOV check
 
-		
-		
-		
-
 		if (aimX == 0.0f && aimY == 0.0f)
 			continue;
 		
-
 		mouse_event(MOUSEEVENTF_MOVE, static_cast<DWORD>(aimX), static_cast<DWORD>(aimY), 0UL, NULL);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));

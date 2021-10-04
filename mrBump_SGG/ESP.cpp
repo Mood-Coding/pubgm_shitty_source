@@ -188,7 +188,7 @@ void ESP::DrawPlayers()
 		return;
 	}
 
-	int yOffset;
+	int yOffset{ 0 };
 
 	for (int i = 0; i < Characters.size(); ++i)
 	{
@@ -207,7 +207,7 @@ void ESP::DrawPlayers()
 		yOffset = 0;
 
 		// Player name
-		if (Settings::PlayerESP::bName && !Characters[i].STExtraCharacter.bIsAI)
+		if (Settings::PlayerESP::bName /*&& !Characters[i].STExtraCharacter.bIsAI*/)
 		{
 			RECT txtRct{};
 			// Calculate PlayerName text rect
@@ -277,40 +277,45 @@ void ESP::DrawPlayers()
 	// Found a valid best target
 	if (g_pAim->tmpNearestDist2Cross != 9999.0f)
 	{
-		// Line to aimbot's target
-		g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z, RED(255));
-
 		// Pawn is holding a valid firearm
 		if (PawnBulletFireSpeed > 0.0f)
 		{	
 			// Distance in game position between: Pawn head bone vs Enemy bone
-			float distance{ Utils::DistBetween2Vector3D(g_pAim->tmpCharacter.GAME_BONE_HEAD, g_pESP->PawnHeadBoneGamePos) };
-			if (distance > 0.0001f)
+			float distance{ Utils::DistBetween2Vector3D(g_pAim->tmpCharacter.GAME_BONE_HEAD, PawnHeadBoneGamePos) };
+
+			// If distance is higher than 150000 so there is an error in tmpCharacter.GAME_BONE_HEAD or PawnHeadBoneGamePos
+			if (distance < 100000)
 			{
 				float BulletTravelTime{ distance / PawnBulletFireSpeed }; // t = S / V
 
-				// Get enemy Velocity
+			// Get enemy Velocity
 				DWORD SceneComponent{ g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + 0x14C) };
 				SDK::FVector ComponentVelocity{ g_pMM->read<SDK::FVector>(SceneComponent + 0x1B0) };
-
 				SDK::FVector PredictEnemyBonePos{ g_pAim->tmpCharacter.GAME_BONE_HEAD };
 				PredictEnemyBonePos.X += ComponentVelocity.X * BulletTravelTime; // S = V * t
 				PredictEnemyBonePos.Y += ComponentVelocity.Y * BulletTravelTime; // S = V * t
 				PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime; // S = V * t
 
-				// Get predicted enemy bone position on screen
+				// Get predicted enemy bone position on screen 
 				if (!g_pVMM->GameToScreenBone(PredictEnemyBonePos, g_pAim->tmpTargetPos))
 					return;
 
+				// Line to best target
+				g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z + yOffset, RED(255));
+
 				// Enemy predict movement line
 				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.5);
+
+				// Dot at the end of enemy movement prediction line
+				g_pD3D->DrawCircle(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, (g_pAim->tmpCharacter.PositionOnSc.Z / 2) / 7, GRAY(255));
 			}
-		}
+		}		
 			/*float BulletDrop(float TravelTime) {
 				return (TravelTime * TravelTime * 980 / 2);
 			}*/
 			//Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object
 	}
+
 	g_pAim->GetTmpBestTarget();
 	g_pAim->ResetTmpNearestTargetDist2Cross();
 }
@@ -564,16 +569,18 @@ int ESP::Bones[11]
 
 bool ESP::IsVehicle(const std::string& actorName)
 {
-	if (actorName.find('/') != std::string::npos)
+	if (actorName.find('/') != std::string::npos
+		|| actorName.find("Parachute") != std::string::npos
+		)
 		return false;
 
 	if (actorName.find("VH_") != std::string::npos
 		||actorName.find("Mirado") != std::string::npos
 		||actorName.find("water_Plane") != std::string::npos
 		||actorName.find("AquaRail") != std::string::npos
-		||actorName.find("Rony") != std::string::npos)
-		return true;
-	if (actorName == "BP_AirDropPlane_C")
+		||actorName.find("Rony") != std::string::npos
+		||actorName == "BP_AirDropPlane_C"
+		)
 		return true;
 
 	return false;
@@ -581,13 +588,10 @@ bool ESP::IsVehicle(const std::string& actorName)
 
 bool ESP::IsPlayer(const std::string& actorName)
 {
-	if (actorName.find("PlayerCharacter") != std::string::npos)
-		return true;
-
-	if (actorName.find("FakePlayer") != std::string::npos)
-		return true;
-
-	if (actorName.find("PlayerPawn") != std::string::npos)
+	if (actorName.find("PlayerCharacter") != std::string::npos
+		|| actorName.find("FakePlayer") != std::string::npos
+		|| actorName.find("PlayerPawn") != std::string::npos
+		)
 		return true;
 
 	return false;
@@ -595,14 +599,20 @@ bool ESP::IsPlayer(const std::string& actorName)
 
 bool ESP::IsItem(const std::string& actorName)
 {
-	if (actorName == "PickUpListWrapperActor" || actorName == "PickUpListWrapperActor_Recycled"
-		|| actorName == "AirDropListWrapperActor" || actorName == "AirDropListWrapperActor_Recycled"
-		|| actorName == "BP_AirDropBox_C" || actorName == "BP_AirDropBox_C_Recycled")
+	// Don't sort AirDrop and LootBox actor
+	if (actorName == "PickUpListWrapperActor"
+		|| actorName == "PickUpListWrapperActor_Recycled"
+		|| actorName == "AirDropListWrapperActor"
+		|| actorName == "AirDropListWrapperActor_Recycled"
+		|| actorName == "BP_AirDropBox_C"
+		|| actorName == "BP_AirDropBox_C_Recycled"
+		)
 		return false;
 
 	if (actorName.find("Wrapper") == std::string::npos
 		&& actorName.find("PickUp") == std::string::npos
-		&& actorName.find("Pickup") == std::string::npos)
+		&& actorName.find("Pickup") == std::string::npos
+		)
 		return false;
 
 	return true;
