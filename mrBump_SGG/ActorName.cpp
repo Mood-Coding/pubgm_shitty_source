@@ -483,7 +483,7 @@ std::unordered_map<int, unsigned int> ColorFilter
 };
 
 // TypeSpecificID -> Display Name
-std::unordered_map<int, std::string> DisplayName
+std::unordered_map<int, std::string> LootItemDisplayName
 {
 	{101101, "AN94"},
 	{101100, "FAMAS"},
@@ -517,7 +517,7 @@ std::unordered_map<int, std::string> DisplayName
 	{101007, "QBZ"},
 	{101005, "Groza"},
 	{101006, "AUG"},
-	{106006, "Sawed Off"},
+	/*{106006, "Sawed Off"},*/
 	{102005, "PP19"},
 	{102004, "Tommy Gun"},
 	{102007, "MP5K"},
@@ -525,13 +525,13 @@ std::unordered_map<int, std::string> DisplayName
 	{102002, "UMP9"},
 	{102003, "Vector"},
 	{102001, "Uzi"},
-	{106003, "R1895"},
+	/*{106003, "R1895"},
 	{106008, "Vz61"},
 	{106001, "P92"},
 	{106004, "P18C"},
 	{106005, "R45"},
-	{106002, "P1911"},
-	{106010, "DesertEagle"},
+	{106002, "P1911"},*/
+	/*{106010, "DesertEagle"},*/
 	/*{108003, "Sickle"},
 	{108001, "Machete"},*/
 	{107001, "Cross Bow"},

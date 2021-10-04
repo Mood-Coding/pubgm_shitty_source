@@ -660,7 +660,7 @@ void ESP::GetBoxItems(BoxData* boxData)
 			if (Count == 0)
 				continue;
 
-			std::string txt = DisplayName[TypeSpecificID];
+			std::string txt{ LootItemDisplayName[TypeSpecificID] };
 			if (txt == "")
 			{
 				continue;
