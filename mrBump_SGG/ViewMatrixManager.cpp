@@ -4,7 +4,7 @@
 
 ViewMatrixManager* g_pVMM = new ViewMatrixManager();
 
-// For item, vehicle
+// For item, vehicle, airdrop, lootbox
 bool ViewMatrixManager::WorldToScreen(SDK::FVector pos, SDK::FVector &screen, int& distance)
 {
 	float ScreenW{ (viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44) };

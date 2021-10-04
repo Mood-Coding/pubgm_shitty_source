@@ -237,7 +237,7 @@ void ESP::DrawPlayers()
 			if (!topTxt.empty())
 			{
 				ImVec2 size = ImGui::CalcTextSize(topTxt.c_str());
-				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y - 18, RED(255), topTxt, Settings::bToggleShadowText);
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y - 18, WHITE(255), topTxt, Settings::bToggleShadowText);
 			}
 		}
 
@@ -290,16 +290,15 @@ void ESP::DrawPlayers()
 				PredictEnemyBonePos.X += ComponentVelocity.X * BulletTravelTime;
 				PredictEnemyBonePos.Y += ComponentVelocity.Y * BulletTravelTime;
 				PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime;
-				// Get predicted aimbot enemy bone position on screen
+
+				// Get predicted enemy bone position on screen
 				g_pVMM->GameToScreenBone(PredictEnemyBonePos, g_pAim->tmpTargetPos);
 
-				g_pAim->GetTmpBestTarget();
-
 				// Enemy predict movement line
-				g_pD3D->DrawLine(g_pAim->targetPos.X, g_pAim->targetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.5);
+				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.5);
 			}
 		}
-
+		g_pAim->GetTmpBestTarget();
 			/*float BulletDrop(float TravelTime) {
 				return (TravelTime * TravelTime * 980 / 2);
 			}*/
@@ -324,9 +323,7 @@ void ESP::DrawAirDrop()
 {
 	for (int i = 0; i < AirDropDatas.size(); ++i)
 	{
-		g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance);
-
-		if (AirDropDatas[i].PositionOnSc.X == 0 && AirDropDatas[i].PositionOnSc.Y == 0)
+		if (!g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance))
 			continue;
 
 		if (Settings::bDebugESP)
@@ -340,13 +337,13 @@ void ESP::DrawAirDrop()
 
 		// AirDrop items
 		if (AirDropDatas[i].items.size() == 0)
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), "Empty", false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y, RED(255), "Empty", false);
 		else
 		{
 			int xOffset = 0;
 			for (auto& itr : AirDropDatas[i].items)
 			{
-				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + xOffset, RED(255), itr, false);
+				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + xOffset, RED(255), itr, false);
 				xOffset += 18;
 			}
 		}
@@ -355,9 +352,7 @@ void ESP::DrawAirDrop()
 
 	for (int i = 0; i < Airdrops.size(); ++i)
 	{
-		g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance);
-
-		if (Airdrops[i].PositionOnSc.X == 0 && Airdrops[i].PositionOnSc.Y == 0)
+		if (!g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance))
 			continue;
 
 		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
@@ -369,13 +364,11 @@ void ESP::DrawLootbox()
 {
 	for (int i = 0; i < Lootboxes.size(); ++i)
 	{
-		g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance);
+		if (!g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance))
+			continue;
 
-		if ((Lootboxes[i].PositionOnSc.X < 1 && Lootboxes[i].PositionOnSc.Y < 1.0f)
-			|| (Lootboxes[i].distance > Settings::LootboxESP::drawDistance))
-		{
+		if (Lootboxes[i].distance > Settings::LootboxESP::drawDistance)
 			continue;	
-		}
 
 		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, RED(255), "Lootbox", true);
 
