@@ -298,15 +298,16 @@ void ESP::DrawPlayers()
 				g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.5);
 			}
 		}
-		g_pAim->GetTmpBestTarget();
+		
 			/*float BulletDrop(float TravelTime) {
 				return (TravelTime * TravelTime * 980 / 2);
 			}*/
 
 			//Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object	
 		
-		g_pAim->ResetTmpNearestTargetDist2Cross();
 	}
+	g_pAim->GetTmpBestTarget();
+	g_pAim->ResetTmpNearestTargetDist2Cross();
 }
 
 void ESP::DrawUnsortedActors()
@@ -321,6 +322,15 @@ void ESP::DrawUnsortedActors()
 
 void ESP::DrawAirDrop()
 {
+	for (int i = 0; i < Airdrops.size(); ++i)
+	{
+		if (!g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance))
+			continue;
+
+		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
+		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(200), txt, true);
+	}
+
 	for (int i = 0; i < AirDropDatas.size(); ++i)
 	{
 		if (!g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance))
@@ -328,35 +338,27 @@ void ESP::DrawAirDrop()
 
 		if (Settings::bDebugESP)
 		{
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);
+			/*g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);*/
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), false);
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
 		}
 
 		// AirDrop items
 		if (AirDropDatas[i].items.size() == 0)
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y, RED(255), "Empty", false);
+		{
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, WHITE(200), "Empty", false);
+		}
 		else
 		{
 			int xOffset = 0;
 			for (auto& itr : AirDropDatas[i].items)
 			{
-				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + xOffset, RED(255), itr, false);
+				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + xOffset, WHITE(200), itr, false);
 				xOffset += 18;
 			}
 		}
-		
-	}
-
-	for (int i = 0; i < Airdrops.size(); ++i)
-	{
-		if (!g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance))
-			continue;
-
-		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
-		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(255), txt, true);
 	}
 }
 
@@ -370,22 +372,7 @@ void ESP::DrawLootbox()
 		if (Lootboxes[i].distance > Settings::LootboxESP::drawDistance)
 			continue;	
 
-		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, RED(255), "Lootbox", true);
-
-
-		if (Lootboxes[i].items.size() == 0)
-		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + 18, RED(255), "Empty", false);
-			continue;
-		}
-
-		int xOffset = 0;
-
-		for (auto& itr : Lootboxes[i].items)
-		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18 + xOffset, RED(255), itr, false);
-			xOffset += 18;
-		}
+		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, WHITE(255), "Lootbox", true);
 
 		if (Settings::bDebugESP)
 		{
@@ -395,6 +382,23 @@ void ESP::DrawLootbox()
 
 			std::string str = std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y);
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18, RED(255), str, true);
+
+			continue;
+		}
+
+		if (Lootboxes[i].items.size() == 0)
+		{
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, WHITE(200), "Empty", false);
+		}
+		else
+		{
+			int xOffset = 0;
+
+			for (auto& itr : Lootboxes[i].items)
+			{
+				g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + xOffset, WHITE(200), itr, false);
+				xOffset += 18;
+			}
 		}
 	}
 }
