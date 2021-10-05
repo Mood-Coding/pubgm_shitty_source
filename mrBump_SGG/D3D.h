@@ -64,9 +64,9 @@ public:
 	void DrawRect(int x, int y, int width, int height, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
 	void DrawRect(ImVec2 topleft, ImVec2 botright, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
 
-	void DrawFilledRect(int x, int y, float width, float height, D3DCOLOR rectColor, D3DCOLOR filledColor);
+	void DrawFilledRect(int x, int y, float width, float height, unsigned int rectColor, unsigned int filledColor);
+	void DrawFilled(float x, float y, float width, float height, unsigned int color);
 
-	void DrawFilled(float x, float y, float width, float height, D3DCOLOR color);
 	void DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color);
 
 	void DrawString(int x, int y, unsigned int color, std::wstring& txt, bool bShadow);

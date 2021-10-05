@@ -221,19 +221,12 @@ void D3D::DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color)
 	DrawLine(x1, y2, x2, y1, color);
 }
 
-void D3D::DrawFilled(float x, float y, float width, float height, D3DCOLOR color) {
-	D3DXVECTOR2 points[2];
-
-	pD3DLine->SetWidth(width);
-
-	//middle point
-	points[0] = D3DXVECTOR2(x + width / 2, y);
-	points[1] = D3DXVECTOR2(x + width / 2, y + height);
-
-	pD3DLine->Draw(points, 2, color);
+void D3D::DrawFilled(float x, float y, float width, float height, unsigned int color)
+{
+	imGuiBackgroundDrawList->AddRectFilled(ImVec2(x, y), ImVec2(x + width, y + height), color);
 }
 
-void D3D::DrawFilledRect(int x, int y, float width, float height, D3DCOLOR rectColor, D3DCOLOR filledColor)
+void D3D::DrawFilledRect(int x, int y, float width, float height, unsigned int rectColor, unsigned int filledColor)
 {
 	DrawFilled(x, y, width, height, filledColor);
 	DrawRect(x, y, width, height, rectColor);
@@ -278,8 +271,8 @@ void D3D::DrawString(int x, int y, unsigned int color, std::wstring& txt, bool b
 	{
 		RECT rect1{ x + 1, y + 1, x + 80, y + 50 };
 		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
-		rect1 = { x + 1, y - 1, x + 80, y + 50 };
-		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
+		/*rect1 = { x + 1, y - 1, x + 80, y + 50 };
+		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));*/
 	}
 	
 	RECT rect2 = { x, y, x + 80, y + 50 };
