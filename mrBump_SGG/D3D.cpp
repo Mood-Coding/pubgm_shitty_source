@@ -89,10 +89,6 @@ bool D3D::SetupHWND(HWND processHWND)
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 
-		wchar_t path[MAX_PATH];
-		GetModuleFileNameW(NULL, path, sizeof(path));
-		std::wcout << path << std::endl;
-
 		std::ifstream iFile;
 		iFile.open("msyhl.ttf");
 		if (!iFile)

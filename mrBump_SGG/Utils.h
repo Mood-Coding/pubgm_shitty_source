@@ -29,6 +29,8 @@ namespace Utils
 
     void DumpActorName();
 
+    bool is_file_exist(const char* file_path);
+
     template<typename T>
     std::string DecToHex(T dec_num)
     {

@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "pch.h"
+
 #include "datatype.h"
-
-
+#include "Utils.h"
 //#include "ESP.h"
 //#include "ProcessManager.h"
 //#include "Entity.h"
@@ -22,9 +22,9 @@ typedef struct _MEMORY_REGION
 
 class MemoryManager {
 private:
-	
-	
-	
+	std::wstring m_DriverPath{};
+
+	bool m_bDriverServiceIsFine = true;
 
 public:
 	MemoryManager() { };
@@ -41,7 +41,12 @@ public:
 	FTransform _ft;
 
 	bool Init(HANDLE hTargetProcess, DWORD dwTargetProcessPID);
-	bool connectToDriver_fix(std::string m_strDeviceName);
+
+	bool ConnectToDriver_fix(std::string m_strDeviceName);
+
+	bool LoadDriver();
+
+
 	bool search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStartAddr, DWORD_PTR dwEndAddr, BOOL bIsCurrProcess, int iSearchMode, std::vector<DWORD_PTR>& vRet);
 	int find(BYTE* buffer, int dwBufferSize, BYTE* bstr, DWORD dwStrLen);
 	void readMemory(PVOID BaseAddress, PVOID Buffer, SIZE_T BufferSize);

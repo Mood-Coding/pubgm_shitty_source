@@ -98,3 +98,22 @@ void Utils::DumpActorName()
 
     std::cout << "[Debug] Dump actor name done!" << std::endl;
 }
+
+bool Utils::is_file_exist(const char* file_path)
+{
+    FILE* file;
+    //fopen_s(&file, file_path, "r");
+
+    // File is exist
+    if (fopen_s(&file, file_path, "r") == 0)
+    {
+        // Close file
+        fclose(file);
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

@@ -237,4 +237,7 @@
   <ItemGroup>
     <Font Include="msyhl.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="kph.sys" />
+  </ItemGroup>
 </Project>
