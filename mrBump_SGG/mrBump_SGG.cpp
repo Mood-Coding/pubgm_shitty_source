@@ -406,7 +406,14 @@ int main()
 		{
 			// Cheat feature draw (ESP,...)
 			{
+				//ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |/* ImGuiWindowFlags_NoDecoration |*/ /*ImGuiWindowFlags_NoBackground |*/ ImGuiWindowFlags_AlwaysAutoResize);
+				/*ImGui::SetNextWindowPos(ImVec2(g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top));
+				ImGui::SetNextWindowSize(ImVec2(g_pD3D->screenW, g_pD3D->screenH));
+				ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground);*/
+
 				g_pVMM->GetViewMatrix();
+
+				g_pD3D->GetImGuiBackgroundDrawList();
 
 				if (Settings::bUnsortedActorESP)
 					g_pESP->DrawUnsortedActors();
@@ -420,6 +427,7 @@ int main()
 
 				g_pESP->DrawPlayers();
 
+				/*ImGui::End();*/
 			}
 			
 			

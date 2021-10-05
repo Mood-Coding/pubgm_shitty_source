@@ -118,7 +118,8 @@ bool D3D::InitD3D()
 {
 	//create the Direct3D interface
 	pD3D = Direct3DCreate9(D3D_SDK_VERSION);    
-	if (pD3D == nullptr) {
+	if (pD3D == nullptr)
+	{
 		std::cout << "Direct3DCreate9 failed" << std::endl;
 		return 0;
 	}
@@ -189,19 +190,29 @@ void D3D::CleanupDeviceD3D()
 	::UnregisterClass(wc.lpszClassName, wc.hInstance);
 }
 
+void D3D::GetImGuiBackgroundDrawList()
+{
+	imGuiBackgroundDrawList = ImGui::GetBackgroundDrawList();
+}
+
+void D3D::DrawCircle(int x, int y, int radius, unsigned int Color)
+{
+	imGuiBackgroundDrawList->AddCircle(ImVec2(x, y), radius, Color);
+}
+
 void D3D::DrawLine(float x1, float y1, float x2, float y2, unsigned int color, float thickness)
 {
-	ImGui::GetBackgroundDrawList()->AddLine(ImVec2(x1, y1), ImVec2(x2, y2), color, thickness);
+	imGuiBackgroundDrawList->AddLine(ImVec2(x1, y1), ImVec2(x2, y2), color, thickness);
 }
 
 void D3D::DrawRect(int x, int y, int width, int height, unsigned int color, float rounding, float thickness)
 {
-	ImGui::GetBackgroundDrawList()->AddRect(ImVec2(x, y), ImVec2(x + width, y + height), color, rounding, 0, thickness);
+	imGuiBackgroundDrawList->AddRect(ImVec2(x, y), ImVec2(x + width, y + height), color, rounding, 0, thickness);
 }
 
 void D3D::DrawRect(ImVec2 topleft, ImVec2 botright, unsigned int color, float rounding, float thickness)
 {
-	ImGui::GetBackgroundDrawList()->AddRect(topleft, botright, color, rounding, 0, thickness);
+	imGuiBackgroundDrawList->AddRect(topleft, botright, color, rounding, 0, thickness);
 }
 
 void D3D::DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color)
@@ -222,7 +233,8 @@ void D3D::DrawFilled(float x, float y, float width, float height, D3DCOLOR color
 	pD3DLine->Draw(points, 2, color);
 }
 
-void D3D::DrawFilledRect(int x, int y, float width, float height, D3DCOLOR rectColor, D3DCOLOR filledColor) {
+void D3D::DrawFilledRect(int x, int y, float width, float height, D3DCOLOR rectColor, D3DCOLOR filledColor)
+{
 	DrawFilled(x, y, width, height, filledColor);
 	DrawRect(x, y, width, height, rectColor);
 }
@@ -231,40 +243,42 @@ void D3D::DrawString(int x, int y, unsigned int color, std::string& txt, bool bS
 {
 	if (bShadow)
 	{
-		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y + 1), BLACK(150), txt.c_str());
-		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y - 1), BLACK(150), txt.c_str());
+		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y + 1), BLACK(150), txt.c_str());
+		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y - 1), BLACK(150), txt.c_str());
 	}
 
-	ImGui::GetBackgroundDrawList()->AddText(ImVec2(x, y), color, txt.c_str());
+	imGuiBackgroundDrawList->AddText(ImVec2(x, y), color, txt.c_str());
 }
 
 void D3D::DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow)
 {
 	if (bShadow)
 	{
-		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y + 1), BLACK(150), txt.c_str());
-		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y - 1), BLACK(150), txt.c_str());
+		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y + 1), BLACK(150), txt.c_str());
+		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y - 1), BLACK(150), txt.c_str());
 	}
 
-	ImGui::GetBackgroundDrawList()->AddText(ImVec2(x, y), color, txt.c_str());
+	imGuiBackgroundDrawList->AddText(ImVec2(x, y), color, txt.c_str());
 }
 
 void D3D::DrawString(float x, float y, unsigned int color, const char* txt, bool bShadow)
 {
 	if (bShadow)
 	{
-		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y + 1), BLACK(150), txt);
-		ImGui::GetBackgroundDrawList()->AddText(ImVec2(x + 1, y - 1), BLACK(150), txt);
+		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y + 1), BLACK(150), txt);
+		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y - 1), BLACK(150), txt);
 	}
 
-	ImGui::GetBackgroundDrawList()->AddText(ImVec2(x, y), color, txt);
+	imGuiBackgroundDrawList->AddText(ImVec2(x, y), color, txt);
 }
 
 void D3D::DrawString(int x, int y, unsigned int color, std::wstring& txt, bool bShadow)
 {
 	if (bShadow)
 	{
-		RECT rect1 = { x + 1, y + 1, x + 80, y + 50 };
+		RECT rect1{ x + 1, y + 1, x + 80, y + 50 };
+		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
+		rect1 = { x + 1, y - 1, x + 80, y + 50 };
 		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
 	}
 	
@@ -272,10 +286,6 @@ void D3D::DrawString(int x, int y, unsigned int color, std::wstring& txt, bool b
 	pPlayerNameFont->DrawTextW(NULL, txt.c_str(), -1, &rect2, DT_NOCLIP | DT_LEFT, color);
 }
 
-void D3D::DrawCircle(int x, int y, int radius, unsigned int Color)
-{
-	ImGui::GetBackgroundDrawList()->AddCircle(ImVec2(x, y), radius, Color);
-}
 
 void D3D::MenuTheme()
 {
@@ -518,23 +528,31 @@ void D3D::HandleWindow()
 
 	GetWindowRect(g_pD3D->gameHWND, &g_pD3D->gameScreenRct);
 
-	SetWindowPos(
+	// Emulator screen w and h
+	g_pD3D->screenW = g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left;
+	g_pD3D->screenH = g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top;
+
+	SetWindowPos
+	(
 		g_pD3D->overlayHWND,
 		NULL,
 		g_pD3D->gameScreenRct.left,
 		g_pD3D->gameScreenRct.top,
 		g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left,
 		g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top,
-		3u);
+		3u
+	);
 
 	// Move overlay window when we move emulator window
-	MoveWindow(
+	MoveWindow
+	(
 		g_pD3D->overlayHWND, 
 		g_pD3D->gameScreenRct.left, 
 		g_pD3D->gameScreenRct.top, 
 		g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left,
 		g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top, 
-		true);
+		true
+	);
 
 	MARGINS margins{ -1, -1, -1, -1 };
 	DwmExtendFrameIntoClientArea(g_pD3D->overlayHWND, &margins);

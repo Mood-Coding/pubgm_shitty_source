@@ -35,6 +35,8 @@ private:
 	LPD3DXSPRITE pSprite = nullptr;
 	WNDCLASSEX wc{};
 
+	ImDrawList* imGuiBackgroundDrawList;
+
 public:
 	D3D() {}
 
@@ -54,6 +56,8 @@ public:
 
 	bool SetupHWND(HWND processHWND);
 	bool InitD3D();
+	
+	void GetImGuiBackgroundDrawList();
 
 	void DrawLine(float x1, float y1, float x2, float y2, unsigned int color, float thickness = 1);
 
