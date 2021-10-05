@@ -132,19 +132,27 @@ void UpdateValue()
 		g_pESP->Pawn = g_pMM->read<DWORD>(PlayerController + ACKNOWLEDGEDPAWN);
 
 		// Get my character head bone world position
-		DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(g_pESP->Pawn + g_pESP->MeshOffset) };
+		DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(g_pESP->Pawn + MESH) };
 		DWORD bodyAddr{ SkeletalMeshComponent + 0x150 };
 		DWORD boneAddr{ g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48 };
 		g_pESP->PawnHeadBoneGamePos = g_pVMM->GetBoneGamePosition(bodyAddr, boneAddr + 5 * 48);
 		g_pESP->PawnHeadBoneGamePos.Z += 5;
 
 		// Get BulletFireSpeed of Pawn's current weapon
-		DWORD WeaponEntity{ g_pMM->read<DWORD>(g_pESP->Pawn + 0x1740) };
+		// Class: BP_ShootWeaponBase_C.STExtraShootWeapon.STExtraWeapon.Actor.Object
+		DWORD ShootWeaponBase{ g_pMM->read<DWORD>(g_pESP->Pawn + 0x1740) };
 		// It will be NULL when Pawn doesn't hold any firearm
-		if (WeaponEntity)
+		if (ShootWeaponBase)
 		{
-			DWORD ShootWeaponEntity{ g_pMM->read<DWORD>(WeaponEntity + 0xCDC) };
-			g_pESP->PawnBulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4);
+			DWORD ShootWeaponEntity{ g_pMM->read<DWORD>(ShootWeaponBase + 0xCDC) }; //ShootWeaponEntity* ShootWeaponEntity;//[Offset: 0xcdc, Size: 4]
+
+			// Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object
+			g_pESP->PawnBulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4); //float BulletFireSpeed;//[Offset: 0x3d4, Size: 4]
+
+			DWORD STExtraShootWeaponBulletBase{ g_pMM->read<DWORD>(ShootWeaponEntity + 0x3d0) }; //class STExtraShootWeaponBulletBase* BulletTemplate;//[Offset: 0x3d0, Size: 4]
+			// Class: STExtraShootWeaponBulletBase.Actor.Object
+			float LaunchGravityScale{ g_pMM->read<float>(STExtraShootWeaponBulletBase + 0x2f8) }; //float LaunchGravityScale;//[Offset: 0x2f8, Size: 4]
+			//std::cout << LaunchGravityScale << '\n';
 		}
 		else
 		{

@@ -214,9 +214,6 @@ public:
 	D3DMatrix viewMatrix;
 
 	DWORD viewWorld = 0;
-	
-	//Character.Pawn.Actor.Object //mesh, tmp
-	DWORD MeshOffset = 0x320; //[Offset: 0x320, Size: 4]
 
 	DWORD GWorld = 0;
 	DWORD GNames = 0;

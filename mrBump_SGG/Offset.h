@@ -37,7 +37,6 @@ extern const DWORD VEHICLECOMMON;
 //Character.Pawn.Actor.Object //mesh, tmp
 extern const DWORD MESH; //[Offset: 0x320, Size: 4]
 
-
 //Class: SceneComponent.ActorComponent.Object
 extern const DWORD RELATIVELOCATION;
 extern const DWORD ACTORPOSITION; 

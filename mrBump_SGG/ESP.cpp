@@ -462,7 +462,7 @@ void ESP::DrawPlayerBone(Character* character, unsigned int color)
 
 bool ESP::GetPlayerBonePos(Character* character)
 {
-	DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(character->Address + g_pESP->MeshOffset) };
+	DWORD SkeletalMeshComponent{ g_pMM->read<DWORD>(character->Address + MESH) };
 	DWORD bodyAddr{ SkeletalMeshComponent + 0x150 };
 	DWORD boneAddr{ g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48 };
 
