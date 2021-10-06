@@ -4,9 +4,9 @@
 ProcessManager* g_pPM = new ProcessManager;
 
 ProcessManager::ProcessManager() {}
-ProcessManager::~ProcessManager() {}
 
-DWORD GetProcessPID(std::wstring processName) {
+DWORD GetPID(std::wstring processName)
+{
 	DWORD pidWithHighestThreadCount = 0;
 	DWORD highestThreadCount = 0;
 
@@ -15,8 +15,10 @@ DWORD GetProcessPID(std::wstring processName) {
 	pe.dwSize = sizeof(PROCESSENTRY32);
 	Process32First(hSnap, &pe);
 
-	while (Process32Next(hSnap, &pe)) {
-		if ((_tcsicmp(pe.szExeFile, processName.c_str()) == 0) && (pe.cntThreads > highestThreadCount)) {
+	while (Process32Next(hSnap, &pe))
+	{
+		if ((_tcsicmp(pe.szExeFile, processName.c_str()) == 0) && (pe.cntThreads > highestThreadCount))
+		{
 			highestThreadCount = pe.cntThreads;
 			pidWithHighestThreadCount = pe.th32ProcessID;
 		}
@@ -24,7 +26,6 @@ DWORD GetProcessPID(std::wstring processName) {
 
 	return pidWithHighestThreadCount;
 }
-
 
 // Enable/disable privilege routine
 bool ProcessManager::SetPrivilege(LPCWSTR lpszPrivilege, BOOL bEnablePrivilege) {
@@ -54,8 +55,7 @@ bool ProcessManager::SetPrivilege(LPCWSTR lpszPrivilege, BOOL bEnablePrivilege) 
 	return true;
 }
 
-
-bool ProcessManager::Init(std::wstring processName)
+bool ProcessManager::Init()
 {
 	std::cout << "[PM]\n";
 
@@ -68,40 +68,34 @@ bool ProcessManager::Init(std::wstring processName)
 	}
 	else
 	{
-		std::cout << "Can't get SeDebugPrivilege!" << std::endl;
-		std::cout << "Error: " << GetLastError() << std::endl;
-
+		std::cout << "Can't get SeDebugPrivilege! Error: " << GetLastError() << '\n';
 		return 0;
 	}
 
 	//get target process pid
-	processPID = GetProcessPID(processName);
-	if (processPID)
+	PID = GetPID(emuProcessName);
+	if (PID)
 	{
-		std::cout << "Target process PID: " << std::dec << processPID << std::endl;
+		std::cout << "Target PID: " << std::dec << PID << std::endl;
 	}
 	else
 	{
-		std::wcout << "Not found process: " << processName.c_str() << std::endl;
-		return 0;
+		std::wcout << L"Not found process: " << emuProcessName.c_str() << std::endl;
+		return false;
 	}
 
-	//get handle of target process to read/ write memory
-	hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE, FALSE, processPID);
+	// Get handle of target process to read/ write memory
+	hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE, FALSE, PID);
 
 	if (hProcess)
 	{
-		std::cout << "Opened target process handle:" << std::hex << hProcess << std::endl;
+		std::cout << "Opened target process handle:" << std::hex << hProcess << '\n';
 	}
 	else
 	{
-		std::cout << "Error, couldn't open process. Please Run as administrator permission" << std::endl;
-		std::cout << "Error code " << GetLastError() << std::endl;
-
-		return 0;
+		std::cout << "Couldn't open process. Please Run as administrator permission. Error: " << GetLastError() << '\n';
+		return false;
 	}
 
-
-	//if everything is fine, return 1
-	return 1;
+	return true;
 }

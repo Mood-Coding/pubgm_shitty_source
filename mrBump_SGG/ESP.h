@@ -209,7 +209,7 @@ class ESP
 public:
 	ESP() {}
 
-	bool Init(std::wstring emulator);
+	bool Init();
 
 	D3DMatrix viewMatrix;
 

@@ -36,27 +36,25 @@ bool D3D::SetupHWND()
 	// Find Smartgaga HWND
 	HWND processHWND = FindWindow(L"TitanRenderWindowClass", NULL);
 	processHWND = FindWindowEx(processHWND, 0, L"TitanOpenglWindowClass", NULL);
-
 	if (processHWND)
 	{
-		g_pPM->emuProcName = L"AndroidProcess.exe";
+		g_pPM->emuProcessName = L"AndroidProcess.exe";
+		goto FOUNDHWND;
 	}
-	else
+	
+	// Find Gameloop HWND
+	processHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
+	processHWND = FindWindowEx(processHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
+	if (processHWND)
 	{
-		// Find Gameloop HWND
-		processHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
-		processHWND = FindWindowEx(processHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
-
-		if (processHWND)
-		{
-			g_pPM->emuProcName = L"aow_exe.exe";
-		}
-		else
-		{
-			std::cout << "<!> Invalid HWND. Can't find emulator window\n";
-			return false;
-		}
+		g_pPM->emuProcessName = L"aow_exe.exe";
+		goto FOUNDHWND;
 	}
+
+	std::cout << "<!> Invalid HWND. Can't find emulator window\n";
+	return false;
+
+FOUNDHWND:
 
 	emulatorHWND = processHWND;
 	std::cout << "Target process window HWND: " << std::hex << emulatorHWND << '\n';
@@ -524,7 +522,7 @@ void D3D::HandleWindow()
 {
 	// When we minimized emulator window, its current hwnd will be invalid
 	// So we need to get the new emulator hwnd
-	if (g_pPM->emuProcName == L"aow_exe.exe")
+	if (g_pPM->emuProcessName == L"aow_exe.exe")
 	{
 		g_pD3D->emulatorHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
 		g_pD3D->emulatorHWND = FindWindowEx(g_pD3D->emulatorHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
@@ -541,8 +539,7 @@ void D3D::HandleWindow()
 	g_pD3D->screenW = g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left;
 	g_pD3D->screenH = g_pD3D->gameScreenRct.bottom - g_pD3D->gameScreenRct.top;
 
-	SetWindowPos
-	(
+	SetWindowPos(
 		g_pD3D->overlayHWND,
 		NULL,
 		g_pD3D->gameScreenRct.left,
@@ -553,8 +550,7 @@ void D3D::HandleWindow()
 	);
 
 	// Move overlay window when we move emulator window
-	MoveWindow
-	(
+	MoveWindow(
 		g_pD3D->overlayHWND, 
 		g_pD3D->gameScreenRct.left, 
 		g_pD3D->gameScreenRct.top, 

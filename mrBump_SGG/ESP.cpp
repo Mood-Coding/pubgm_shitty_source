@@ -4,19 +4,18 @@
 
 ESP* g_pESP = new ESP();
 
-bool ESP::Init(std::wstring emulator)
+bool ESP::Init()
 {
 	std::cout << "[ESP]\n";
 
-	viewWorld = g_pVMM->GetViewWorld(emulator);
-
+	viewWorld = g_pVMM->GetViewWorld(g_pPM->emuProcessName);
 	if (viewWorld)
 	{
-		std::cout << "Viewworld base found at: 0x" <<  std::hex << viewWorld << std::hex << "\n";
+		std::cout << "Viewworld base found at: 0x" << std::hex << viewWorld << '\n';
 	}
 	else
 	{
-		std::cout << "Game not found ?" << std::endl;
+		std::cout << "<GetViewWorld> Game not found!\n";
 		return 0;
 	}
 
@@ -38,7 +37,7 @@ bool ESP::Init(std::wstring emulator)
 
 	ActorNameCache.reserve(512);
 
-	return 1;
+	return true;
 }
 
 void ESP::DrawItems()

@@ -288,19 +288,19 @@ int main()
         return 0;
     }
 
-	if (!g_pPM->Init(g_pPM->emuProcName))
+	if (!g_pPM->Init())
 	{
 		system("pause");
 		return 0;
 	}
 
-	if (!g_pMM->Init(g_pPM->hProcess, g_pPM->processPID))
+	if (!g_pMM->Init())
 	{
 		system("pause");
 		return 0;
 	}
 
-	if (!g_pESP->Init(g_pPM->emuProcName))
+	if (!g_pESP->Init())
 	{
 		system("pause");
 		return 0;
@@ -444,6 +444,6 @@ int main()
 	// It won't delete other running kprocesshacker driver service
 	g_pMM->UnloadDriver();
 
-	system("pause");
+	/*system("pause");*/
 	return 0;
 }

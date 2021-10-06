@@ -7,15 +7,14 @@
 class ProcessManager {
 public:
 	ProcessManager();
-	~ProcessManager();
 
-	bool Init(std::wstring processName);
+	bool Init();
 	bool SetPrivilege(LPCWSTR lpszPrivilege, BOOL bEnablePrivilege);
 
-	DWORD processPID = 0;
+	DWORD PID = 0;
 	HANDLE hProcess = 0;
 
-	std::wstring emuProcName{};
+	std::wstring emuProcessName{};
 };
 
 extern ProcessManager* g_pPM;

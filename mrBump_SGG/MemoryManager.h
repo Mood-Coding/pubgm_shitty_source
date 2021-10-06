@@ -33,11 +33,9 @@ public:
 	bool m_bUsingAnotherDriverService = false;
 	PSIZE_T NumberOfBytes = nullptr;
 
-	Vector3f _v3;
-	Vector2f _v2;
 	FTransform _ft;
 
-	bool Init(HANDLE hTargetProcess, DWORD dwTargetProcessPID);
+	bool Init();
 
 	bool ConnectToDriver_fix(std::string m_strDeviceName);
 

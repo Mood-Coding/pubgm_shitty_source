@@ -3,7 +3,7 @@
 
 MemoryManager* g_pMM = new MemoryManager();
 
-bool MemoryManager::Init(HANDLE hTargetProcess, DWORD dwTargetProcessPID)
+bool MemoryManager::Init()
 {
 	std::cout << "[MM]\n";
 
@@ -18,7 +18,6 @@ bool MemoryManager::Init(HANDLE hTargetProcess, DWORD dwTargetProcessPID)
 	}
 	
 	bool bStatus = ConnectToDriver_fix("\\Device\\KProcessHacker2");
- 
 	if (m_hDriver && bStatus)
 	{
 		std::cout << "Connected to driver 0x" << std::hex << m_hDriver << '\n';
@@ -29,8 +28,8 @@ bool MemoryManager::Init(HANDLE hTargetProcess, DWORD dwTargetProcessPID)
 		return false;
 	}
 	
-	processHandle = hTargetProcess;
-	processId = dwTargetProcessPID;
+	processHandle = g_pPM->hProcess;
+	processId = g_pPM->PID;
 
 	return true;
 }
