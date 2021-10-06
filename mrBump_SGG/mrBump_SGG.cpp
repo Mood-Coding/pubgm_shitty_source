@@ -269,7 +269,7 @@ void UpdateValue()
 		}
 
 		g_bDoneReadMem = true;
-
+		// TODO Make updatevalue function being true async function
 		// Wait until draw loop take all data from UpdateValue()
 		while (g_bDoneReadMem)
 		{
@@ -405,18 +405,13 @@ int main()
 			// Current match info
 			{
 				ImGui::Begin("Game Status", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
-				ImGui::TextColored(ImVec4(0.33f, 1.0f, 1.0f, 1.0f), "In Game");
 				std::string txt{ "Nearby: " + std::to_string(g_pESP->CharacterCount) };
-				ImGui::Text(txt.c_str());
+				if (g_pESP->CharacterCount > 0)
+					ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), txt.c_str());
+				else
+					ImGui::Text(txt.c_str());
 				ImGui::End();
 			}
-		}
-		else
-		// Current match info
-		{
-			ImGui::Begin("Game Status", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
-			ImGui::Text("In Lobby");
-			ImGui::End();
 		}
 
 		// Resume the read mem loop, let it continue its work :>
