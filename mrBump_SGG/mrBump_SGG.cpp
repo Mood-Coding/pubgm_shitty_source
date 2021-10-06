@@ -429,7 +429,7 @@ int main()
 		std::this_thread::sleep_until(next_frame); // Wait for end of frame
 	}
 
-	std::cout << "<Exit> Exitting! Pai pai\n";
+	std::cout << "<Exit> Exitting!\n";
 
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -440,8 +440,8 @@ int main()
 	if (!g_pMM->m_bUsingAnotherDriverService)
 		g_pMM->StopDriver();
 
-	// It will delete the driver service has "KPH" name
-	// It won't delete another running kprocesshacker driver service that has different name
+	// It will delete the driver service created by cheat
+	// It won't delete other running kprocesshacker driver service
 	g_pMM->UnloadDriver();
 
 	system("pause");
