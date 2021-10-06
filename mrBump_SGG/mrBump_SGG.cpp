@@ -291,24 +291,7 @@ void UpdateValue()
 
 int main()
 {
-	// Find Smartgaga HWND
-	HWND targetHWND = FindWindow(L"TitanRenderWindowClass", NULL);
-	targetHWND = FindWindowEx(targetHWND, 0, L"TitanOpenglWindowClass", NULL);
-
-	if (targetHWND)
-	{
-		g_pPM->emuProcName = L"AndroidProcess.exe";
-	}
-	else
-	{
-		// Find Gameloop HWND
-		targetHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
-		targetHWND = FindWindowEx(targetHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
-
-		g_pPM->emuProcName = L"aow_exe.exe";
-	}
-
-    if (!g_pD3D->SetupHWND(targetHWND))
+    if (!g_pD3D->SetupHWND())
 	{
 		system("pause");
         return 0;
@@ -472,11 +455,21 @@ int main()
 		std::this_thread::sleep_until(next_frame); // Wait for end of frame
 	}
 
+	std::cout << "<Exit> Exitting! Pai pai\n";
+
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
 	g_pD3D->CleanupDeviceD3D();
 
+	if (!g_pMM->m_bUsingAnotherDriverService)
+		g_pMM->StopDriver();
+
+	// It will delete the driver service has "KPH" name
+	// It won't delete another running kprocesshacker driver service that has different name
+	g_pMM->UnloadDriver();
+
+	system("pause");
 	return 0;
 }

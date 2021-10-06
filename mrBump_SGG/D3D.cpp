@@ -29,20 +29,39 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-bool D3D::SetupHWND(HWND processHWND)
+bool D3D::SetupHWND()
 {
 	std::cout << "[D3D]\n";
 
-	if (processHWND == NULL)
+	// Find Smartgaga HWND
+	HWND processHWND = FindWindow(L"TitanRenderWindowClass", NULL);
+	processHWND = FindWindowEx(processHWND, 0, L"TitanOpenglWindowClass", NULL);
+
+	if (processHWND)
 	{
-		std::cout << "<!> Invalid target process window HWND\n";
-		return 0;
+		g_pPM->emuProcName = L"AndroidProcess.exe";
+	}
+	else
+	{
+		// Find Gameloop HWND
+		processHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
+		processHWND = FindWindowEx(processHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
+
+		if (processHWND)
+		{
+			g_pPM->emuProcName = L"aow_exe.exe";
+		}
+		else
+		{
+			std::cout << "<!> Invalid HWND. Can't find emulator window\n";
+			return false;
+		}
 	}
 
-	gameHWND = processHWND;
-	std::cout << "Target process window HWND: " << std::hex << gameHWND << '\n';
+	emulatorHWND = processHWND;
+	std::cout << "Target process window HWND: " << std::hex << emulatorHWND << '\n';
 
-	GetWindowRect(gameHWND, &gameScreenRct);
+	GetWindowRect(emulatorHWND, &gameScreenRct);
 	screenW = gameScreenRct.right - gameScreenRct.left;
 	screenH = gameScreenRct.bottom - gameScreenRct.top;
 
@@ -506,16 +525,16 @@ void D3D::HandleWindow()
 	// So we need to get the new emulator hwnd
 	if (g_pPM->emuProcName == L"aow_exe.exe")
 	{
-		g_pD3D->gameHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
-		g_pD3D->gameHWND = FindWindowEx(g_pD3D->gameHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
+		g_pD3D->emulatorHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
+		g_pD3D->emulatorHWND = FindWindowEx(g_pD3D->emulatorHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
 	}
 	else
 	{
-		g_pD3D->gameHWND = FindWindow(L"TitanRenderWindowClass", NULL);
-		g_pD3D->gameHWND = FindWindowEx(g_pD3D->gameHWND, 0, L"TitanOpenglWindowClass", NULL);
+		g_pD3D->emulatorHWND = FindWindow(L"TitanRenderWindowClass", NULL);
+		g_pD3D->emulatorHWND = FindWindowEx(g_pD3D->emulatorHWND, 0, L"TitanOpenglWindowClass", NULL);
 	}
 
-	GetWindowRect(g_pD3D->gameHWND, &g_pD3D->gameScreenRct);
+	GetWindowRect(g_pD3D->emulatorHWND, &g_pD3D->gameScreenRct);
 
 	// Emulator screen w and h
 	g_pD3D->screenW = g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left;
@@ -547,7 +566,7 @@ void D3D::HandleWindow()
 	DwmExtendFrameIntoClientArea(g_pD3D->overlayHWND, &margins);
 
 	// Auto close hack when emulator process is closed
-	if (g_pD3D->gameHWND == NULL)
+	if (g_pD3D->emulatorHWND == NULL)
 		::PostQuitMessage(0);
 }
 

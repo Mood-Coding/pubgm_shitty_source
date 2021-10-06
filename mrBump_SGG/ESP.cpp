@@ -678,8 +678,8 @@ void ESP::GetBoxItems(BoxData* boxData)
 			std::string txt{ BoxItemDisplayName[TypeSpecificID] };
 			if (txt == "")
 			{
-				continue;
 				txt = std::to_string(TypeSpecificID);
+				continue;
 			}
 			// Check if given string is not exist in items vector
 			if (std::find(boxData->items.begin(), boxData->items.end(), txt) == boxData->items.end())

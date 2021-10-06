@@ -21,7 +21,6 @@ class MemoryManager {
 private:
 	std::wstring m_DriverPath{};
 
-	bool m_bDriverServiceIsFine = false;
 
 public:
 	MemoryManager() { };
@@ -31,6 +30,7 @@ public:
 	HANDLE processHandle = NULL;
 	int processId = 0;
 
+	bool m_bUsingAnotherDriverService = false;
 	PSIZE_T NumberOfBytes = nullptr;
 
 	Vector3f _v3;
@@ -42,9 +42,12 @@ public:
 	bool ConnectToDriver_fix(std::string m_strDeviceName);
 
 	bool LoadDriver();
+	bool StartDriver();
 
+	bool StopDriver();
+	bool UnloadDriver();
 
-	bool search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStartAddr, DWORD_PTR dwEndAddr, BOOL bIsCurrProcess, int iSearchMode, std::vector<DWORD_PTR>& vRet);
+	bool search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStartAddr, DWORD_PTR dwEndAddr, /*BOOL bIsCurrProcess, int iSearchMode,*/ std::vector<DWORD_PTR>& vRet);
 	int find(BYTE* buffer, int dwBufferSize, BYTE* bstr, DWORD dwStrLen);
 	void readMemory(PVOID BaseAddress, PVOID Buffer, SIZE_T BufferSize);
 

@@ -40,21 +40,20 @@ private:
 public:
 	D3D() {}
 
-	HWND gameHWND = NULL;
-	HWND gameHWND0 = NULL;
+	HWND emulatorHWND = NULL;
 	HWND overlayHWND = NULL;
 	int screenW = 0, screenH = 0;
 
 	ImFont* font;
 
-	std::map<byte, LPD3DXFONT> pFontSimSun;
+	//std::map<byte, LPD3DXFONT> pFontSimSun;
 	LPD3DXFONT pPlayerNameFont;
 
 	LPDIRECT3DDEVICE9 pD3DDevice;
 
 	RECT gameScreenRct{};
 
-	bool SetupHWND(HWND processHWND);
+	bool SetupHWND();
 	bool InitD3D();
 	
 	void GetImGuiBackgroundDrawList();
