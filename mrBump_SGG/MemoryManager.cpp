@@ -151,25 +151,30 @@ FTransform MemoryManager::ftRead(DWORD base) {
 
 bool MemoryManager::LoadDriver()
 {
+	SC_HANDLE hSCM{ 0 };
+	SC_HANDLE hService{ 0 };
+
+	// Get driver path
 	if (Utils::is_file_exist("kph.sys"))
 	{
-		// Get exe path without process name
-		wchar_t buffer_exe_path[MAX_PATH];
-		GetModuleFileNameW(NULL, buffer_exe_path, sizeof(buffer_exe_path));
-
+		// Get executable path
+		wchar_t buffer_exe_path[512];
+		GetModuleFileNameW(NULL, buffer_exe_path, 512);
 		std::wstring exe_path(buffer_exe_path);
 
-		m_DriverPath = exe_path.substr(0, exe_path.find_last_of('\\') + 1) + L"\\kph.sys";
+		// Remove executable name and append driver name
+		m_DriverPath = exe_path.substr(0, exe_path.find_last_of('\\')) + L"\\kph.sys";
+		std::wcout << L"Driver path: " << m_DriverPath << std::endl;
 	}
 	else
 	{
 		std::cout << "<!> Can't file kph.sys file!\n";
-		return false;
+		goto CLEANUP;
 	}
 
 	// Establishes a connection to the service control manager on the specified computer.
 	// Opens the specified service control manager database.
-	SC_HANDLE hSCM{ OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS) };
+	hSCM = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (hSCM == NULL)
 	{
 		std::cout << "<!> Can't create SCManager\n";
@@ -182,18 +187,14 @@ bool MemoryManager::LoadDriver()
 		if (error == ERROR_DATABASE_DOES_NOT_EXIST)
 			std::cout << "<!> The specified database does not exist\n";
 
-		return false;
+		goto CLEANUP;
 	}
 
 	// Trying to get the handle of the service if it exist
-	SC_HANDLE hService{ OpenServiceW(hSCM, L"KPH", STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS | SERVICE_START | SERVICE_STOP) };
-	if (hService)
+	hService = OpenServiceW(hSCM, L"KPH", STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS | SERVICE_START | SERVICE_STOP);
+	// The service of the driver isn't exist so we are trying to create a new one
+	if (hService == NULL)
 	{
-		std::cout << "The driver service is already created!\n";
-	}
-	else
-	{
-		// The service of the driver isn't exist so we create new one
 		hService = CreateServiceW(
 			hSCM,
 			L"KPH",
@@ -230,42 +231,44 @@ bool MemoryManager::LoadDriver()
 			if (err == ERROR_SERVICE_MARKED_FOR_DELETE)
 				std::cout << "<!> The specified service already exists in this database and has been marked for deletion\n";
 
-			CloseServiceHandle(hSCM);
-
-			return false;
+			goto CLEANUP;
+		}
+		else
+		{
+			std::cout << "Created driver service\n";
 		}
 	}
+	// The driver service í created before.
+	else
+	{
+		std::cout << "The driver service is already created!\n";
+	}
+
 
 	if (StartServiceW(hService, NULL, NULL))
 	{
 		std::cout << "Started the driver service!\n";
+
+		m_bDriverServiceIsFine = true;
 	}
 	else
 	{
 		DWORD err{ GetLastError() };
 
-		if (err == ERROR_INVALID_IMAGE_HASH)
-		{
-			std::cout << "<!> Cannot Verify Digital Signature Re-enable DSEFix\n";
-
-			CloseServiceHandle(hService);
-			CloseServiceHandle(hSCM);
-
-			return false;
-		}
-
 		if (err == ERROR_SERVICE_ALREADY_RUNNING)
 		{
 			std::cout << "The driver service is already running!\n";
-
-			CloseServiceHandle(hService);
-			CloseServiceHandle(hSCM);
-
-			return true;
+			m_bDriverServiceIsFine = true;
+			goto CLEANUP;
 		}
 
-		// Can't start the driver service because it's disabled
-		// So we need to change the service state to start by the service control manager
+		if (err == ERROR_INVALID_IMAGE_HASH)
+		{
+			std::cout << "<!> Cannot Verify Digital Signature\n";
+			goto CLEANUP;
+		}
+
+		// Can't start the driver service because it's disabled so we will change the service config
 		if (err == ERROR_SERVICE_DISABLED)
 		{
 			std::cout << "Driver service is disabled\n";
@@ -288,52 +291,38 @@ bool MemoryManager::LoadDriver()
 			{
 				std::cout << "Changed driver service state!\n";
 
-				// Start the driver service again
 				if (StartServiceW(hService, NULL, NULL))
 				{
 					std::cout << "Started the driver service!\n";
 				}
 				else
 				{
-					std::cout << "Can't start the driver service!\n";
-
-					CloseServiceHandle(hService);
-					CloseServiceHandle(hSCM);
-
-					return false;
+					std::cout << "<!> Tried and still can't start the driver service!\n";
+					goto CLEANUP;
 				}
 			}
 			else
 			{
 				std::cout << "<!> Can't change driver service state!\n";
-
-				CloseServiceHandle(hService);
-				CloseServiceHandle(hSCM);
-
-				return false;
+				goto CLEANUP;
 			}
 		}
 
+		// Error 193
 		if (err == 0xC1)
 		{
 			std::cout << "<!> The driver path is invalid!\n";
-
-			CloseServiceHandle(hService);
-			CloseServiceHandle(hSCM);
-
-			return false;
+			goto CLEANUP;
 		}
 
+		// There is an another error
 		std::cout << "<!> Start service error: " << err << '\n';
-
-		CloseServiceHandle(hService);
-		CloseServiceHandle(hSCM);
-
-		return false;
+		goto CLEANUP;
 	}
 	
+CLEANUP:
 	CloseServiceHandle(hService);
 	CloseServiceHandle(hSCM);
 
-	return true;
+	return m_bDriverServiceIsFine;
 }

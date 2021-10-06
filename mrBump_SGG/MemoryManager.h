@@ -3,9 +3,6 @@
 
 #include "datatype.h"
 #include "Utils.h"
-//#include "ESP.h"
-//#include "ProcessManager.h"
-//#include "Entity.h"
 
 #define MM_DEVICE_TYPE 0x9999
 #define MM_CTL_CODE(x) CTL_CODE(MM_DEVICE_TYPE, 0x800 + x, METHOD_NEITHER, FILE_ANY_ACCESS)
@@ -24,7 +21,7 @@ class MemoryManager {
 private:
 	std::wstring m_DriverPath{};
 
-	bool m_bDriverServiceIsFine = true;
+	bool m_bDriverServiceIsFine = false;
 
 public:
 	MemoryManager() { };
