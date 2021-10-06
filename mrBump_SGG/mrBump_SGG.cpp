@@ -371,8 +371,6 @@ int main()
 			g_pESP->Lootboxes = tmpLootboxes;
 			g_pESP->AirDropDatas = tmpAirDropDatas;
 			g_pESP->Airdrops = tmpAirDrops;
-
-			//g_pESP->viewMatrixAddr = tmpViewMatrixAddr;
 		}
 
 		g_pD3D->pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0); // Clear the window alpha
