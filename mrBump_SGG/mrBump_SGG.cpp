@@ -368,8 +368,7 @@ int main()
 
 		g_pD3D->pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0); // Clear the window alpha
 		g_pD3D->pD3DDevice->BeginScene(); // Begin the 3D scene
-		// Start the Dear ImGui frame
-		ImGui_ImplDX9_NewFrame();
+		ImGui_ImplDX9_NewFrame(); // Start the Dear ImGui frame
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
@@ -383,7 +382,7 @@ int main()
 
 		if (bInGame)
 		{
-			// Cheat feature draw (ESP,...)
+			// ESP stuff
 			{
 				g_pVMM->GetViewMatrix();
 
