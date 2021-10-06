@@ -276,16 +276,38 @@ void ESP::DrawPlayers()
 	}
 
 	// Found a valid best target and Pawn is holding a valid firearm
-	if (g_pAim->tmpNearestDist2Cross != 9999.0f && PawnBulletFireSpeed > 0.0f)
+	if (g_pAim->tmpNearestDist2Cross != 9999.0f && g_pAim->PawnBulletFireSpeed > 0.0f)
 	{
 		// Distance in game position between: Pawn head bone vs Enemy bone
 		float distance{ Utils::DistBetween2Vector3D(g_pAim->tmpCharacter.GAME_BONE_HEAD, PawnHeadBoneGamePos) };
+		float distanceMeter = distance / 100.0f;
+		float zAssist = 1.0f;
+		if (distanceMeter < 50.f)
+			zAssist = 1.8f;
+		else if (distanceMeter < 100.f)
+			zAssist = 1.72f;
+		else if (distanceMeter < 150.f)
+			zAssist = 1.23f;
+		else if (distanceMeter < 200.f)
+			zAssist = 1.24f;
+		else if (distanceMeter < 250.f)
+			zAssist = 1.25f;
+		else if (distanceMeter < 300.f)
+			zAssist = 1.26f;
+		else if (distanceMeter < 350.f)
+			zAssist = 1.27f;
+		else if (distanceMeter < 400.f)
+			zAssist = 1.28f;
+		else if (distanceMeter < 450.f)
+			zAssist = 1.29f;
+		else if (distanceMeter < 500.f)
+			zAssist = 1.30f;
 
 		// If distance is higher than 100000 so there is an error in tmpCharacter.GAME_BONE_HEAD or PawnHeadBoneGamePos
 		if (distance < 100000)
 		{
 			// Time for bullet to reach the enemy position: t = S / v
-			float BulletTravelTime{ distance / PawnBulletFireSpeed }; 
+			float BulletTravelTime{ distance / g_pAim->PawnBulletFireSpeed }; 
 
 			// Get enemy velocity: v
 			DWORD SceneComponent{ g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + 0x14C) };
@@ -295,7 +317,7 @@ void ESP::DrawPlayers()
 			SDK::FVector PredictEnemyBonePos{ g_pAim->tmpCharacter.GAME_BONE_HEAD };
 			PredictEnemyBonePos.X += ComponentVelocity.X * BulletTravelTime; // S = v * t
 			PredictEnemyBonePos.Y += ComponentVelocity.Y * BulletTravelTime; // S = v * t
-			PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime; // S = v * t
+			PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime * zAssist + 0.5f * 5.72f * pow(BulletTravelTime, 2); // S = v * t
 
 			// Get predicted enemy bone position on screen
 			// Don't need to check the return value of this function (is behind my player)
@@ -309,7 +331,8 @@ void ESP::DrawPlayers()
 			g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.5);
 
 			// Dot at the end of enemy movement prediction line
-			g_pD3D->DrawCircle(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, (g_pAim->tmpCharacter.PositionOnSc.Z / 2) / 7, GRAY(255));
+			if (ComponentVelocity.X != 0 && ComponentVelocity.Y != 0)
+				g_pD3D->DrawCircle(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, (g_pAim->tmpCharacter.PositionOnSc.Z / 2) / 7, GRAY(255));
 		}
 		/*float BulletDrop(float TravelTime) {
 			return (TravelTime * TravelTime * 980 / 2);

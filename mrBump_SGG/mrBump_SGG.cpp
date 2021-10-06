@@ -145,7 +145,7 @@ void UpdateValue()
 			DWORD ShootWeaponEntity{ g_pMM->read<DWORD>(ShootWeaponBase + 0xCDC) }; //ShootWeaponEntity* ShootWeaponEntity;//[Offset: 0xcdc, Size: 4]
 
 			// Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object
-			g_pESP->PawnBulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4); //float BulletFireSpeed;//[Offset: 0x3d4, Size: 4]
+			g_pAim->PawnBulletFireSpeed = g_pMM->read<float>(ShootWeaponEntity + 0x3D4); //float BulletFireSpeed;//[Offset: 0x3d4, Size: 4]
 
 			DWORD STExtraShootWeaponBulletBase{ g_pMM->read<DWORD>(ShootWeaponEntity + 0x3d0) }; //class STExtraShootWeaponBulletBase* BulletTemplate;//[Offset: 0x3d0, Size: 4]
 			// Class: STExtraShootWeaponBulletBase.Actor.Object
@@ -154,7 +154,7 @@ void UpdateValue()
 		}
 		else
 		{
-			g_pESP->PawnBulletFireSpeed = 0.0f;
+			g_pAim->PawnBulletFireSpeed = 0.0f;
 		}
 
 

@@ -32,6 +32,52 @@ void Aimbot::FindBestTarget(Character* character)
 	}
 }
 
+SDK::FVector2D Aimbot::PredictMovement(SDK::FVector PawnBoneGamePos, SDK::FVector TargetBoneGamePos)
+{
+	if (PawnBulletFireSpeed > 0.0f)
+	{
+		// Distance in game position between: Pawn head bone vs Enemy bone
+		float distance{ Utils::DistBetween2Vector3D(PawnBoneGamePos, TargetBoneGamePos) };
+		float distanceMeter{ distance / 100.0f };
+		// If distance is higher than 100000 so there is an error in tmpCharacter.GAME_BONE_HEAD or PawnHeadBoneGamePos
+		if (distance < 80000)
+		{
+			// Time for bullet to reach the enemy position: t = S / v
+			float BulletTravelTime{ distance / PawnBulletFireSpeed };
+
+			// Get enemy velocity: v
+			DWORD SceneComponent{ g_pMM->read<DWORD>(g_pAim->tmpCharacter.Address + 0x14C) };
+			SDK::FVector ComponentVelocity{ g_pMM->read<SDK::FVector>(SceneComponent + 0x1B0) };
+
+			// The distance that enemy moved 
+			SDK::FVector PredictEnemyBonePos{ g_pAim->tmpCharacter.GAME_BONE_HEAD };
+			PredictEnemyBonePos.X += ComponentVelocity.X * BulletTravelTime; // S = v * t
+			PredictEnemyBonePos.Y += ComponentVelocity.Y * BulletTravelTime; // S = v * t
+			PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime; // S = v * t
+
+			// Get predicted enemy bone position on screen
+			// Don't need to check the return value of this function (is behind my player)
+			// because it's already checked in the players for loop
+			g_pVMM->GameToScreenBone(PredictEnemyBonePos, g_pAim->tmpTargetPos);
+
+			// Line to best target
+//			g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z + yOffset, RED(255));
+
+			// Enemy predict movement line
+	//		g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.5);
+
+			// Dot at the end of enemy movement prediction line
+			//g_pD3D->DrawCircle(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, (g_pAim->tmpCharacter.PositionOnSc.Z / 2) / 7, GRAY(255));
+		}
+		/*float BulletDrop(float TravelTime) {
+			return (TravelTime * TravelTime * 980 / 2);
+		}*/
+		//Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object
+	}
+
+	return SDK::FVector2D(0, 0);
+}
+
 void Aimbot::GetTmpBestTarget()
 {
 	targetPos = tmpTargetPos;
@@ -121,6 +167,6 @@ void AimbotLoop(bool* g_bActive)
 		
 		mouse_event(MOUSEEVENTF_MOVE, static_cast<DWORD>(aimX), static_cast<DWORD>(aimY), 0UL, NULL);
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		std::this_thread::sleep_for(std::chrono::milliseconds(Settings::Aimbot::delayBetweenEveryAimbotTime));
 	}
 }

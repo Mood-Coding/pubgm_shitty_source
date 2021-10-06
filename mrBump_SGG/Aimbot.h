@@ -20,9 +20,15 @@ public:
 	SDK::FVector2D tmpTargetPos{};
 	Character tmpCharacter;
 
+	float PawnBulletFireSpeed = 0.0f;
+	
+	const float GRAVITY = 588.6f;
+
 	void MoveMouse(long x,long y);
 
 	void FindBestTarget(Character* character);
+
+	SDK::FVector2D PredictMovement(SDK::FVector PawnBoneGamePos, SDK::FVector TargetBoneGamePos);
 
 	void GetTmpBestTarget();
 	
