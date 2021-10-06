@@ -179,31 +179,6 @@ public:
 	std::string ActorName{};
 };
 
-
-struct ActorCaching
-{
-public:
-	ActorCaching() {}
-
-	ActorCaching(std::string& actorName, std::string displayName, bool isItem)
-	{
-		ActorName = actorName;
-		DisplayName = displayName;
-		bIsItem = isItem;
-	}
-
-	ActorCaching(std::string& actorName, std::string displayName, std::wstring playerName)
-	{
-		ActorName = actorName;
-		DisplayName = displayName;
-	}
-
-	std::string ActorName{};
-	std::string DisplayName{};
-	std::wstring PlayerName{};
-	bool bIsItem = false;
-};
-
 class ESP
 {
 public:
