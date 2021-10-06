@@ -72,7 +72,7 @@ void MemoryManager::readMemory(PVOID BaseAddress, PVOID Buffer, SIZE_T BufferSiz
 
 	IO_STATUS_BLOCK ioStatusBlock;
 
-	NtDeviceIoControlFile(m_hDriver, nullptr, nullptr, nullptr, &ioStatusBlock, MM_READVIRTUALMEMORY, &input, sizeof(input), nullptr, 0);
+	NtDeviceIoControlFile(m_hDriver, nullptr, nullptr, nullptr, &ioStatusBlock, MM_READVIRTUALMEMORY, &input, sizeof(input), nullptr, 0UL);
 }
 
 
@@ -100,7 +100,7 @@ bool MemoryManager::search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStart
 			memSectorList[memSectorIndex] = mData;
 			memSectorIndex++;
 		}
-		dwAddress = (DWORD)mbi.BaseAddress + mbi.RegionSize;
+		dwAddress = (DWORD)mbi.BaseAddress + (DWORD)mbi.RegionSize;
 	}
 
 	//int memSectorCount = memSectorIndex;

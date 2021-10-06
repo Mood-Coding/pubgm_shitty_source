@@ -60,20 +60,19 @@ public:
 
 	void DrawLine(float x1, float y1, float x2, float y2, unsigned int color, float thickness = 1);
 
-	void DrawRect(int x, int y, int width, int height, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
+	void DrawRect(float x, float y, float width, float height, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
 	void DrawRect(ImVec2 topleft, ImVec2 botright, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
 
-	void DrawFilledRect(int x, int y, float width, float height, unsigned int rectColor, unsigned int filledColor);
+	void DrawFilledRect(float x, float y, float width, float height, unsigned int rectColor, unsigned int filledColor);
 	void DrawFilled(float x, float y, float width, float height, unsigned int color);
 
 	void DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color);
 
-	void DrawString(int x, int y, unsigned int color, std::wstring& txt, bool bShadow);
-	void DrawString(int x, int y, unsigned int color, std::string& txt, bool bShadow);
+	void DrawString(float x, float y, unsigned int color, std::wstring& txt, bool bShadow);
 	void DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow);
 	void DrawString(float x, float y, unsigned int color, const char* txt, bool bShadow);
 
-	void DrawCircle(int x, int y, int radius, unsigned int Color);
+	void DrawCircle(float x, float y, float radius, unsigned int Color);
 
 	RECT calcTextRect(LPD3DXFONT pFont, std::string txt);
 

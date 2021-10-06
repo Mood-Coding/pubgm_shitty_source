@@ -123,13 +123,13 @@ void ESP::DrawVehicles()
 
 		// Footer 1st text
 		{
-			int xOffset = 0;
+			float xOffset = 0;
 
 			if (Settings::VehicleESP::bName)
 			{
 				std::string str = Vehicles[i].displayName;
 				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), str, Settings::bToggleShadowText);
-				xOffset += ImGui::CalcTextSize(str.c_str()).x + 5;
+				xOffset += ImGui::CalcTextSize(str.c_str()).x + 5.0f;
 			}
 
 			if (Settings::VehicleESP::bDistance)
@@ -141,7 +141,7 @@ void ESP::DrawVehicles()
 
 		// Footer 2nd text
 		{
-			int xOffset = 0;
+			float xOffset = 0;
 
 			if (Settings::VehicleESP::bHp)
 			{
@@ -211,10 +211,10 @@ void ESP::DrawPlayers()
 		{
 			RECT txtRct{};
 			// Calculate PlayerName text rect
-			g_pD3D->pPlayerNameFont->DrawText(NULL, Characters[i].PlayerName.c_str(), Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
+			g_pD3D->pPlayerNameFont->DrawTextW(NULL, Characters[i].PlayerName.c_str(), (INT)Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
 
 			// We use D3D draw string API because ImGui doesn't support UNICODE string :<
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X - (float)floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
 
 			// Next text line will be under Player name + Bot check
 			yOffset += 18;
@@ -251,14 +251,14 @@ void ESP::DrawPlayers()
 		// Knocked check (hp <= 0)
 		if (Characters[i].STExtraCharacter.Health <= 0)
 		{
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, RED(255), "Knocked", Settings::bToggleShadowText);
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X - (float)floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, RED(255), "Knocked", Settings::bToggleShadowText);
 
 			yOffset += 18;
 		}
 
 		// Line
 		if (Settings::PlayerESP::LineESP::bToggle)
-			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 29, g_pD3D->screenW / 2, 0, WHITE(255));
+			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 29, (float)g_pD3D->screenW / 2, 0, WHITE(255));
 
 		if (Settings::PlayerESP::BoneESP::bToggle || Settings::Aimbot::bToggle)
 		{
@@ -317,7 +317,7 @@ void ESP::DrawPlayers()
 			SDK::FVector PredictEnemyBonePos{ g_pAim->tmpCharacter.GAME_BONE_HEAD };
 			PredictEnemyBonePos.X += ComponentVelocity.X * BulletTravelTime; // S = v * t
 			PredictEnemyBonePos.Y += ComponentVelocity.Y * BulletTravelTime; // S = v * t
-			PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime * zAssist + 0.5f * 5.72f * pow(BulletTravelTime, 2); // S = v * t
+			PredictEnemyBonePos.Z += ComponentVelocity.Z * BulletTravelTime * zAssist + 0.5f * 5.72f * BulletTravelTime * BulletTravelTime; // S = v * t
 
 			// Get predicted enemy bone position on screen
 			// Don't need to check the return value of this function (is behind my player)
@@ -325,7 +325,7 @@ void ESP::DrawPlayers()
 			g_pVMM->GameToScreenBone(PredictEnemyBonePos, g_pAim->tmpTargetPos);
 
 			// Line to best target
-			g_pD3D->DrawLine(g_pD3D->screenW / 2, g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z + yOffset, RED(255));
+			g_pD3D->DrawLine((float)g_pD3D->screenW / 2, (float)g_pD3D->screenH, g_pAim->tmpCharacter.PositionOnSc.X, g_pAim->tmpCharacter.PositionOnSc.Y + g_pAim->tmpCharacter.PositionOnSc.Z + yOffset, RED(255));
 
 			// Enemy predict movement line
 			g_pD3D->DrawLine(g_pAim->tmpTargetPos.X, g_pAim->tmpTargetPos.Y, g_pAim->tmpCharacter.BONE_HEAD.X, g_pAim->tmpCharacter.BONE_HEAD.Y, WHITE(255), 1.5);
@@ -469,19 +469,19 @@ void ESP::DrawPlayerBone(Character* character, unsigned int color)
 {
 	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z / 2);
 
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, color, 1.2);
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, color, 1.2f);
 
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, color, 1.2);
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, color, 1.2);
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, color, 1.2f);
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, color, 1.2f);
 
-	g_pD3D->DrawLine(character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, character->BONE_L_WRIST.X, character->BONE_L_WRIST.Y, color, 1.2);
-	g_pD3D->DrawLine(character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, character->BONE_R_WRIST.X, character->BONE_R_WRIST.Y, color, 1.2);
+	g_pD3D->DrawLine(character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, character->BONE_L_WRIST.X, character->BONE_L_WRIST.Y, color, 1.2f);
+	g_pD3D->DrawLine(character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, character->BONE_R_WRIST.X, character->BONE_R_WRIST.Y, color, 1.2f);
 
-	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, color, 1.2);
-	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, color, 1.2);
+	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, color, 1.2f);
+	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, color, 1.2f);
 
-	g_pD3D->DrawLine(character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, character->BONE_L_FOOT.X, character->BONE_L_FOOT.Y, color, 1.2);
-	g_pD3D->DrawLine(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, color, 1.2);
+	g_pD3D->DrawLine(character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, character->BONE_L_FOOT.X, character->BONE_L_FOOT.Y, color, 1.2f);
+	g_pD3D->DrawLine(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, color, 1.2f);
 }
 
 bool ESP::GetPlayerBonePos(Character* character)

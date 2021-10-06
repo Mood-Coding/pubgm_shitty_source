@@ -23,7 +23,7 @@ DWORD tmpViewMatrixAddr = 0;
 
 bool bInGame = false;
 
-void inline AddToCharacters(const std::string& currActorName, const DWORD& currActorAddr, const SDK::FVector& currActorPos)
+void inline AddToCharacters(const DWORD& currActorAddr, const SDK::FVector& currActorPos)
 {
 	Character character(currActorAddr, currActorPos);
 
@@ -189,7 +189,7 @@ void UpdateValue()
 
 
 		// Loop through ActorArray
-		for (int i = 0; i < g_pESP->maxActorCount; ++i)
+		for (int i = 0; i < (int)g_pESP->maxActorCount; ++i)
 		{
 			DWORD currActorAddr = ActorArray[i];
 			if (currActorAddr == NULL)
@@ -228,7 +228,7 @@ void UpdateValue()
 
 			if (g_pESP->IsPlayer(currActorName) && (Settings::PlayerESP::bToggle || Settings::bDebugESP))
 			{
-				AddToCharacters(currActorName, currActorAddr, currActorPos);
+				AddToCharacters(currActorAddr, currActorPos);
 
 				continue;
 			}

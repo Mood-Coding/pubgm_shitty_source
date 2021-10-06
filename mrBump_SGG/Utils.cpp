@@ -60,12 +60,12 @@ bool Utils::is_digits(const std::string& str)
 
 float Utils::DistBetween2Vector2D(SDK::FVector2D v1, SDK::FVector2D v2)
 {
-    return sqrt(pow(v2.X - v1.X, 2) + pow(v2.Y - v1.Y, 2));
+    return (float)sqrt(pow(v2.X - v1.X, 2) + pow(v2.Y - v1.Y, 2));
 }
 
 float Utils::DistBetween2Vector3D(SDK::FVector v1, SDK::FVector v2)
 {
-    return sqrt( pow(v2.X - v1.X, 2) + pow(v2.Y - v1.Y, 2) + pow(v2.Z - v1.Z, 2) );
+    return (float)sqrt( pow(v2.X - v1.X, 2) + pow(v2.Y - v1.Y, 2) + pow(v2.Z - v1.Z, 2) );
 }
 
 // convert UTF-8 string to wstring

@@ -17,18 +17,18 @@ void Aimbot::MoveMouse(long x, long y)
 	SendInput(1, &Input, sizeof(INPUT));
 }
 
-void Aimbot::FindBestTarget(Character* character)
+void Aimbot::FindBestTarget(Character* bestTarget)
 {
 	SDK::FVector2D posToCheck{};
 	if (Settings::Aimbot::targetBone == BONE_HEAD)
-		posToCheck = character->BONE_HEAD;
+		posToCheck = bestTarget->BONE_HEAD;
 
 	float distToCross{ Utils::DistBetween2Vector2D(posToCheck, SDK::FVector2D(static_cast<float>(g_pD3D->screenW) / 2.0f, static_cast<float>(g_pD3D->screenH) / 2))};
 
 	if (distToCross < tmpNearestDist2Cross)
 	{
 		tmpNearestDist2Cross = distToCross;
-		tmpCharacter = *character;
+		tmpCharacter = *bestTarget;
 	}
 }
 
@@ -38,7 +38,6 @@ SDK::FVector2D Aimbot::PredictMovement(SDK::FVector PawnBoneGamePos, SDK::FVecto
 	{
 		// Distance in game position between: Pawn head bone vs Enemy bone
 		float distance{ Utils::DistBetween2Vector3D(PawnBoneGamePos, TargetBoneGamePos) };
-		float distanceMeter{ distance / 100.0f };
 		// If distance is higher than 100000 so there is an error in tmpCharacter.GAME_BONE_HEAD or PawnHeadBoneGamePos
 		if (distance < 80000)
 		{
