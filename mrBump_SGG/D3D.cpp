@@ -286,8 +286,8 @@ void D3D::DrawString(int x, int y, unsigned int color, std::wstring& txt, bool b
 	{
 		RECT rect1{ x + 1, y + 1, x + 80, y + 50 };
 		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
-		/*rect1 = { x + 1, y - 1, x + 80, y + 50 };
-		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));*/
+		rect1 = { x + 1, y - 1, x + 80, y + 50 };
+		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
 	}
 	
 	RECT rect2 = { x, y, x + 80, y + 50 };

@@ -207,7 +207,7 @@ void ESP::DrawPlayers()
 		yOffset = 0;
 
 		// Player name
-		if (Settings::PlayerESP::bName /*&& !Characters[i].STExtraCharacter.bIsAI*/)
+		if (Settings::PlayerESP::bName)
 		{
 			RECT txtRct{};
 			// Calculate PlayerName text rect
@@ -235,6 +235,7 @@ void ESP::DrawPlayers()
 			// Draw distance + hp
 			if (str != " ")
 			{
+				// For centered text at the middle of player
 				ImVec2 size{ ImGui::CalcTextSize(str.c_str()) };
 
 				// Bot has distance + hp with cyan color, human is white
