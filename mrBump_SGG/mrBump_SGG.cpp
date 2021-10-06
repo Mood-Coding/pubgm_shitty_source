@@ -328,7 +328,7 @@ int main()
 	std::thread readMem(UpdateValue);
 
 	// HandleWindow, HandleKeyInput
-	std::thread windowManager(EventManager, &g_bActive);
+	std::thread windowManager(EventManager, &g_bActive, &g_bDoneReadMem);
 
 	// aimbot thread
 	std::thread aimBot(AimbotLoop, &g_bActive);
@@ -344,7 +344,7 @@ int main()
 	{
 		MSG msg;
 		// Handle input message
-		while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+		if (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
 		{
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
@@ -365,7 +365,6 @@ int main()
 			g_pESP->UnsortedActors = tmpUnsortedActors;
 
 			g_pESP->Characters = tmpCharacters;
-			//g_pESP->CharacterCount = g_tmpCharacterCount;
 
 			g_pESP->Items = tmpItems;
 

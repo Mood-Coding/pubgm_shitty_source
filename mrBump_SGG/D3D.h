@@ -16,7 +16,7 @@
 
 #define M_PI 3.14159265358979323846264338327950288419716939937510
 
-void EventManager(bool* bActive);
+void EventManager(bool* bActive, bool* g_bDoneReadMem);
 
 template <class T> void SafeRelease(T** ppT)
 {

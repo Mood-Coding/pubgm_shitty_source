@@ -594,7 +594,7 @@ void D3D::HandleKeyInput(bool* bActive)
 
 }
 
-void EventManager(bool* bActive)
+void EventManager(bool* bActive, bool* g_bDoneReadMem)
 {
 	while (*bActive)
 	{
