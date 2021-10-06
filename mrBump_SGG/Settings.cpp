@@ -64,7 +64,7 @@ namespace Settings
 		bool bToggle = true;
 		int targetBone = BONE_HEAD;
 		int sensitivity = 2;
-		int delayBetweenEveryAimbotTime = 10;
+		int delayBetweenEveryAimbotTime = 15;
 	}
 
 	bool bFightMode = false;

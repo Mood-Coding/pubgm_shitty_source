@@ -577,7 +577,7 @@ void D3D::HandleKeyInput(bool* bActive)
 		return;
 	}
 
-	if (GetAsyncKeyState(VK_CAPITAL))
+	if (GetAsyncKeyState(VK_CAPITAL) & 1)
 	{
 		Settings::bFightMode = !Settings::bFightMode;
 		return;
