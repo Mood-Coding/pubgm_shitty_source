@@ -577,22 +577,26 @@ void D3D::HandleKeyInput(bool* bActive)
 	{
 		Settings::bShowMenu = !Settings::bShowMenu;
 		ChangeClickability(Settings::bShowMenu, g_pD3D->overlayHWND);
-
 		return;
 	}
 
 	if (GetAsyncKeyState(VK_END) & 1)
 	{
 		*bActive = false;
-
 		return;
 	}
 
 	if (GetAsyncKeyState(VK_MENU) && GetAsyncKeyState(VK_CONTROL) & 0x1)
 	{
 		Settings::bDebugESP = !Settings::bDebugESP;
+		return;
 	}
 
+	if (GetAsyncKeyState(VK_CAPITAL))
+	{
+		Settings::bFightMode = !Settings::bFightMode;
+		return;
+	}
 }
 
 void EventManager(bool* bActive, bool* g_bDoneReadMem)

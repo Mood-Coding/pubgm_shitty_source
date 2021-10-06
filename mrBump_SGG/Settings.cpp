@@ -69,7 +69,6 @@ namespace Settings
 
 	bool bFightMode = false;
 
-
 	int readMemloopDelay = 30;
 	int drawLoopDelay = 16;
 	int loopDelay = 20;
