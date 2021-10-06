@@ -259,5 +259,6 @@ DWORD ViewMatrixManager::GetViewWorld(std::wstring emulator)
 
 void ViewMatrixManager::GetViewMatrix()
 {	
+	g_pESP->viewMatrixAddr = g_pMM->read<DWORD>(g_pMM->read<DWORD>(g_pESP->viewWorld) + 32) + 512;
 	g_pMM->readMemory((PVOID)g_pESP->viewMatrixAddr, &g_pVMM->viewMatrix, 64);
 }

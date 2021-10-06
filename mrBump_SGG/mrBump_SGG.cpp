@@ -123,8 +123,6 @@ void UpdateValue()
 		tmpAirDrops.clear();
 		tmpAirDropDatas.clear();
 		tmpLootboxes.clear();
-
-		tmpViewMatrixAddr = g_pMM->read<DWORD>(g_pMM->read<DWORD>(g_pESP->viewWorld) + 32) + 512;
 		
 		// Get my character address
 		DWORD NetConnection{ g_pMM->read<DWORD>(NetDriver + SERVERCONNECTION) };
@@ -374,7 +372,7 @@ int main()
 			g_pESP->AirDropDatas = tmpAirDropDatas;
 			g_pESP->Airdrops = tmpAirDrops;
 
-			g_pESP->viewMatrixAddr = tmpViewMatrixAddr;
+			//g_pESP->viewMatrixAddr = tmpViewMatrixAddr;
 		}
 
 		g_pD3D->pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0); // Clear the window alpha
@@ -396,11 +394,6 @@ int main()
 		{
 			// Cheat feature draw (ESP,...)
 			{
-				//ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |/* ImGuiWindowFlags_NoDecoration |*/ /*ImGuiWindowFlags_NoBackground |*/ ImGuiWindowFlags_AlwaysAutoResize);
-				/*ImGui::SetNextWindowPos(ImVec2(g_pD3D->gameScreenRct.left, g_pD3D->gameScreenRct.top));
-				ImGui::SetNextWindowSize(ImVec2(g_pD3D->screenW, g_pD3D->screenH));
-				ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground);*/
-
 				g_pVMM->GetViewMatrix();
 
 				g_pD3D->GetImGuiBackgroundDrawList();
@@ -416,11 +409,8 @@ int main()
 				g_pESP->DrawVehicles();
 
 				g_pESP->DrawPlayers();
-
-				/*ImGui::End();*/
 			}
-			
-			
+		
 			// Current match info
 			{
 				ImGui::Begin("Game Status", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
