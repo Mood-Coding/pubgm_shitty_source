@@ -182,7 +182,7 @@ void ESP::DrawPlayers()
 				continue;
 
 			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Characters[i].Address).c_str(), Settings::bToggleShadowText);
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y + 18, WHITE(255), std::to_string(Characters[i].STExtraCharacter.TeamID).c_str(), Settings::bToggleShadowText);
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y + 18, WHITE(255), std::to_string(Characters[i].TeamIDIndex).c_str(), Settings::bToggleShadowText);
 		}
 
 		return;
@@ -202,7 +202,7 @@ void ESP::DrawPlayers()
 		if (Characters[i].STExtraCharacter.bIsAI)
 			teamIDColor = CYAN(255);
 		else
-			teamIDColor = TeamIDColor[Characters[i].STExtraCharacter.TeamID];
+			teamIDColor = Characters[i].TeamColor;//TeamIDColor[Characters[i].STExtraCharacter.TeamID];
 
 		yOffset = 0;
 

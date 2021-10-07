@@ -4,8 +4,6 @@
 
 std::array<unsigned int, 100> TeamIDColor
 {
-	IM_COL32(255, 255, 255, 255),
-	// TeamIDColor index start from here
 	IM_COL32(30,144 ,255,255),
 	IM_COL32(64,224,208,255),
 	IM_COL32(255,160,122,255),

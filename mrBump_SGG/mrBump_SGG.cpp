@@ -28,18 +28,32 @@ void inline AddToCharacters(const DWORD& currActorAddr, const SDK::FVector& curr
 	Character character(currActorAddr, currActorPos);
 
 	if (character.Address == g_pESP->Pawn)
-	{
 		g_pESP->MyTeamID = g_pMM->read<DWORD>(g_pESP->Pawn + TEAMID);
-	}
 
 	// Read whole STExtraCharacter class
 	character.STExtraCharacter = g_pMM->read<SDK::STExtraCharacter>(currActorAddr);
 
 	// This character is in my team so skip
 	if (character.STExtraCharacter.TeamID == g_pESP->MyTeamID)
-		// But it won't skip when current character is my character and SelfESP is on
+		// But it won't skip when current character is myself and SelfESP is on
 		if (!(character.Address == g_pESP->Pawn && Settings::bSelfESP))
 			return;
+
+	// Get TeamColor from TeamID ( TeamID -> TeamIDIndex -> TeamColor)
+	{
+		auto itr{ std::find(g_pESP->TeamIDIndex.begin(), g_pESP->TeamIDIndex.end(), character.STExtraCharacter.TeamID)};
+
+		// If current TeamID isn't exist in TeamIDIndex
+		if (itr == g_pESP->TeamIDIndex.end())
+		{
+			g_pESP->TeamIDIndex.push_back(character.STExtraCharacter.TeamID);
+			// Now it must return a valid itr
+			itr = std::find(g_pESP->TeamIDIndex.begin(), g_pESP->TeamIDIndex.end(), character.STExtraCharacter.TeamID);
+		}
+
+		character.TeamIDIndex = itr - g_pESP->TeamIDIndex.begin();
+		character.TeamColor = TeamIDColor[character.TeamIDIndex];
+	}
 
 	if (Settings::PlayerESP::bName)
 		character.PlayerName = g_pESP->GetPlayerName(character.STExtraCharacter.PlayerName);
@@ -186,7 +200,6 @@ void UpdateValue()
 		std::cout << "ActorList " << g_pESP->ActorList << '\n';
 		std::cout << "ActorArray " << ActorArray.size() << '\n';
 		std::cout << "maxActorCount " << g_pESP->maxActorCount << '\n';*/
-
 
 		// Loop through ActorArray
 		for (int i = 0; i < (int)g_pESP->maxActorCount; ++i)
@@ -442,7 +455,7 @@ int main()
 
 	// It will delete the driver service created by cheat
 	// It won't delete other running kprocesshacker driver service
-	g_pMM->UnloadDriver();
+	/*g_pMM->UnloadDriver();*/
 
 	/*system("pause");*/
 	return 0;

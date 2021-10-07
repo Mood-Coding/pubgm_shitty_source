@@ -60,7 +60,7 @@ public:
 	
 	SDK::STExtraCharacter STExtraCharacter{};
 	
-	std::wstring PlayerName = L"";
+	std::wstring PlayerName{ L"" };
 
 	SDK::FVector GAME_BONE_HEAD;
 	SDK::FVector GAME_BONE_CHEST;
@@ -77,6 +77,9 @@ public:
 	SDK::FVector2D BONE_L_FOOT;
 	SDK::FVector2D BONE_R_KNEE;
 	SDK::FVector2D BONE_R_FOOT;
+
+	unsigned int TeamColor{ 0 };
+	int TeamIDIndex{ 0 };
 };
 
 class Item : public Actor
@@ -229,6 +232,8 @@ public:
 	// ActorID -> ActorName
 	std::unordered_map<DWORD, std::string> ActorNameCache;	
 	
+	std::vector<int> TeamIDIndex;
+
 	void DrawPlayers();
 	void DrawItems();
 	void DrawVehicles();
