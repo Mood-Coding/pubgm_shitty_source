@@ -202,7 +202,7 @@ void ESP::DrawPlayers()
 		if (Characters[i].STExtraCharacter.bIsAI)
 			teamIDColor = CYAN(255);
 		else
-			teamIDColor = Characters[i].TeamColor;//TeamIDColor[Characters[i].STExtraCharacter.TeamID];
+			teamIDColor = Characters[i].TeamColor;
 
 		yOffset = 0;
 
@@ -213,8 +213,12 @@ void ESP::DrawPlayers()
 			// Calculate PlayerName text rect
 			g_pD3D->pPlayerNameFont->DrawTextW(NULL, Characters[i].PlayerName.c_str(), (INT)Characters[i].PlayerName.length(), &txtRct, DT_CALCRECT, D3DCOLOR_XRGB(0, 0, 0));
 
-			// We use D3D draw string API because ImGui doesn't support UNICODE string :<
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - (float)floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
+			// Bot has cyan name, human is white
+			// We use D3D draw string API because ImGui doesn't support UNICODE string :< 
+			if (Characters[i].STExtraCharacter.bIsAI)
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - (float)floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z, D3DCOLOR_ARGB(255, 0, 255, 255), Characters[i].PlayerName, Settings::bToggleShadowText);
+			else
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - (float)floor((txtRct.right - txtRct.left) / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z, WHITE(255), Characters[i].PlayerName, Settings::bToggleShadowText);
 
 			// Next text line will be under Player name + Bot check
 			yOffset += 18;
@@ -237,12 +241,7 @@ void ESP::DrawPlayers()
 			{
 				// For centered text at the middle of player
 				ImVec2 size{ ImGui::CalcTextSize(str.c_str()) };
-
-				// Bot has distance + hp with cyan color, human is white
-				if (!Characters[i].STExtraCharacter.bIsAI)
-					g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, WHITE(255), str, Settings::bToggleShadowText);
-				else
-					g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, CYAN(255), str, Settings::bToggleShadowText);
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, WHITE(255), str, Settings::bToggleShadowText);
 
 				yOffset += 18;
 			}
@@ -256,14 +255,14 @@ void ESP::DrawPlayers()
 			yOffset += 18;
 		}
 
-		// Line
+		// Line ESP
 		if (Settings::PlayerESP::LineESP::bToggle)
-			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 29, (float)g_pD3D->screenW / 2, 0, WHITE(255));
+			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 29, (float)g_pD3D->screenW / 2, 0, Characters[i].TeamColor);
 
+		// Bone ESP
 		if (Settings::PlayerESP::BoneESP::bToggle || Settings::Aimbot::bToggle)
 		{
-			// Because read mem loop has high delay than draw loop
-			// Puting GetPlayerBonePos here so BoneESP will be more smoother than putting this in read mem loop
+			// Because read mem loop has higher delay than draw loop, BoneESP will be smoother at here
 			if (GetPlayerBonePos(&Characters[i]))
 			{
 				if (Settings::Aimbot::bToggle)
@@ -465,7 +464,7 @@ void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ)
 	g_pD3D->DrawCircle(headScreenPosition.X, headScreenPosition.Y, playerZ / 7, RED(255));
 }
 
-void ESP::DrawPlayerBone(Character* character, unsigned int color)
+void ESP::DrawPlayerBone(Character* character, const unsigned int &color)
 {
 	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z / 2);
 

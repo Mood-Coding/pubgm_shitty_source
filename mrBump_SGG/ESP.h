@@ -252,7 +252,7 @@ public:
 	static int Bones[11];
 
 	void DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ);
-	void DrawPlayerBone(Character* character, unsigned int color);
+	void DrawPlayerBone(Character* character, const unsigned int& color);
 
 	bool IsPlayer(const std::string& actorName);
 	bool IsVehicle(const std::string& actorName);
