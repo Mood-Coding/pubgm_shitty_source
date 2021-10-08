@@ -297,25 +297,25 @@ int main()
 {
     if (!g_pD3D->SetupHWND())
 	{
-		system("pause");
+		std::cin.get();
         return 0;
     }
 
 	if (!g_pPM->Init())
 	{
-		system("pause");
+		std::cin.get();
 		return 0;
 	}
 
 	if (!g_pMM->Init())
 	{
-		system("pause");
+		std::cin.get();
 		return 0;
 	}
 
 	if (!g_pESP->Init())
 	{
-		system("pause");
+		std::cin.get();
 		return 0;
 	}
 	
@@ -457,6 +457,6 @@ int main()
 	// It won't delete other running kprocesshacker driver service
 	/*g_pMM->UnloadDriver();*/
 
-	/*system("pause");*/
+	/*std::cin.get();*/
 	return 0;
 }
