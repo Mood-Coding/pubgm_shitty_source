@@ -67,7 +67,6 @@ void MemoryManager::readMemory(PVOID BaseAddress, PVOID Buffer, SIZE_T BufferSiz
 	NtDeviceIoControlFile(m_hDriver, nullptr, nullptr, nullptr, &ioStatusBlock, MM_READVIRTUALMEMORY, &input, sizeof(input), nullptr, 0UL);
 }
 
-
 bool MemoryManager::search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStartAddr, DWORD_PTR dwEndAddr,/* BOOL bIsCurrProcess, int iSearchMode,*/ std::vector<DWORD_PTR>& vRet)
 {
 	MEMORY_BASIC_INFORMATION	mbi;
@@ -129,13 +128,14 @@ int MemoryManager::find(BYTE* buffer, int dwBufferSize, BYTE* bstr, DWORD dwStrL
 		return -1;
 	}
 	DWORD  i, j;
-	for (i = 0; i < dwBufferSize; i++)
+	for (i = 0; i < dwBufferSize; ++i)
 	{
-		for (j = 0; j < dwStrLen; j++)
+		for (j = 0; j < dwStrLen; ++j)
 		{
 			if (buffer[i + j] != bstr[j] && bstr[j] != '?')
 				break;
 		}
+
 		if (j == dwStrLen)
 			return i;
 	}
@@ -150,7 +150,6 @@ FTransform MemoryManager::ftRead(DWORD base) {
 
 bool MemoryManager::LoadDriver()
 {
-	bool bLoad = false;
 	SC_HANDLE hSCManager{ 0 };
 	SC_HANDLE hService{ 0 };
 
@@ -186,7 +185,7 @@ bool MemoryManager::LoadDriver()
 	if (hService)
 	{
 		std::cout << "The driver service is already created!\n";
-		bLoad = true;
+		m_bLoadedService = true;
 	}
 	// The service of the driver isn't exist so we will create a new one
 	else
@@ -196,8 +195,8 @@ bool MemoryManager::LoadDriver()
 		// Can't create service for the driver
 		if (hService)
 		{
-			bLoad = true;
 			std::cout << "Created driver service\n";
+			m_bLoadedService = true;
 		}
 		else
 		{
@@ -213,14 +212,13 @@ CLEANUP:
 	if (hSCManager != NULL)
 		CloseServiceHandle(hSCManager);
 
-	return bLoad;
+	return m_bLoadedService;
 }
 
 bool MemoryManager::StartDriver()
 {
 	SC_HANDLE hSCManager{ 0 };
 	SC_HANDLE hService{ 0 };
-	bool bStart{ false };
 
 	// Establishes a connection to the service control manager on the specified computer.
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
@@ -240,8 +238,8 @@ bool MemoryManager::StartDriver()
 
 	if (StartServiceW(hService, NULL, NULL))
 	{
-		bStart = true;
 		std::cout << "Started the driver service\n";
+		m_bStartedService = true;
 	}
 	else
 	{
@@ -256,7 +254,7 @@ bool MemoryManager::StartDriver()
 		if (err == ERROR_SERVICE_ALREADY_RUNNING)
 		{
 			std::cout << "<StartService> The driver service is already running!\n";
-			bStart = true;
+			m_bStartedService = true;
 			goto CLEANUP;
 		}
 
@@ -264,8 +262,7 @@ bool MemoryManager::StartDriver()
 		if (err == 0xb7)
 		{
 			std::cout << "<StartService> There is a running driver service with different name\n";
-			m_bUsingAnotherDriverService = true;
-			bStart = true;
+			m_bUsingAnotherService = true;
 			goto CLEANUP;
 		}
 
@@ -281,15 +278,18 @@ CLEANUP:
 	if (hSCManager != NULL)
 		CloseServiceHandle(hSCManager);
 
-	return bStart;
+	return m_bStartedService || m_bUsingAnotherService;
 }
 
-bool MemoryManager::StopDriver()
+void MemoryManager::StopDriver()
 {
+	// The driver service created by cheat is not running so we don't need to stop it
+	if (m_bUsingAnotherService)
+		return;
+
 	SC_HANDLE hSCManager{ 0 };
 	SC_HANDLE hService{ 0 };
 	SERVICE_STATUS proc{ 0 };
-	bool bStopped{ false };
 
 	// Establishes a connection to the service control manager on the specified computer.
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
@@ -307,17 +307,11 @@ bool MemoryManager::StopDriver()
 		goto CLEANUP;
 	}
 
-	// Sends stop control code to driver service
+	// Send stop control code to driver service
 	if (ControlService(hService, SERVICE_CONTROL_STOP, &proc))
-	{
 		std::cout << "Stopped driver service\n";
-		bStopped = true;
-	}
 	else
-	{
-		DWORD error{ GetLastError() };
-		std::cout << "<ControlService> Error: " << error << '\n';
-	}
+		std::cout << "<ControlService> Error: " << GetLastError() << '\n';
 
 CLEANUP:
 	if (hSCManager)
@@ -325,15 +319,15 @@ CLEANUP:
 
 	if (hService)
 		CloseServiceHandle(hService);
-
-	return bStopped;
 }
 
-bool MemoryManager::UnloadDriver()
+void MemoryManager::UnloadDriver()
 {
+	if (!m_bLoadedService)
+		return;
+
 	SC_HANDLE hSCManager{ 0 };
 	SC_HANDLE hService{ 0 };
-	bool bUnload{ false };
 
 	// Establishes a connection to the service control manager on the specified computer.
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
@@ -352,18 +346,12 @@ bool MemoryManager::UnloadDriver()
 	}
 
 	// Marks driver service for deletion.
-	// The driver service is not removed until
-	// all open handles to the service have been closed
-	// by CloseServiceHandle + CloseHandle.
+	// The driver service is not removed until all open handles to the service
+	// have been closed by CloseServiceHandle + CloseHandle.
 	if (DeleteService(hService))
-	{
 		std::cout << "Deleted driver service\n";
-		bUnload = true;
-	}
 	else
-	{
 		std::cout << "<DeleteService> Error: " << GetLastError << '\n';
-	}
 
 CLEANUP:
 	if (hSCManager)
@@ -374,6 +362,4 @@ CLEANUP:
 
 	if (m_hDriver)
 		CloseHandle(m_hDriver);
-
-	return bUnload;
 }

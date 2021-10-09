@@ -299,10 +299,7 @@ bool InitCheat()
 
 	if (!g_pMM->Init())
 	{
-		if (!g_pMM->m_bUsingAnotherDriverService)
-			g_pMM->StopDriver();
-
-		// Delete the driver service created by cheat
+		g_pMM->StopDriver();
 		g_pMM->UnloadDriver();
 
 		system("pause");
@@ -472,10 +469,7 @@ int main()
 
 	g_pD3D->CleanupDeviceD3D();
 
-	if (!g_pMM->m_bUsingAnotherDriverService)
-		g_pMM->StopDriver();
-
-	// Delete the driver service created by cheat
+	g_pMM->StopDriver();
 	g_pMM->UnloadDriver();
 
 	system("pause");

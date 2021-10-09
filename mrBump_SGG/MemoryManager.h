@@ -21,8 +21,9 @@ class MemoryManager {
 private:
 	std::wstring m_DriverPath{};
 
-	bool bLoadedService{ false };
-	bool bStartedService{ false };
+	bool m_bLoadedService{ false };
+	bool m_bStartedService{ false };
+	bool m_bUsingAnotherService{ false };
 
 public:
 	MemoryManager() { };
@@ -31,7 +32,6 @@ public:
 
 	HANDLE processHandle = NULL;
 
-	bool m_bUsingAnotherDriverService = false;
 	PSIZE_T NumberOfBytes = nullptr;
 
 	FTransform _ft;
@@ -42,9 +42,8 @@ public:
 
 	bool LoadDriver();
 	bool StartDriver();
-
-	bool StopDriver();
-	bool UnloadDriver();
+	void StopDriver();
+	void UnloadDriver();
 
 	bool search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStartAddr, DWORD_PTR dwEndAddr, /*BOOL bIsCurrProcess, int iSearchMode,*/ std::vector<DWORD_PTR>& vRet);
 	int find(BYTE* buffer, int dwBufferSize, BYTE* bstr, DWORD dwStrLen);
