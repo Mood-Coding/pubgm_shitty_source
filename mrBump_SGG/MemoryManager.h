@@ -21,6 +21,9 @@ class MemoryManager {
 private:
 	std::wstring m_DriverPath{};
 
+	bool bLoadedService{ false };
+	bool bStartedService{ false };
+
 public:
 	MemoryManager() { };
 

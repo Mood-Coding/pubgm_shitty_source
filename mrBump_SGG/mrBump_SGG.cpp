@@ -7,19 +7,14 @@ bool g_bActive = true;
 
 std::array<int, MAX_ACTORS> ActorArray;
 
-std::vector<Character> tmpCharacters;
-//int g_tmpCharacterCount = 0;
-
-std::vector<Vehicle> tmpVehicles;
-
-std::vector<Item> tmpItems;
-
-std::vector<Airdrop> tmpAirDrops;
-std::vector<BoxData> tmpLootboxes;
-std::vector<BoxData> tmpAirDropDatas;
-
-std::vector<UnsortedActor> tmpUnsortedActors;
-DWORD tmpViewMatrixAddr = 0;
+//std::vector<Character> tmpCharacters;
+//std::vector<Vehicle> tmpVehicles;
+//std::vector<Item> tmpItems;
+//std::vector<Airdrop> tmpAirDrops;
+//std::vector<BoxData> tmpLootboxes;
+//std::vector<BoxData> tmpAirDropDatas;
+//
+//std::vector<UnsortedActor> tmpUnsortedActors;
 
 bool bInGame = false;
 
@@ -109,15 +104,17 @@ void UpdateValue()
 		g_pESP->UWorld = g_pMM->read<DWORD>(g_pESP->GWorld);
 
 		// When UWorld == 0, if we read the next value (NetDriver)
-		// it will crash the hack (undefined behavior)
+		// it will crash the hack
 		if (g_pESP->UWorld == 0)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(5));
 			continue;
+		}
 
 		DWORD NetDriver{ g_pMM->read<DWORD>(g_pESP->UWorld + NETDRIVER) };
 		
-		// If player is in a match, NetDriver != 0 
-		// It will be glitche when ...
-		if (NetDriver != 0)
+		// If player is in a match, NetDriver will have a valid address 
+		if (NetDriver)
 		{
 			bInGame = true;
 		}
@@ -125,8 +122,7 @@ void UpdateValue()
 		{
 			bInGame = false;
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
+			std::this_thread::sleep_for(std::chrono::milliseconds(5));
 			continue;
 		}
 
@@ -293,38 +289,58 @@ void UpdateValue()
 	}
 }
 
-int main()
+bool InitCheat()
 {
-	int idBtn{ MessageBox(NULL, L"Smartgaga?\nIf no then Gameloop", L"Choose emulator", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON1 | MB_TOPMOST) };
-	if (idBtn == IDYES)
-		g_pPM->emuProcessName = L"AndroidProcess.exe";
-	else if (idBtn == IDNO)
-		g_pPM->emuProcessName = L"aow_exe.exe";
-
 	if (!g_pPM->Init())
 	{
 		system("pause");
-		return 0;
+		return false;
 	}
 
 	if (!g_pMM->Init())
 	{
+		if (!g_pMM->m_bUsingAnotherDriverService)
+			g_pMM->StopDriver();
+
+		// Delete the driver service created by cheat
+		g_pMM->UnloadDriver();
+
 		system("pause");
-		return 0;
+		return false;
 	}
 
 	if (!g_pD3D->SetupHWND())
 	{
+		ImGui_ImplDX9_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+
+		g_pD3D->CleanupDeviceD3D();
+
 		system("pause");
-		return 0;
+		return false;
 	}
 
 	if (!g_pESP->Init())
 	{
 		system("pause");
-		return 0;
+		return false;
 	}
-	
+
+	return true;
+}
+
+int main()
+{
+	int idBtn{ MessageBox(NULL, L"Smartgaga?\nIf NO then Gameloop", L"Choose emulator", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON1 | MB_TOPMOST) };
+	if (idBtn == IDYES)
+		g_pPM->emuProcessName = L"AndroidProcess.exe";
+	else if (idBtn == IDNO)
+		g_pPM->emuProcessName = L"aow_exe.exe";
+
+	if (!InitCheat())
+		return 0;
+
 	// Avoid reallocation
 	tmpAirDrops.reserve(20);
 	tmpAirDropDatas.reserve(20);
@@ -347,7 +363,7 @@ int main()
 	using clock = std::chrono::steady_clock;
 	auto next_frame = clock::now();
 
-	g_pD3D->MenuTheme(); // Custom menu theme
+	g_pD3D->MenuTheme(); // Setup custom menu theme
 
 	// Main draw loop
 	while (g_bActive)
@@ -448,7 +464,6 @@ int main()
 		std::this_thread::sleep_until(next_frame); // Wait for end of frame
 	}
 
-EXIT:
 	std::cout << "<Exit> Exitting!\n";
 
 	ImGui_ImplDX9_Shutdown();
@@ -460,7 +475,7 @@ EXIT:
 	if (!g_pMM->m_bUsingAnotherDriverService)
 		g_pMM->StopDriver();
 
-	// It will delete the driver service created by cheat
+	// Delete the driver service created by cheat
 	g_pMM->UnloadDriver();
 
 	system("pause");

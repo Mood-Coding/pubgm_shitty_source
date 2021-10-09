@@ -8,7 +8,7 @@ bool MemoryManager::Init()
 	std::cout << "[MM]\n";
 
 	if (!(LoadDriver() && StartDriver()))
-		false;
+		return false;
 	
 	bool bStatus{ ConnectToDriver("\\Device\\KProcessHacker2") };
 	if (m_hDriver && bStatus)
