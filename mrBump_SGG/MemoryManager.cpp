@@ -52,19 +52,19 @@ bool MemoryManager::ConnectToDriver(std::string m_strDeviceName)
 	}	
 }
 
-
-void MemoryManager::readMemory(PVOID BaseAddress, PVOID Buffer, SIZE_T BufferSize) {
+void MemoryManager::readMemory(PVOID BaseAddress, PVOID Buffer, SIZE_T BufferSize)
+{
 	struct {
 		HANDLE ProcessHandle;
 		PVOID BaseAddress;
 		PVOID Buffer;
 		SIZE_T BufferSize;
 		PSIZE_T NumberOfBytesRead;
-	} input = { processHandle, BaseAddress, Buffer, BufferSize, NumberOfBytes };
+	} input { processHandle, BaseAddress, Buffer, BufferSize, NumberOfBytes };
 
-	IO_STATUS_BLOCK ioStatusBlock;
+	IO_STATUS_BLOCK ioStatusBlock{ 0 };
 
-	NtDeviceIoControlFile(m_hDriver, nullptr, nullptr, nullptr, &ioStatusBlock, MM_READVIRTUALMEMORY, &input, sizeof(input), nullptr, 0UL);
+	NtDeviceIoControlFile(m_hDriver, NULL, NULL, NULL, &ioStatusBlock, MM_READVIRTUALMEMORY, &input, sizeof(input), nullptr, 0UL);
 }
 
 bool MemoryManager::search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStartAddr, DWORD_PTR dwEndAddr,/* BOOL bIsCurrProcess, int iSearchMode,*/ std::vector<DWORD_PTR>& vRet)
