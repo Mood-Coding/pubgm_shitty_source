@@ -17,7 +17,7 @@ bool MemoryManager::Init()
 	}
 	else
 	{
-		std::cout << "Can't connect to driver" << std::endl;
+		std::cout << "<ConnectToDriver> Can't connect to driver" << std::endl;
 		return false;
 	}
 	
@@ -40,7 +40,6 @@ bool MemoryManager::ConnectToDriver(std::string m_strDeviceName)
 	InitializeObjectAttributes(&objectAttributes, &objectName, FILE_NON_DIRECTORY_FILE, NULL, NULL);
 
 	NTSTATUS status = NtOpenFile(&hNtDriver, FILE_GENERIC_READ | FILE_GENERIC_WRITE, &objectAttributes, &isb, FILE_SHARE_READ, FILE_NON_DIRECTORY_FILE);
-	std::cout << "Connect driver status: 0x" << std::hex << status << std::endl;
 	if (status == STATUS_SUCCESS)
 	{
 		m_hDriver = hNtDriver;
@@ -48,6 +47,7 @@ bool MemoryManager::ConnectToDriver(std::string m_strDeviceName)
 	}
 	else
 	{
+		std::cout << "<NtOpenFile> Error: 0x" << std::hex << status << std::endl;
 		return false;
 	}	
 }
