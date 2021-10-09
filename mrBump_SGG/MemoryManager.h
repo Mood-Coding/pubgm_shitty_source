@@ -21,7 +21,6 @@ class MemoryManager {
 private:
 	std::wstring m_DriverPath{};
 
-
 public:
 	MemoryManager() { };
 
@@ -37,8 +36,6 @@ public:
 	bool Init();
 
 	bool ConnectToDriver(std::string m_strDeviceName);
-
-	bool LoadDriver_fix();
 
 	bool LoadDriver();
 	bool StartDriver();

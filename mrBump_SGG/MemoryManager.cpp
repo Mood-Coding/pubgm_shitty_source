@@ -22,46 +22,6 @@ bool MemoryManager::Init()
 	}
 	
 	processHandle = g_pPM->hProcess;
-	//PID = g_pPM->PID;
-
-	return true;
-}
-
-bool MemoryManager::LoadDriver_fix()
-{
-	//ROCESS_INFORMATION ProcessInfo; //This is what we get as an [out] parameter
-	//STARTUPINFO StartupInfo; //This is an [in] parameter
-	//ZeroMemory(&StartupInfo, sizeof(StartupInfo));
-	//StartupInfo.cb = sizeof StartupInfo; //Only compulsory field
-	//if (CreateProcess("c:\\winnt\\notepad.exe", NULL,
-	//	NULL, NULL, FALSE, 0, NULL,
-	//	NULL, &StartupInfo, &ProcessInfo))
-	//{
-	//	WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
-	//	CloseHandle(ProcessInfo.hThread);
-	//	CloseHandle(ProcessInfo.hProcess);
-	//}
-
-
-	SHELLEXECUTEINFO ShExecInfo { 0 };
-	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	ShExecInfo.hwnd = NULL;
-	ShExecInfo.lpVerb = NULL;
-	ShExecInfo.lpFile = L"c:\\MyProgram.exe";
-	ShExecInfo.lpParameters = L"";
-	ShExecInfo.lpDirectory = NULL;
-	ShExecInfo.nShow = SW_SHOW;
-	ShExecInfo.hInstApp = NULL;
-	if (ShellExecuteEx(&ShExecInfo) && ShExecInfo.hProcess != NULL)
-	{
-		WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-	}
-	else
-	{
-		std::cout << "<ShellExecuteEx> Error: " << GetLastError() << '\n';
-		return false;
-	}
 
 	return true;
 }

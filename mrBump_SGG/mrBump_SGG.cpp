@@ -296,7 +296,6 @@ void UpdateValue()
 int main()
 {
 	int idBtn{ MessageBox(NULL, L"Smartgaga?\nIf no then Gameloop", L"Choose emulator", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON1 | MB_TOPMOST) };
-
 	if (idBtn == IDYES)
 		g_pPM->emuProcessName = L"AndroidProcess.exe";
 	else if (idBtn == IDNO)
@@ -462,7 +461,6 @@ EXIT:
 		g_pMM->StopDriver();
 
 	// It will delete the driver service created by cheat
-	// It won't delete other running kprocesshacker driver service
 	g_pMM->UnloadDriver();
 
 	system("pause");
