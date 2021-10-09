@@ -39,6 +39,8 @@ public:
 
 	bool ConnectToDriver_fix(std::string m_strDeviceName);
 
+	bool LoadDriver_fix();
+
 	bool LoadDriver();
 	bool StartDriver();
 

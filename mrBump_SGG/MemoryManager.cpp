@@ -7,6 +7,13 @@ bool MemoryManager::Init()
 {
 	std::cout << "[MM]\n";
 
+	//LoadDriver_fix();
+
+	LoadDriver();
+	StartDriver();
+	StopDriver();
+	UnloadDriver();
+
 	/*if (LoadDriver())
 	{
 		if (!StartDriver())
@@ -30,6 +37,45 @@ bool MemoryManager::Init()
 	
 	processHandle = g_pPM->hProcess;
 	processId = g_pPM->PID;
+
+	return true;
+}
+
+bool MemoryManager::LoadDriver_fix()
+{
+	//ROCESS_INFORMATION ProcessInfo; //This is what we get as an [out] parameter
+	//STARTUPINFO StartupInfo; //This is an [in] parameter
+	//ZeroMemory(&StartupInfo, sizeof(StartupInfo));
+	//StartupInfo.cb = sizeof StartupInfo; //Only compulsory field
+	//if (CreateProcess("c:\\winnt\\notepad.exe", NULL,
+	//	NULL, NULL, FALSE, 0, NULL,
+	//	NULL, &StartupInfo, &ProcessInfo))
+	//{
+	//	WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
+	//	CloseHandle(ProcessInfo.hThread);
+	//	CloseHandle(ProcessInfo.hProcess);
+	//}
+
+
+	SHELLEXECUTEINFO ShExecInfo { 0 };
+	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	ShExecInfo.hwnd = NULL;
+	ShExecInfo.lpVerb = NULL;
+	ShExecInfo.lpFile = L"c:\\MyProgram.exe";
+	ShExecInfo.lpParameters = L"";
+	ShExecInfo.lpDirectory = NULL;
+	ShExecInfo.nShow = SW_SHOW;
+	ShExecInfo.hInstApp = NULL;
+	if (ShellExecuteEx(&ShExecInfo) && ShExecInfo.hProcess != NULL)
+	{
+		WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+	}
+	else
+	{
+		std::cout << "<ShellExecuteEx> Error: " << GetLastError() << '\n';
+		return false;
+	}
 
 	return true;
 }
@@ -163,25 +209,10 @@ bool MemoryManager::LoadDriver()
 	SC_HANDLE hService{ 0 };
 
 	// Establishes a connection to the service control manager on the specified computer.
-	// Opens the specified service control manager database.
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
-	if (hSCManager == NULL)
+	if (!hSCManager)
 	{
-		DWORD error{ GetLastError() };
-
-		if (error == ERROR_ACCESS_DENIED)
-		{
-			std::cout << "<OpenSCManager> The requested access was denied\n";
-			goto CLEANUP;
-		}
-
-		if (error == ERROR_DATABASE_DOES_NOT_EXIST)
-		{
-			std::cout << "<OpenSCManager> The specified database does not exist\n";
-			goto CLEANUP;
-		}
-
-		std::cout << "<OpenSCManager> Error: " << error << '\n';
+		std::cout << "<OpenSCManagerW> Error: " << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -195,68 +226,38 @@ bool MemoryManager::LoadDriver()
 
 		// Remove executable name and append driver name
 		m_DriverPath = exe_path.substr(0, exe_path.find_last_of('\\')) + L"\\kph.sys";
-		std::wcout << L"Driver path: " << m_DriverPath << std::endl;
 	}
 	else
 	{
-		std::cout << "<!> Can't file kph.sys file!\n";
+		std::cout << "<LoadDriver> Can't file kph.sys driver!\n";
 		goto CLEANUP;
 	}
 
 	// Trying to get the handle of the service if it exist
 	hService = OpenServiceW(hSCManager, L"KPH", STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS | SERVICE_START | SERVICE_STOP);
-	// The service of the driver isn't exist so we are trying to create a new one
-	if (hService == NULL)
+	
+	// The driver service has been created before.
+	if (hService)
 	{
-		hService = CreateServiceW(
-			hSCManager,
-			L"KPH",
-			L"KPH", 
-			SERVICE_ALL_ACCESS | SERVICE_START | DELETE | SERVICE_STOP,
-			SERVICE_KERNEL_DRIVER, 
-			SERVICE_DEMAND_START, 
-			SERVICE_ERROR_IGNORE,
-			m_DriverPath.c_str(), 
-			NULL,
-			NULL, 
-			NULL, 
-			NULL, 
-			NULL
-		);
+		std::cout << "The driver service is already created!\n";
+		bLoad = true;
+	}
+	// The service of the driver isn't exist so we will create a new one
+	else
+	{
+		hService = CreateServiceW(hSCManager, L"KPH", L"KPH", SERVICE_ALL_ACCESS | SERVICE_START | DELETE | SERVICE_STOP, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START, SERVICE_ERROR_IGNORE, m_DriverPath.c_str(), NULL, NULL, NULL, NULL, NULL);
 
 		// Can't create service for the driver
-		if (hService == NULL)
-		{
-			DWORD err{ GetLastError() };
-
-			if (err == ERROR_ACCESS_DENIED)
-				std::cout << "<!> The handle to the SCM database does not have the SC_MANAGER_CREATE_SERVICE access right\n";
-
-			if (err == ERROR_DUPLICATE_SERVICE_NAME)
-				std::cout << "<!> The display name already exists in the service control manager database either as a service name or as another display name\n";
-
-			if (err == ERROR_INVALID_HANDLE)
-				std::cout << "<!> The handle to the specified service control manager database is invalid\n";
-
-			if (err == ERROR_SERVICE_EXISTS)
-				std::cout << "<!> The specified service already exists in this database\n";
-
-			if (err == ERROR_SERVICE_MARKED_FOR_DELETE)
-				std::cout << "<!> The specified service already exists in this database and has been marked for deletion\n";
-
-			goto CLEANUP;
-		}
-		else
+		if (hService)
 		{
 			bLoad = true;
 			std::cout << "Created driver service\n";
 		}
-	}
-	// The driver service í created before.
-	else
-	{
-		bLoad = true;
-		std::cout << "The driver service is already created!\n";
+		else
+		{
+			std::cout << "<CreateServiceW> Error: " << GetLastError() << '\n';
+			goto CLEANUP;
+		}
 	}
 	
 CLEANUP:
@@ -271,30 +272,15 @@ CLEANUP:
 
 bool MemoryManager::StartDriver()
 {
-	bool bStart = false;
 	SC_HANDLE hSCManager{ 0 };
 	SC_HANDLE hService{ 0 };
+	bool bStart{ false };
 
 	// Establishes a connection to the service control manager on the specified computer.
-	// Opens the specified service control manager database.
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (hSCManager == NULL)
 	{
-		DWORD error{ GetLastError() };
-
-		if (error == ERROR_ACCESS_DENIED)
-		{
-			std::cout << "<OpenSCManager> The requested access was denied\n";
-			goto CLEANUP;
-		}
-
-		if (error == ERROR_DATABASE_DOES_NOT_EXIST)
-		{
-			std::cout << "<OpenSCManager> The specified database does not exist\n";
-			goto CLEANUP;
-		}
-
-		std::cout << "<OpenSCManager> Error: " << error << '\n';
+		std::cout << "<OpenSCManagerW> Error: " << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -302,15 +288,7 @@ bool MemoryManager::StartDriver()
 	hService = OpenServiceW(hSCManager, L"KPH", SERVICE_ALL_ACCESS | SERVICE_START | DELETE | SERVICE_STOP);
 	if (!hService)
 	{
-		DWORD error = GetLastError();
-
-		if (error == 1060)
-		{
-			std::cout << "<OpenService> No service found by name";
-			goto CLEANUP;
-		}
-
-		std::cout << "<OpenService> Error: " << error << '\n';
+		std::cout << "<OpenServiceW> Error: " << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -323,76 +301,26 @@ bool MemoryManager::StartDriver()
 	{
 		DWORD err{ GetLastError() };
 
-		if (err == ERROR_SERVICE_ALREADY_RUNNING)
-		{
-			bStart = true;
-			std::cout << "The driver service is already running!\n";
-			goto CLEANUP;
-		}
-
 		if (err == ERROR_INVALID_IMAGE_HASH)
 		{
 			std::cout << "<StartService> Cannot Verify Digital Signature\n";
 			goto CLEANUP;
 		}
 
-		// Error 193
-		if (err == 0xC1)
+		if (err == ERROR_SERVICE_ALREADY_RUNNING)
 		{
-			std::cout << "<StartService> The driver path is invalid!\n";
+			std::cout << "<StartService> The driver service is already running!\n";
+			bStart = true;
 			goto CLEANUP;
 		}
 
-		// Error 183
 		// Cannot create a file when that file already exists.
 		if (err == 0xb7)
 		{
-			bStart = true;
+			std::cout << "<StartService> There is a running driver service with different name\n";
 			m_bUsingAnotherDriverService = true;
-			std::cout << "There is a running driver service with different name.\nNo need to use created service!\n";
+			bStart = true;
 			goto CLEANUP;
-		}
-
-		// Can't start the driver service because it's disabled so we will change the service config
-		if (err == ERROR_SERVICE_DISABLED)
-		{
-			std::cout << "Driver service was created but disabled. Trying to active it\n";
-
-			bool bStatus = ChangeServiceConfigW(
-				hService,
-				SERVICE_NO_CHANGE,
-				SERVICE_DEMAND_START,
-				SERVICE_NO_CHANGE,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL
-			);
-
-			if (!bStatus)
-			{
-				std::cout << "<StartService> Can't change driver service state! Error: " << GetLastError() << '\n';
-				goto CLEANUP;
-			}
-			else
-			{
-				std::cout << "Changed driver service state!\n";
-
-				if (StartServiceW(hService, NULL, NULL))
-				{
-					bStart = true;
-					std::cout << "Started the driver service!\n";
-				}
-				else
-				{
-					std::cout << "<StartService> Still can't start the driver service!\n";
-				}
-
-				goto CLEANUP;
-			}
 		}
 
 		// There is an another error
@@ -412,31 +340,16 @@ CLEANUP:
 
 bool MemoryManager::StopDriver()
 {
-	bool bStopped = false;
 	SC_HANDLE hSCManager{ 0 };
 	SC_HANDLE hService{ 0 };
-	SERVICE_STATUS proc;
+	SERVICE_STATUS proc{ 0 };
+	bool bStopped{ false };
 
 	// Establishes a connection to the service control manager on the specified computer.
-	// Opens the specified service control manager database.
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (hSCManager == NULL)
 	{
-		DWORD error{ GetLastError() };
-
-		if (error == ERROR_ACCESS_DENIED)
-		{
-			std::cout << "<OpenSCManager> The requested access was denied\n";
-			goto CLEANUP;
-		}
-
-		if (error == ERROR_DATABASE_DOES_NOT_EXIST)
-		{
-			std::cout << "<OpenSCManager> The specified database does not exist\n";
-			goto CLEANUP;
-		}
-
-		std::cout << "<OpenSCManager> Error: " << error << '\n';
+		std::cout << "<OpenSCManagerW> Error: " << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -444,23 +357,15 @@ bool MemoryManager::StopDriver()
 	hService = OpenServiceW(hSCManager, L"KPH", SERVICE_ALL_ACCESS | SERVICE_START | DELETE | SERVICE_STOP);
 	if (!hService)
 	{
-		DWORD error = GetLastError();
-
-		if (error == 1060)
-		{
-			std::cout << "<OpenService> No service found by name";
-			goto CLEANUP;
-		}
-
-		std::cout << "<OpenService> Error: " << error << '\n';
+		std::cout << "<OpenServiceW> Error: " << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
-	// Sends a control code to a service
+	// Sends stop control code to driver service
 	if (ControlService(hService, SERVICE_CONTROL_STOP, &proc))
 	{
-		bStopped = true;
 		std::cout << "Stopped driver service\n";
+		bStopped = true;
 	}
 	else
 	{
@@ -469,10 +374,10 @@ bool MemoryManager::StopDriver()
 	}
 
 CLEANUP:
-	if (hSCManager != NULL)
+	if (hSCManager)
 		CloseServiceHandle(hSCManager);
 
-	if (hService != NULL)
+	if (hService)
 		CloseServiceHandle(hService);
 
 	return bStopped;
@@ -480,30 +385,15 @@ CLEANUP:
 
 bool MemoryManager::UnloadDriver()
 {
-	bool bUnload = false;
 	SC_HANDLE hSCManager{ 0 };
 	SC_HANDLE hService{ 0 };
+	bool bUnload{ false };
 
 	// Establishes a connection to the service control manager on the specified computer.
-	// Opens the specified service control manager database.
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (hSCManager == NULL)
 	{
-		DWORD error{ GetLastError() };
-
-		if (error == ERROR_ACCESS_DENIED)
-		{
-			std::cout << "<OpenSCManager> The requested access was denied\n";
-			goto CLEANUP;
-		}
-
-		if (error == ERROR_DATABASE_DOES_NOT_EXIST)
-		{
-			std::cout << "<OpenSCManager> The specified database does not exist\n";
-			goto CLEANUP;
-		}
-
-		std::cout << "<OpenSCManager> Error: " << error << '\n';
+		std::cout << "<OpenSCManagerW> Error: " << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -511,22 +401,18 @@ bool MemoryManager::UnloadDriver()
 	hService = OpenServiceW(hSCManager, L"KPH", SERVICE_ALL_ACCESS | SERVICE_START | DELETE | SERVICE_STOP);
 	if (!hService)
 	{
-		DWORD error = GetLastError();
-
-		if (error == 1060)
-		{
-			std::cout << "<!> No service found by name";
-			goto CLEANUP;
-		}
-
-		std::cout << "<OpenService> Error: " << error << '\n';
+		std::cout << "<OpenServiceW> Error: " << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
+	// Marks driver service for deletion.
+	// The driver service is not removed until
+	// all open handles to the service have been closed
+	// by CloseServiceHandle + CloseHandle.
 	if (DeleteService(hService))
 	{
-		bUnload = true;
 		std::cout << "Deleted driver service\n";
+		bUnload = true;
 	}
 	else
 	{
@@ -534,11 +420,14 @@ bool MemoryManager::UnloadDriver()
 	}
 
 CLEANUP:
-	if (hSCManager != NULL)
+	if (hSCManager)
 		CloseServiceHandle(hSCManager);
 
-	if (hService != NULL)
+	if (hService)
 		CloseServiceHandle(hService);
+
+	if (m_hDriver)
+		CloseHandle(m_hDriver);
 
 	return bUnload;
 }

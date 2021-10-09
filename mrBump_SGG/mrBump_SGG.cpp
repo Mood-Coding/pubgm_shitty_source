@@ -295,11 +295,31 @@ void UpdateValue()
 
 int main()
 {
-    if (!g_pD3D->SetupHWND())
-	{
-		std::cin.get();
-        return 0;
-    }
+	// Choose emulator
+	// Find Smartgaga HWND
+	//HWND sggHWND = FindWindow(L"TitanRenderWindowClass", NULL);
+	//sggHWND = FindWindowEx(sggHWND, 0, L"TitanOpenglWindowClass", NULL);
+	//if (sggHWND)
+	//{
+	//	g_pPM->emuProcessName = L"AndroidProcess.exe";
+	//}
+
+	//// Find Gameloop HWND
+	//HWND glHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
+	//glHWND = FindWindowEx(glHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
+	//if (glHWND)
+	//{
+	//	g_pPM->emuProcessName = L"aow_exe.exe";
+	//}
+
+	//std::cout << "<!> Invalid HWND. Can't find emulator window\n";
+
+	int idBtn{ MessageBox(NULL, L"Smartgaga?\nIf no then Gameloop", L"Choose emulator", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON1 | MB_TOPMOST) };
+
+	if (idBtn == IDYES)
+		g_pPM->emuProcessName = L"AndroidProcess.exe";
+	else if (idBtn == IDNO)
+		g_pPM->emuProcessName = L"aow_exe.exe";
 
 	if (!g_pPM->Init())
 	{
@@ -308,6 +328,12 @@ int main()
 	}
 
 	if (!g_pMM->Init())
+	{
+		std::cin.get();
+		return 0;
+	}
+
+	if (!g_pD3D->SetupHWND())
 	{
 		std::cin.get();
 		return 0;
