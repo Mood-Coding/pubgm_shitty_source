@@ -28,7 +28,6 @@ public:
 	HANDLE m_hDriver = nullptr;
 
 	HANDLE processHandle = NULL;
-	int processId = 0;
 
 	bool m_bUsingAnotherDriverService = false;
 	PSIZE_T NumberOfBytes = nullptr;
@@ -37,7 +36,7 @@ public:
 
 	bool Init();
 
-	bool ConnectToDriver_fix(std::string m_strDeviceName);
+	bool ConnectToDriver(std::string m_strDeviceName);
 
 	bool LoadDriver_fix();
 

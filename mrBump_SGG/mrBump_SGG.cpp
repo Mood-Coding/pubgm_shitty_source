@@ -295,25 +295,6 @@ void UpdateValue()
 
 int main()
 {
-	// Choose emulator
-	// Find Smartgaga HWND
-	//HWND sggHWND = FindWindow(L"TitanRenderWindowClass", NULL);
-	//sggHWND = FindWindowEx(sggHWND, 0, L"TitanOpenglWindowClass", NULL);
-	//if (sggHWND)
-	//{
-	//	g_pPM->emuProcessName = L"AndroidProcess.exe";
-	//}
-
-	//// Find Gameloop HWND
-	//HWND glHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
-	//glHWND = FindWindowEx(glHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
-	//if (glHWND)
-	//{
-	//	g_pPM->emuProcessName = L"aow_exe.exe";
-	//}
-
-	//std::cout << "<!> Invalid HWND. Can't find emulator window\n";
-
 	int idBtn{ MessageBox(NULL, L"Smartgaga?\nIf no then Gameloop", L"Choose emulator", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON1 | MB_TOPMOST) };
 
 	if (idBtn == IDYES)
@@ -323,25 +304,25 @@ int main()
 
 	if (!g_pPM->Init())
 	{
-		std::cin.get();
+		system("pause");
 		return 0;
 	}
 
 	if (!g_pMM->Init())
 	{
-		std::cin.get();
+		system("pause");
 		return 0;
 	}
 
 	if (!g_pD3D->SetupHWND())
 	{
-		std::cin.get();
+		system("pause");
 		return 0;
 	}
 
 	if (!g_pESP->Init())
 	{
-		std::cin.get();
+		system("pause");
 		return 0;
 	}
 	
@@ -468,6 +449,7 @@ int main()
 		std::this_thread::sleep_until(next_frame); // Wait for end of frame
 	}
 
+EXIT:
 	std::cout << "<Exit> Exitting!\n";
 
 	ImGui_ImplDX9_Shutdown();
@@ -481,8 +463,8 @@ int main()
 
 	// It will delete the driver service created by cheat
 	// It won't delete other running kprocesshacker driver service
-	/*g_pMM->UnloadDriver();*/
+	g_pMM->UnloadDriver();
 
-	/*std::cin.get();*/
+	system("pause");
 	return 0;
 }

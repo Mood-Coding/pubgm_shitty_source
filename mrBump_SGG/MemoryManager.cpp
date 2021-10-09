@@ -7,24 +7,10 @@ bool MemoryManager::Init()
 {
 	std::cout << "[MM]\n";
 
-	//LoadDriver_fix();
-
-	LoadDriver();
-	StartDriver();
-	StopDriver();
-	UnloadDriver();
-
-	/*if (LoadDriver())
-	{
-		if (!StartDriver())
-			return false;
-	}
-	else
-	{
-		return false;
-	}*/
+	if (!(LoadDriver() && StartDriver()))
+		false;
 	
-	bool bStatus = ConnectToDriver_fix("\\Device\\KProcessHacker2");
+	bool bStatus{ ConnectToDriver("\\Device\\KProcessHacker2") };
 	if (m_hDriver && bStatus)
 	{
 		std::cout << "Connected to driver 0x" << std::hex << m_hDriver << '\n';
@@ -36,7 +22,7 @@ bool MemoryManager::Init()
 	}
 	
 	processHandle = g_pPM->hProcess;
-	processId = g_pPM->PID;
+	//PID = g_pPM->PID;
 
 	return true;
 }
@@ -80,7 +66,7 @@ bool MemoryManager::LoadDriver_fix()
 	return true;
 }
 
-bool MemoryManager::ConnectToDriver_fix(std::string m_strDeviceName)
+bool MemoryManager::ConnectToDriver(std::string m_strDeviceName)
 {
 	std::wstring strObjectName;
 	strObjectName.assign(m_strDeviceName.begin(), m_strDeviceName.end());
