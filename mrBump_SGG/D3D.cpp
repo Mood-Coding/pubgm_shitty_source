@@ -470,6 +470,29 @@ void D3D::MenuRender()
 			ImGui::SliderInt("Sensitivity", &Settings::Aimbot::sensitivity, 2, 30);
 			ImGui::SliderInt("Delay between every mouse_event time ", &Settings::Aimbot::delayBetweenEveryAimbotTime, 1, 100);
 			ImGui::Combo("Bone", &Settings::Aimbot::selectedBone, Settings::Aimbot::bone);
+
+			switch (Settings::Aimbot::selectedBone)
+			{
+				case(0):
+				{
+					Settings::Aimbot::targetBone = BONE_HEAD;
+					break;
+				}
+				case(1):
+				{
+					break;
+				}
+				case(2):
+				{
+					Settings::Aimbot::targetBone = BONE_CHEST;
+					break;
+				}
+				case(3):
+				{
+					Settings::Aimbot::targetBone = BONE_PELVIS;
+					break;
+				}
+			}
 		}
 
 		if (Settings::tab == SETTINGS_TAB_ID)

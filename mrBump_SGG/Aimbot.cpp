@@ -168,7 +168,7 @@ void AimbotLoop(bool* g_bActive)
 			}
 
 			// Avoid shaking when very near to aim position
-			if (abs(aimY) < 1.5f)
+			if (abs(aimY) < 1.0f)
 				aimY = 0.0f;
 		}
 
