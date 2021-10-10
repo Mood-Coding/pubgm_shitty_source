@@ -19,10 +19,10 @@ std::string Utils::RandomString(size_t length) {
     return str;
 }
 
-std::wstring Utils::StrToWStr(const std::string &s) {
-    int len;
-    int slength = (int)s.length() + 1;
-    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+std::wstring Utils::StrToWStr(const std::string &s)
+{
+    int slength{ (int)s.length() + 1 };
+    int len{ MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0) };
     wchar_t* buf = new wchar_t[len];
     MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
     std::wstring r(buf);
@@ -58,12 +58,12 @@ bool Utils::is_digits(const std::string& str)
     return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
-float Utils::DistBetween2Vector2D(SDK::FVector2D v1, SDK::FVector2D v2)
+float Utils::DistBetween2Vector2D(const SDK::FVector2D& v1, const SDK::FVector2D& v2)
 {
     return (float)sqrt(pow(v2.X - v1.X, 2) + pow(v2.Y - v1.Y, 2));
 }
 
-float Utils::DistBetween2Vector3D(SDK::FVector v1, SDK::FVector v2)
+float Utils::DistBetween2Vector3D(const SDK::FVector& v1, const SDK::FVector& v2)
 {
     return (float)sqrt( pow(v2.X - v1.X, 2) + pow(v2.Y - v1.Y, 2) + pow(v2.Z - v1.Z, 2) );
 }

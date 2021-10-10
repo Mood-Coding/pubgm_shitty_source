@@ -58,7 +58,8 @@ public:
 	
 	void GetImGuiBackgroundDrawList();
 
-	void DrawLine(float x1, float y1, float x2, float y2, unsigned int color, float thickness = 1);
+	void DrawLine(const float& x1, const float& y1, const float& x2, const float& y2, const unsigned int& color, float thickness = 1);
+	void DrawLine(const ImVec2& pos1, const ImVec2& pos2, const unsigned int& color, float thickness = 1);
 
 	void DrawRect(float x, float y, float width, float height, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
 	void DrawRect(ImVec2 topleft, ImVec2 botright, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
@@ -72,7 +73,7 @@ public:
 	void DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow);
 	void DrawString(float x, float y, unsigned int color, const char* txt, bool bShadow);
 
-	void DrawCircle(float x, float y, float radius, unsigned int Color);
+	void DrawCircle(const float& x, const float& y, const float& radius, const unsigned int& Color);
 
 	RECT calcTextRect(LPD3DXFONT pFont, std::string txt);
 

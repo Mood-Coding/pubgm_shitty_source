@@ -208,14 +208,19 @@ void D3D::GetImGuiBackgroundDrawList()
 	imGuiBackgroundDrawList = ImGui::GetBackgroundDrawList();
 }
 
-void D3D::DrawCircle(float x, float y, float radius, unsigned int Color)
+void D3D::DrawCircle(const float& x, const float& y, const float& radius, const unsigned int& Color)
 {
 	imGuiBackgroundDrawList->AddCircle(ImVec2(x, y), radius, Color);
 }
 
-void D3D::DrawLine(float x1, float y1, float x2, float y2, unsigned int color, float thickness)
+void D3D::DrawLine(const float& x1, const float& y1, const float& x2, const float& y2, const unsigned int& color, float thickness)
 {
 	imGuiBackgroundDrawList->AddLine(ImVec2(x1, y1), ImVec2(x2, y2), color, thickness);
+}
+
+void D3D::DrawLine(const ImVec2& pos1, const ImVec2& pos2, const unsigned int& color, float thickness)
+{
+	imGuiBackgroundDrawList->AddLine(pos1, pos2, color, thickness);
 }
 
 void D3D::DrawRect(float x, float y, float width, float height, unsigned int color, float rounding, float thickness)

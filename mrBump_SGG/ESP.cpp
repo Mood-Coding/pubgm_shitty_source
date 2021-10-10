@@ -440,7 +440,7 @@ void ESP::DrawLootbox()
 	}
 }
 
-std::string ESP::GetActorName(DWORD actorID)
+std::string ESP::GetActorName(const DWORD& actorID)
 {
 	DWORD FNamePtr{ g_pMM->read<DWORD>(Names + (actorID / 0x4000) * 4) };
 	DWORD FName{ g_pMM->read<DWORD>(FNamePtr + 4 * (actorID % 0x4000)) };
@@ -451,11 +451,11 @@ std::string ESP::GetActorName(DWORD actorID)
 	// minus 1 : for null terminated. If not string will end with |||||||||||||||||| 
 	g_pMM->readMemory((PVOID)FName, &name, sizeof(name)-1);
 
-	std::string result = std::string(name);
-	return result;
+	//std::string result = std::string(name);
+	return std::string(name);
 }
 
-std::wstring ESP::GetPlayerName(DWORD nameAddr)
+std::wstring ESP::GetPlayerName(const DWORD& nameAddr)
 {
 	TCHAR p[16]{};
 	g_pMM->readMemory((PVOID)nameAddr, &p, sizeof(p) - 1);

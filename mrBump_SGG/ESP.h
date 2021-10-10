@@ -244,8 +244,8 @@ public:
 
 	void GetBoxItems(BoxData* boxData);
 
-	std::string GetActorName(DWORD actorID);
-	std::wstring GetPlayerName(DWORD nameAddr);
+	std::string GetActorName(const DWORD& actorID);
+	std::wstring GetPlayerName(const DWORD& nameAddr);
 
 	bool GetPlayerBonePos(Character* character);
 

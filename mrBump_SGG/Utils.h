@@ -24,8 +24,8 @@ namespace Utils
 
     bool is_digits(const std::string& str);
 
-    float DistBetween2Vector2D(SDK::FVector2D v1, SDK::FVector2D v2);
-    float DistBetween2Vector3D(SDK::FVector v1, SDK::FVector v2);
+    float DistBetween2Vector2D(const SDK::FVector2D& v1, const SDK::FVector2D& v2);
+    float DistBetween2Vector3D(const SDK::FVector& v1, const SDK::FVector& v2);
 
     void DumpActorName();
 
