@@ -469,6 +469,7 @@ void D3D::MenuRender()
 			ImGui::Checkbox("Toggle", &Settings::Aimbot::bToggle);
 			ImGui::SliderInt("Sensitivity", &Settings::Aimbot::sensitivity, 2, 30);
 			ImGui::SliderInt("Delay between every mouse_event time ", &Settings::Aimbot::delayBetweenEveryAimbotTime, 1, 100);
+			ImGui::Combo("Bone", &Settings::Aimbot::selectedBone, Settings::Aimbot::bone);
 		}
 
 		if (Settings::tab == SETTINGS_TAB_ID)
