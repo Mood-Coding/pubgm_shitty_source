@@ -5,17 +5,6 @@
 bool g_bDoneReadMem = false;
 bool g_bActive = true;
 
-std::array<int, MAX_ACTORS> ActorArray;
-
-//std::vector<Character> tmpCharacters;
-//std::vector<Vehicle> tmpVehicles;
-//std::vector<Item> tmpItems;
-//std::vector<Airdrop> tmpAirDrops;
-//std::vector<BoxData> tmpLootboxes;
-//std::vector<BoxData> tmpAirDropDatas;
-//
-//std::vector<UnsortedActor> tmpUnsortedActors;
-
 bool bInGame = false;
 
 void inline AddToCharacters(const DWORD& currActorAddr, const SDK::FVector& currActorPos)

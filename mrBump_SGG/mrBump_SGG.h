@@ -10,6 +10,8 @@
 #include "MemoryManager.h"
 #include "ProcessManager.h"
 
+std::array<int, MAX_ACTORS> ActorArray;
+
 std::vector<Character> tmpCharacters;
 std::vector<Vehicle> tmpVehicles;
 std::vector<Item> tmpItems;
