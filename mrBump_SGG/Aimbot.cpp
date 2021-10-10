@@ -93,14 +93,11 @@ void Aimbot::FindBestTarget(Character* curTarget)
 void Aimbot::GetTmpBestTarget()
 {
 	AimPos = TargetScPredictedPos;
-	//character = tmpCharacter;
 }
 
 void Aimbot::ResetTmpNearestTargetDist2Cross()
 {
 	NearestDist2Cross = 9999.0f;
-	/*TargetScPredictedPos.X = 0.0f;
-	TargetScPredictedPos.Y = 0.0f;*/
 }
 
 void AimbotLoop(bool* g_bActive)
@@ -127,7 +124,6 @@ void AimbotLoop(bool* g_bActive)
 		{
 			if (g_pAim->AimPos.X > half_width)
 			{
-				// TODO dao nguoc hang tu
 				aimX = -(half_width - g_pAim->AimPos.X);
 				aimX /= Settings::Aimbot::sensitivity;
 
@@ -142,10 +138,6 @@ void AimbotLoop(bool* g_bActive)
 				if (aimX + half_width < 0.0f)
 					aimX = 0.0f;
 			}
-
-			// Avoid shaking when very near to aim position
-			/*if (abs(aimX) < 0.7f)
-				aimX = 0.0f;*/
 		}
 
 		if (g_pAim->AimPos.Y != 0.0f)
@@ -166,10 +158,6 @@ void AimbotLoop(bool* g_bActive)
 				if (aimY + half_height < 0.0f)
 					aimY = 0.0f;
 			}
-
-			// Avoid shaking when very near to aim position
-			/*if (abs(aimY) < 0.7f)
-				aimY = 0.0f;*/
 		}
 
 		// TODO FOV check

@@ -303,29 +303,6 @@ void ESP::DrawPlayers()
 			zAssist = 1.30f;
 		else zAssist = 1.35f;
 
-		/*float distanceMeter = distance / 100.0f;
-		float zAssist = 1.0f;
-		if (distanceMeter < 50.f)
-			zAssist = 1.8f;
-		else if (distanceMeter < 100.f)
-			zAssist = 1.72f;
-		else if (distanceMeter < 150.f)
-			zAssist = 1.23f;
-		else if (distanceMeter < 200.f)
-			zAssist = 1.24f;
-		else if (distanceMeter < 250.f)
-			zAssist = 1.25f;
-		else if (distanceMeter < 300.f)
-			zAssist = 1.26f;
-		else if (distanceMeter < 350.f)
-			zAssist = 1.27f;
-		else if (distanceMeter < 400.f)
-			zAssist = 1.28f;
-		else if (distanceMeter < 450.f)
-			zAssist = 1.29f;
-		else if (distanceMeter < 500.f)
-			zAssist = 1.30f;*/
-
 		std::cout << zAssist << '\n';
 
 		// If distance is higher than 80000 so there is an error in tmpCharacter.GAME_BONE_HEAD or PawnHeadBoneGamePos
@@ -346,10 +323,10 @@ void ESP::DrawPlayers()
 				PredictedEnemyGamePos.Y += ComponentVelocity.Y * BulletTravelTime; // S = v * t
 				PredictedEnemyGamePos.Z += ComponentVelocity.Z * BulletTravelTime * zAssist + 0.5f * g_pAim->GRAVITY * BulletTravelTime * BulletTravelTime /** 5.0f*/; // S = v * t
 			}
-			//else
-			//{
-			//	PredictedEnemyGamePos.Z += 0 /*BulletTravelTime **/ /*zAssist * g_pAim->GRAVITY*/ /** BulletTravelTime * BulletTravelTime*/ /** 5.0f*/;
-			//}
+			else
+			{
+				PredictedEnemyGamePos.Z *= zAssist;
+			}
 
 			// Get predicted enemy bone position on screen
 			g_pVMM->GameToScreenBone(PredictedEnemyGamePos, g_pAim->TargetScPredictedPos);
