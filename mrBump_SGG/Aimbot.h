@@ -12,19 +12,18 @@ void AimbotLoop(bool* g_bActive);
 class Aimbot
 {
 public:
-	//float nearestDist2Cross = 9999.0f;
-	SDK::FVector2D targetPos{};
-	Character character;
+	SDK::FVector TargetGamePos;
+	SDK::FVector2D TargetScPos;
+	SDK::FVector2D TargetScPredictedPos;
+	Character TargetCharacter;
 
-	float tmpNearestDist2Cross = 9999.0f;
-	SDK::FVector2D tmpTargetPos{};
-	Character tmpCharacter;
+	SDK::FVector2D AimPos{};
 
-	float PawnBulletFireSpeed = 0.0f;
+	float NearestDist2Cross = 9999.0f;
+
+	float PawnBulletFireSpeed{ 0.0f };
 	
-	const float GRAVITY = 588.6f;
-
-	void MoveMouse(long x,long y);
+	const float GRAVITY{ 5.72f };
 
 	void FindBestTarget(Character* character);
 

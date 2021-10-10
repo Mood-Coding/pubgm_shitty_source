@@ -70,6 +70,8 @@ namespace Settings
 		extern int targetBone;
 		extern int sensitivity;
 		extern int delayBetweenEveryAimbotTime;
+		extern const char* bone;
+		extern int selectedBone;
 	}
 
 	extern bool bFightMode;
