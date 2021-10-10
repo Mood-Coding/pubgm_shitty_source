@@ -23,7 +23,7 @@ public:
 
 	float PawnBulletFireSpeed{ 0.0f };
 	
-	const float GRAVITY{ 5.72f };
+	const float GRAVITY{ 5.886f };
 
 	void FindBestTarget(Character* character);
 
