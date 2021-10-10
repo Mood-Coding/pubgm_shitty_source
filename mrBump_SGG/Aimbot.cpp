@@ -6,8 +6,8 @@ Aimbot* g_pAim = new Aimbot();
 
 void Aimbot::FindBestTarget(Character* curTarget)
 {
-	SDK::FVector2D posToCheck;
-	SDK::FVector posToPredict;
+	SDK::FVector2D posToCheck{};
+	SDK::FVector posToPredict{};
 
 	switch (Settings::Aimbot::targetBone)
 	{
@@ -99,8 +99,8 @@ void Aimbot::GetTmpBestTarget()
 void Aimbot::ResetTmpNearestTargetDist2Cross()
 {
 	NearestDist2Cross = 9999.0f;
-	TargetScPredictedPos.X = 0.0f;
-	TargetScPredictedPos.Y = 0.0f;
+	/*TargetScPredictedPos.X = 0.0f;
+	TargetScPredictedPos.Y = 0.0f;*/
 }
 
 void AimbotLoop(bool* g_bActive)

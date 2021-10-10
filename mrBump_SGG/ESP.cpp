@@ -314,9 +314,12 @@ void ESP::DrawPlayers()
 
 			// The distance that enemy will move in BulletTravelTime duration
 			SDK::FVector PredictedEnemyGamePos{ g_pAim->TargetGamePos };
-			PredictedEnemyGamePos.X += ComponentVelocity.X * BulletTravelTime; // S = v * t
-			PredictedEnemyGamePos.Y += ComponentVelocity.Y * BulletTravelTime; // S = v * t
-			PredictedEnemyGamePos.Z += ComponentVelocity.Z * BulletTravelTime * zAssist + 0.5f * g_pAim->GRAVITY * BulletTravelTime * BulletTravelTime; // S = v * t
+			if (PredictedEnemyGamePos.X != 0 && PredictedEnemyGamePos.Y != 0 && PredictedEnemyGamePos.Z != 0)
+			{
+				PredictedEnemyGamePos.X += ComponentVelocity.X * BulletTravelTime; // S = v * t
+				PredictedEnemyGamePos.Y += ComponentVelocity.Y * BulletTravelTime; // S = v * t
+				PredictedEnemyGamePos.Z += ComponentVelocity.Z * BulletTravelTime * zAssist + 0.5f * g_pAim->GRAVITY * BulletTravelTime * BulletTravelTime; // S = v * t
+			}
 
 			// Get predicted enemy bone position on screen
 			g_pVMM->GameToScreenBone(PredictedEnemyGamePos, g_pAim->TargetScPredictedPos);
