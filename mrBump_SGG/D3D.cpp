@@ -480,14 +480,10 @@ void D3D::MenuRender()
 				}
 				case(1):
 				{
-					break;
-				}
-				case(2):
-				{
 					Settings::Aimbot::targetBone = BONE_CHEST;
 					break;
 				}
-				case(3):
+				case(2):
 				{
 					Settings::Aimbot::targetBone = BONE_PELVIS;
 					break;

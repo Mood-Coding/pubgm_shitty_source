@@ -280,7 +280,7 @@ void ESP::DrawPlayers()
 		// Distance in game position between: Pawn head bone vs Enemy bone
 		float distance{ Utils::DistBetween2Vector3D(PawnHeadBoneGamePos, g_pAim->TargetGamePos) };
 		float zAssist{ 1.0f };
-		//std::cout << distance << '\n'; 
+		
 		if (distance < 5000.f)
 			zAssist = 1.8f;
 		else if (distance < 10000.f)
@@ -302,8 +302,6 @@ void ESP::DrawPlayers()
 		else if (distance < 50000.f)
 			zAssist = 1.30f;
 		else zAssist = 1.35f;
-
-		std::cout << zAssist << '\n';
 
 		// If distance is higher than 80000 so there is an error in tmpCharacter.GAME_BONE_HEAD or PawnHeadBoneGamePos
 		if (distance < 80000.0f)
