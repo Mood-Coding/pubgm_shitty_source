@@ -336,7 +336,7 @@ int main()
 		g_pPM->emuProcessName = L"aow_exe.exe";
 
 	if (!InitCheat())
-		return 0;
+		return false;
 
 	// Avoid reallocation
 	tmpAirDrops.reserve(20);
@@ -469,9 +469,9 @@ int main()
 
 	g_pD3D->CleanupDeviceD3D();
 
-	g_pMM->StopDriver();
-	g_pMM->UnloadDriver();
+	/*g_pMM->StopDriver();
+	g_pMM->UnloadDriver();*/
 
 	system("pause");
-	return 0;
+  	return 0;
 }

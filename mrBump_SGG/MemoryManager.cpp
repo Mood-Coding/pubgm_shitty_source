@@ -7,8 +7,8 @@ bool MemoryManager::Init()
 {
 	std::cout << "[MM]\n";
 
-	if (!(LoadDriver() && StartDriver()))
-		return false;
+	/*if (!(LoadDriver() && StartDriver()))
+		return false;*/
 	
 	bool bStatus{ ConnectToDriver("\\Device\\KProcessHacker2") };
 	if (m_hDriver && bStatus)
@@ -157,7 +157,7 @@ bool MemoryManager::LoadDriver()
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (!hSCManager)
 	{
-		std::cout << "<OpenSCManagerW> Error: " << GetLastError() << '\n';
+		std::cout << "<OpenSCManagerW> Error: " << std::dec << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -179,7 +179,7 @@ bool MemoryManager::LoadDriver()
 	}
 
 	// Trying to get the handle of the service if it exist
-	hService = OpenServiceW(hSCManager, L"KPH", STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG | SERVICE_QUERY_STATUS | SERVICE_START | SERVICE_STOP);
+	hService = OpenServiceW(hSCManager, L"KPH", SERVICE_CHANGE_CONFIG | SERVICE_START | SERVICE_STOP);
 	
 	// The driver service has been created before.
 	if (hService)
@@ -200,7 +200,7 @@ bool MemoryManager::LoadDriver()
 		}
 		else
 		{
-			std::cout << "<CreateServiceW> Error: " << GetLastError() << '\n';
+			std::cout << "<CreateServiceW> Error: " << std::dec << GetLastError() << '\n';
 			goto CLEANUP;
 		}
 	}
@@ -224,7 +224,7 @@ bool MemoryManager::StartDriver()
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (hSCManager == NULL)
 	{
-		std::cout << "<OpenSCManagerW> Error: " << GetLastError() << '\n';
+		std::cout << "<OpenSCManagerW> Error: " << std::dec << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -232,7 +232,7 @@ bool MemoryManager::StartDriver()
 	hService = OpenServiceW(hSCManager, L"KPH", SERVICE_ALL_ACCESS | SERVICE_START | DELETE | SERVICE_STOP);
 	if (!hService)
 	{
-		std::cout << "<OpenServiceW> Error: " << GetLastError() << '\n';
+		std::cout << "<OpenServiceW> Error: " << std::dec << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -267,7 +267,7 @@ bool MemoryManager::StartDriver()
 		}
 
 		// There is an another error
-		std::cout << "<StartService> Error: " << err << '\n';
+		std::cout << "<StartService> Error: " << std::dec << err << '\n';
 		goto CLEANUP;
 	}
 
@@ -284,7 +284,7 @@ CLEANUP:
 void MemoryManager::StopDriver()
 {
 	// The driver service created by cheat is not running so we don't need to stop it
-	if (m_bUsingAnotherService)
+	if (m_bUsingAnotherService || !m_bStartedService)
 		return;
 
 	SC_HANDLE hSCManager{ 0 };
@@ -295,7 +295,7 @@ void MemoryManager::StopDriver()
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (hSCManager == NULL)
 	{
-		std::cout << "<OpenSCManagerW> Error: " << GetLastError() << '\n';
+		std::cout << "<OpenSCManagerW> Error: " << std::dec << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -309,9 +309,12 @@ void MemoryManager::StopDriver()
 
 	// Send stop control code to driver service
 	if (ControlService(hService, SERVICE_CONTROL_STOP, &proc))
+	{
 		std::cout << "Stopped driver service\n";
+		m_bStoppedService = true;
+	}
 	else
-		std::cout << "<ControlService> Error: " << GetLastError() << '\n';
+		std::cout << "<ControlService> Error: " << std::dec << GetLastError() << '\n';
 
 CLEANUP:
 	if (hSCManager)
@@ -333,15 +336,15 @@ void MemoryManager::UnloadDriver()
 	hSCManager = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (hSCManager == NULL)
 	{
-		std::cout << "<OpenSCManagerW> Error: " << GetLastError() << '\n';
+		std::cout << "<OpenSCManagerW> Error: " << std::dec << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
 	// Open an existing driver service
-	hService = OpenServiceW(hSCManager, L"KPH", SERVICE_ALL_ACCESS | SERVICE_START | DELETE | SERVICE_STOP);
+	hService = OpenServiceW(hSCManager, L"KPH", SERVICE_CHANGE_CONFIG | DELETE | SERVICE_STOP);
 	if (!hService)
 	{
-		std::cout << "<OpenServiceW> Error: " << GetLastError() << '\n';
+		std::cout << "<OpenServiceW> Error: " << std::dec << GetLastError() << '\n';
 		goto CLEANUP;
 	}
 
@@ -351,7 +354,7 @@ void MemoryManager::UnloadDriver()
 	if (DeleteService(hService))
 		std::cout << "Deleted driver service\n";
 	else
-		std::cout << "<DeleteService> Error: " << GetLastError << '\n';
+		std::cout << "<DeleteService> Error: " << std::dec << GetLastError() << '\n';
 
 CLEANUP:
 	if (hSCManager)

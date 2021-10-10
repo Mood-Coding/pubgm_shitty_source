@@ -23,6 +23,7 @@ private:
 
 	bool m_bLoadedService{ false };
 	bool m_bStartedService{ false };
+	bool m_bStoppedService{ false };
 	bool m_bUsingAnotherService{ false };
 
 public:
