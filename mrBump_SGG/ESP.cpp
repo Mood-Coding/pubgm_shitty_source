@@ -357,16 +357,6 @@ void ESP::DrawPlayers()
 	g_pAim->ResetTmpNearestTargetDist2Cross();
 }
 
-void ESP::DrawUnsortedActors()
-{
-	for (int i = 0; i < UnsortedActors.size(); ++i)
-	{
-		g_pVMM->WorldToScreen(UnsortedActors[i].Position, UnsortedActors[i].PositionOnSc, UnsortedActors[i].distance);
-
-		g_pD3D->DrawString(UnsortedActors[i].PositionOnSc.X, UnsortedActors[i].PositionOnSc.Y, PINK(255), UnsortedActors[i].ActorName, 18, false);
-	}
-}
-
 void ESP::DrawAirDrop()
 {
 	for (int i = 0; i < Airdrops.size(); ++i)
@@ -456,6 +446,17 @@ void ESP::DrawLootbox()
 	}
 }
 
+void ESP::DrawUnsortedActors()
+{
+	for (int i = 0; i < UnsortedActors.size(); ++i)
+	{
+		if (!g_pVMM->WorldToScreen(UnsortedActors[i].Position, UnsortedActors[i].PositionOnSc, UnsortedActors[i].distance))
+			continue;
+
+		g_pD3D->DrawString(UnsortedActors[i].PositionOnSc.X, UnsortedActors[i].PositionOnSc.Y, PINK(255), UnsortedActors[i].ActorName, g_pD3D->max_text_size, false);
+	}
+}
+
 std::string ESP::GetActorName(const DWORD& actorID)
 {
 	DWORD FNamePtr{ g_pMM->read<DWORD>(Names + (actorID / 0x4000) * 4) };
@@ -467,7 +468,6 @@ std::string ESP::GetActorName(const DWORD& actorID)
 	// minus 1 : for null terminated. If not string will end with |||||||||||||||||| 
 	g_pMM->readMemory((PVOID)FName, &name, sizeof(name)-1);
 
-	//std::string result = std::string(name);
 	return std::string(name);
 }
 
@@ -502,6 +502,21 @@ void ESP::DrawPlayerBone(Character* character, const unsigned int &color)
 	g_pD3D->DrawLine(character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, character->BONE_L_FOOT.X, character->BONE_L_FOOT.Y, color, 1.2f);
 	g_pD3D->DrawLine(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, color, 1.2f);
 }
+
+int ESP::Bones[11]
+{
+	BONE_HEAD,
+	BONE_CHEST,
+	BONE_PELVIS,
+	BONE_L_ELBOW,
+	BONE_L_WRIST,
+	BONE_R_ELBOW,
+	BONE_R_WRIST,
+	BONE_L_KNEE,
+	BONE_L_FOOT,
+	BONE_R_KNEE,
+	BONE_R_FOOT
+};
 
 bool ESP::GetPlayerBonePos(Character* character)
 {
@@ -595,20 +610,59 @@ bool ESP::GetPlayerBonePos(Character* character)
 	return true;
 }
 
-int ESP::Bones[11]
+// TODO reformat void ESP::GetBoxItems(BoxData* boxData)
+void ESP::GetBoxItems(BoxData* boxData)
 {
-	BONE_HEAD,
-	BONE_CHEST,
-	BONE_PELVIS,
-	BONE_L_ELBOW,
-	BONE_L_WRIST,
-	BONE_R_ELBOW,
-	BONE_R_WRIST,
-	BONE_L_KNEE,
-	BONE_L_FOOT,
-	BONE_R_KNEE,
-	BONE_R_FOOT
-};
+	// Class: PickUpListWrapperActor.PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
+	DWORD PickUpDataList{ g_pMM->read<DWORD>(boxData->address + PICKUPDATALIST) };
+	int itemCount{ g_pMM->read<int>(boxData->address + PICKUPDATALIST + 0x4) }; // It's right before PickUpDataList
+
+	// Copy pasta :D dont know why
+	if (itemCount > 60)
+		itemCount = 60;
+
+	for (DWORD itemAddr = PickUpDataList; itemAddr < PickUpDataList + itemCount * 0x30; itemAddr += 0x30)
+	{
+		//Class: PickUpItemData
+		//Class: ItemDefineID //ItemDefineID ID;//[Offset: 0x0, Size: 24]
+			//int Type;//[Offset: 0x0, Size: 4]
+		int TypeSpecificID{ g_pMM->read<int>(itemAddr + 0x4) }; ///[Offset: 0x4, Size: 4]
+		//bool bValidItem;//(ByteOffset: 0, ByteMask: 1, FieldMask: 255)[Offset: 0x8, Size: 1]
+		//bool bValidInstance;//(ByteOffset: 0, ByteMask: 1, FieldMask: 255)[Offset: 0x9, Size: 1]
+		//uint64 InstanceID;//[Offset: 0x10, Size: 8]
+	//int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
+	//BattleItemAdditionalData[] AdditionalDataList;//[Offset: 0x1c, Size: 12]
+	//int InstanceID;//[Offset: 0x28, Size: 4]
+
+		if (TypeSpecificID > 0)
+		{
+			int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
+			if (Count == 0)
+				continue;
+
+			std::string txt{ BoxItemDisplayName[TypeSpecificID] };
+			if (txt == "")
+			{
+				txt = std::to_string(TypeSpecificID);
+				continue;
+			}
+			// Check if given string is not exist in items vector
+			if (std::find(boxData->items.begin(), boxData->items.end(), txt) == boxData->items.end())
+			{
+				boxData->items.emplace_back(txt);
+			}
+
+
+
+			/*if (txt != "")
+				boxData->items[txt] = Count + boxData->items[txt];
+			else
+				boxData->items[std::to_string(TypeSpecificID)] = Count + boxData->items[std::to_string(TypeSpecificID)];*/
+
+			++boxData->itemCount;
+		}
+	}
+}
 
 bool ESP::IsVehicle(const std::string& actorName)
 {
@@ -677,7 +731,7 @@ bool ESP::IsAirdrop(const std::string& actorName)
 	return false;
 }
 
-// Sometime Airdrop will have 2 actors: PlayerDeadInventoryBox_C and BP_AirDropBox_C
+// Sometime both LootBox and AirDrop will have actor: PlayerDeadInventoryBox_C
 // So we dont use PlayerDeadInventoryBox_C to find Lootbox
 // Instead, we will use PickUpListWrapperActor
 bool ESP::IsLootbox(const std::string& actorName)
@@ -688,57 +742,5 @@ bool ESP::IsLootbox(const std::string& actorName)
 	return false;
 }
 
-// TODO reformat void ESP::GetBoxItems(BoxData* boxData)
-void ESP::GetBoxItems(BoxData* boxData)
-{
-	// Class: PickUpListWrapperActor.PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
-	DWORD PickUpDataList{ g_pMM->read<DWORD>(boxData->address + PICKUPDATALIST) };
-	int itemCount{ g_pMM->read<int>(boxData->address + PICKUPDATALIST + 0x4) }; // It's right before PickUpDataList
 
-	// Copy pasta :D dont know why
-	if (itemCount > 60)
-		itemCount = 60;
-
-	for (DWORD itemAddr = PickUpDataList; itemAddr < PickUpDataList + itemCount * 0x30; itemAddr += 0x30)
-	{
-		//Class: PickUpItemData
-		//Class: ItemDefineID //ItemDefineID ID;//[Offset: 0x0, Size: 24]
-			//int Type;//[Offset: 0x0, Size: 4]
-			int TypeSpecificID{ g_pMM->read<int>(itemAddr + 0x4) }; ///[Offset: 0x4, Size: 4]
-			//bool bValidItem;//(ByteOffset: 0, ByteMask: 1, FieldMask: 255)[Offset: 0x8, Size: 1]
-			//bool bValidInstance;//(ByteOffset: 0, ByteMask: 1, FieldMask: 255)[Offset: 0x9, Size: 1]
-			//uint64 InstanceID;//[Offset: 0x10, Size: 8]
-		//int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
-		//BattleItemAdditionalData[] AdditionalDataList;//[Offset: 0x1c, Size: 12]
-		//int InstanceID;//[Offset: 0x28, Size: 4]
-
-		if (TypeSpecificID > 0)
-		{
-			int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
-			if (Count == 0)
-				continue;
-
-			std::string txt{ BoxItemDisplayName[TypeSpecificID] };
-			if (txt == "")
-			{
-				txt = std::to_string(TypeSpecificID);
-				continue;
-			}
-			// Check if given string is not exist in items vector
-			if (std::find(boxData->items.begin(), boxData->items.end(), txt) == boxData->items.end())
-			{
-				boxData->items.emplace_back(txt);
-			}
-			
-			
-
-			/*if (txt != "")
-				boxData->items[txt] = Count + boxData->items[txt];
-			else
-				boxData->items[std::to_string(TypeSpecificID)] = Count + boxData->items[std::to_string(TypeSpecificID)];*/
-			
-			++boxData->itemCount;
-		}
-	}
-}
 

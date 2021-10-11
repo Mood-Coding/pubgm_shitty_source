@@ -194,6 +194,10 @@ void D3D::GetImGuiBackgroundDrawList()
 	imGuiBackgroundDrawList = ImGui::GetBackgroundDrawList();
 }
 
+///////////////////
+// DRAW FUNCTION //
+///////////////////
+
 void D3D::DrawCircle(const float& x, const float& y, const float& radius, const unsigned int& Color)
 {
 	imGuiBackgroundDrawList->AddCircle(ImVec2(x, y), radius, Color);
@@ -214,7 +218,7 @@ void D3D::DrawRect(float x, float y, float width, float height, unsigned int col
 	imGuiBackgroundDrawList->AddRect(ImVec2(x, y), ImVec2(x + width, y + height), color, rounding, 0, thickness);
 }
 
-void D3D::DrawRect(ImVec2 topleft, ImVec2 botright, unsigned int color, float rounding, float thickness)
+void D3D::DrawRect(const ImVec2& topleft, const ImVec2& botright, unsigned int color, float rounding, float thickness)
 {
 	imGuiBackgroundDrawList->AddRect(topleft, botright, color, rounding, 0, thickness);
 }
@@ -247,7 +251,7 @@ void D3D::DrawString(const float& x, const float& y, unsigned int color, std::st
 	imGuiBackgroundDrawList->AddText(font, size, ImVec2(x, y), color, txt.c_str(), NULL, 0.0f, NULL);
 }
 
-void D3D::DrawString(float x, float y, unsigned int color, const char* txt, float size, bool bShadow)
+void D3D::DrawString(const float& x, const float& y, unsigned int color, const char* txt, float size, bool bShadow)
 {
 	if (bShadow)
 	{
@@ -260,18 +264,23 @@ void D3D::DrawString(float x, float y, unsigned int color, const char* txt, floa
 
 void D3D::DrawString(const float& x, const float& y, unsigned int color, std::wstring& txt, bool bShadow)
 {
+	RECT rect{};
+
 	if (bShadow)
 	{
-		RECT rect1{ (LONG)x + 1, (LONG)y + 1, (LONG)x + 80, (LONG)y + 50 };
-		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
-		rect1 = { (LONG)x + 1, (LONG)y - 1, (LONG)x + 80, (LONG)y + 50 };
-		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255)); 
+		rect = { (LONG)x + 1, (LONG)y + 1, (LONG)x + 80, (LONG)y + 50 };
+		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect, DT_NOCLIP | DT_LEFT, BLACK(255));
+		rect = { (LONG)x + 1, (LONG)y - 1, (LONG)x + 80, (LONG)y + 50 };
+		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect, DT_NOCLIP | DT_LEFT, BLACK(255)); 
 	}
 	
-	RECT rect2 = { (LONG)x, (LONG)y, (LONG)x + 80, (LONG)y + 50 };
-	pPlayerNameFont->DrawTextW(NULL, txt.c_str(), -1, &rect2, DT_NOCLIP | DT_LEFT, color);
+	rect = { (LONG)x, (LONG)y, (LONG)x + 80, (LONG)y + 50 };
+	pPlayerNameFont->DrawTextW(NULL, txt.c_str(), -1, &rect, DT_NOCLIP | DT_LEFT, color);
 }
 
+///////////////////////
+// END DRAW FUNCTION //
+///////////////////////
 
 void D3D::MenuTheme()
 {

@@ -66,7 +66,7 @@ public:
 	void DrawLine(const ImVec2& pos1, const ImVec2& pos2, const unsigned int& color, float thickness = 1);
 
 	void DrawRect(float x, float y, float width, float height, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
-	void DrawRect(ImVec2 topleft, ImVec2 botright, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
+	void DrawRect(const ImVec2& topleft, const ImVec2& botright, unsigned int color, float rounding = 0.0F, float thickness = 1.0F);
 
 	void DrawFilledRect(float x, float y, float width, float height, unsigned int rectColor, unsigned int filledColor);
 	void DrawFilled(float x, float y, float width, float height, unsigned int color);
@@ -75,7 +75,7 @@ public:
 
 	void DrawString(const float& x, const float& y, unsigned int color, std::wstring& txt, bool bShadow);
 	void DrawString(const float& x, const float& y, unsigned int color, std::string& txt, float size, bool bShadow);
-	void DrawString(float x, float y, unsigned int color, const char* txt, float size, bool bShadow);
+	void DrawString(const float& x, const float& y, unsigned int color, const char* txt, float size, bool bShadow);
 
 	void DrawCircle(const float& x, const float& y, const float& radius, const unsigned int& Color);
 
