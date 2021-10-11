@@ -121,22 +121,18 @@ void ESP::DrawVehicles()
 		if (Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 			continue;
 
+		std::string str{};
+
 		// Footer 1st text
 		{
-			float xOffset = 0;
-
 			if (Settings::VehicleESP::bName)
-			{
-				std::string str = Vehicles[i].displayName;
-				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), str, Settings::bToggleShadowText);
-				xOffset += ImGui::CalcTextSize(str.c_str()).x + 5.0f;
-			}
+				str = Vehicles[i].displayName + ' ';
 
 			if (Settings::VehicleESP::bDistance)
-			{
-				std::string str = std::to_string(Vehicles[i].distance) + "m";
-				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X + xOffset, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), str, Settings::bToggleShadowText);
-			}
+				str += std::to_string(Vehicles[i].distance) + 'm';
+
+			if (str != "")
+				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), str, Settings::bToggleShadowText);
 		}
 
 		// Footer 2nd text
@@ -145,23 +141,23 @@ void ESP::DrawVehicles()
 
 			if (Settings::VehicleESP::bHp)
 			{
-				int hpPercent = (int)(Vehicles[i].VehicleCommonComponent.HP / Vehicles[i].VehicleCommonComponent.HPMax * 100);
+				int hpPercent{ (int)(Vehicles[i].VehicleCommonComponent.HP / Vehicles[i].VehicleCommonComponent.HPMax * 100) };
 
 				if (hpPercent < 0)
 					continue;
 
-				std::string str{ "HP:" + std::to_string(hpPercent) + '%' };
-				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( ((6*(float)(hpPercent))/5)/360 , 1, 1), str, Settings::bToggleShadowText);
+				str = "HP:" + std::to_string(hpPercent) + '%';
+				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( (float)hpPercent / 360 , 1.0f, 1.0f), str, Settings::bToggleShadowText);
 
-				xOffset += ImGui::CalcTextSize(str.c_str()).x + 5;
+				xOffset += g_pD3D->font->CalcTextSizeA(18.0f, FLT_MAX, -1.0f, str.c_str(), NULL, NULL).x + 5;
 			}
 
 			if (Settings::VehicleESP::bFuel)
 			{
-				int fuelPercent = (int)(Vehicles[i].VehicleCommonComponent.Fuel / Vehicles[i].VehicleCommonComponent.FuelMax * 100);
+				int fuelPercent{ (int)(Vehicles[i].VehicleCommonComponent.Fuel / Vehicles[i].VehicleCommonComponent.FuelMax * 100) };
 
-				std::string str = "Fuel:" + std::to_string(fuelPercent) + '%';
-				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X + xOffset, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV(((6 * (float)(fuelPercent)) / 5) / 360, 1, 1), str, Settings::bToggleShadowText);
+				str = "Fuel:" + std::to_string(fuelPercent) + '%';
+				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X + xOffset, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( (float)fuelPercent / 360, 1.0f, 1.0f), str, Settings::bToggleShadowText);
 			}
 		}
 	}
