@@ -50,7 +50,7 @@ void ESP::DrawItems()
 			if (!g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance))
 				continue;
 
-			float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.015f };
+			float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.012f };
 
 			if (Items[i].distance > Settings::ItemESP::drawDistance)
 				continue;
@@ -74,7 +74,7 @@ void ESP::DrawItems()
 		if (Items[i].distance > Settings::ItemESP::drawDistance)
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.015f };
+		float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.012f };
 
 		unsigned int itemDisplayColor{ ColorFilter[ActorColorFilterID[Items[i].displayName]] };
 		if (itemDisplayColor == 0)
@@ -105,7 +105,7 @@ void ESP::DrawVehicles()
 			if (Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 				continue;
 
-			float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.015f };
+			float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.012f };
 
 			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), distScale, Settings::bToggleShadowText);
 		}
@@ -118,7 +118,7 @@ void ESP::DrawVehicles()
 		if (!g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.015f };
+		float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.012f };
 
 		if (Vehicles[i].displayName == "AirDrop Plane")
 		{
@@ -185,7 +185,7 @@ void ESP::DrawPlayers()
 			if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 				continue;
 
-			float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.015f };
+			float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.012f };
 
 			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Characters[i].Address).c_str(), distScale, Settings::bToggleShadowText);
 			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y + 18, WHITE(255), std::to_string(Characters[i].TeamIDIndex).c_str(), distScale, Settings::bToggleShadowText);
@@ -203,7 +203,7 @@ void ESP::DrawPlayers()
 		if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.015f };
+		float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.012f };
 
 		yOffset = 0;
 
@@ -364,7 +364,7 @@ void ESP::DrawAirDrop()
 		if (!g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Airdrops[i].distance * 0.015f };
+		float distScale{ g_pD3D->max_text_size - Airdrops[i].distance * 0.012f };
 
 		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
 		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(200), txt, distScale, true);
@@ -375,7 +375,7 @@ void ESP::DrawAirDrop()
 		if (!g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - AirDropDatas[i].distance * 0.015f };
+		float distScale{ g_pD3D->max_text_size - AirDropDatas[i].distance * 0.012f };
 
 		if (Settings::bDebugESP)
 		{
@@ -410,7 +410,7 @@ void ESP::DrawLootbox()
 		if (!g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Lootboxes[i].distance * 0.015f };
+		float distScale{ g_pD3D->max_text_size - Lootboxes[i].distance * 0.012f };
 
 		if (Lootboxes[i].distance > Settings::LootboxESP::drawDistance)
 			continue;	
