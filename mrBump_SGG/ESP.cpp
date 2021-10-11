@@ -50,15 +50,17 @@ void ESP::DrawItems()
 			if (!g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance))
 				continue;
 
+			float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.015f };
+
 			if (Items[i].distance > Settings::ItemESP::drawDistance)
 				continue;
 
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Items[i].Address).c_str(), Settings::bToggleShadowText);
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18, WHITE(255), Items[i].actorName, Settings::bToggleShadowText);
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18, WHITE(255), Items[i].displayName, Settings::bToggleShadowText);
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18, WHITE(255), std::to_string(Items[i].ItemDefineID.TypeSpecificID).c_str(), Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Items[i].Address).c_str(), distScale, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18, WHITE(255), Items[i].actorName, distScale, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18, WHITE(255), Items[i].displayName, distScale, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18, WHITE(255), std::to_string(Items[i].ItemDefineID.TypeSpecificID).c_str(), distScale, Settings::bToggleShadowText);
 			std::string txt{ std::to_string(Items[i].PositionOnSc.X) + ' ' + std::to_string(Items[i].PositionOnSc.Y) };
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18 + 18, WHITE(255), txt.c_str(), Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18 + 18, WHITE(255), txt.c_str(), distScale, Settings::bToggleShadowText);
 		}
 
 		return;
@@ -71,6 +73,8 @@ void ESP::DrawItems()
 
 		if (Items[i].distance > Settings::ItemESP::drawDistance)
 			continue;
+
+		float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.015f };
 
 		unsigned int itemDisplayColor{ ColorFilter[ActorColorFilterID[Items[i].displayName]] };
 		if (itemDisplayColor == 0)
@@ -85,7 +89,7 @@ void ESP::DrawItems()
 			str += std::to_string(Items[i].distance) + "m";
 
 		if (str != "")
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, itemDisplayColor, str, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, itemDisplayColor, str, distScale, Settings::bToggleShadowText);
 	}
 }
 
@@ -101,7 +105,9 @@ void ESP::DrawVehicles()
 			if (Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 				continue;
 
-			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), Settings::bToggleShadowText);
+			float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.015f };
+
+			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), distScale, Settings::bToggleShadowText);
 		}
 
 		return;
@@ -112,9 +118,11 @@ void ESP::DrawVehicles()
 		if (!g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance))
 			continue;
 
+		float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.015f };
+
 		if (Vehicles[i].displayName == "AirDrop Plane")
 		{
-			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), "AirDrop Plane", Settings::bToggleShadowText);
+			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), "AirDrop Plane", distScale, Settings::bToggleShadowText);
 			continue;
 		}
 
@@ -132,7 +140,7 @@ void ESP::DrawVehicles()
 				str += std::to_string(Vehicles[i].distance) + 'm';
 
 			if (str != "")
-				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), str, Settings::bToggleShadowText);
+				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), str, distScale, Settings::bToggleShadowText);
 		}
 
 		// Footer 2nd text
@@ -147,9 +155,9 @@ void ESP::DrawVehicles()
 					continue;
 
 				str = "HP:" + std::to_string(hpPercent) + '%';
-				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( (float)hpPercent / 360 , 1.0f, 1.0f), str, Settings::bToggleShadowText);
+				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( (float)hpPercent / 360 , 1.0f, 1.0f), str, distScale, Settings::bToggleShadowText);
 
-				xOffset += g_pD3D->font->CalcTextSizeA(18.0f, FLT_MAX, -1.0f, str.c_str(), NULL, NULL).x + 5;
+				xOffset += g_pD3D->font->CalcTextSizeA(distScale, FLT_MAX, -1.0f, str.c_str(), NULL, NULL).x + 5;
 			}
 
 			if (Settings::VehicleESP::bFuel)
@@ -157,7 +165,7 @@ void ESP::DrawVehicles()
 				int fuelPercent{ (int)(Vehicles[i].VehicleCommonComponent.Fuel / Vehicles[i].VehicleCommonComponent.FuelMax * 100) };
 
 				str = "Fuel:" + std::to_string(fuelPercent) + '%';
-				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X + xOffset, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( (float)fuelPercent / 360, 1.0f, 1.0f), str, Settings::bToggleShadowText);
+				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X + xOffset, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( (float)fuelPercent / 360, 1.0f, 1.0f), str, distScale, Settings::bToggleShadowText);
 			}
 		}
 	}
@@ -177,8 +185,10 @@ void ESP::DrawPlayers()
 			if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 				continue;
 
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Characters[i].Address).c_str(), Settings::bToggleShadowText);
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y + 18, WHITE(255), std::to_string(Characters[i].TeamIDIndex).c_str(), Settings::bToggleShadowText);
+			float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.015f };
+
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Characters[i].Address).c_str(), distScale, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y + 18, WHITE(255), std::to_string(Characters[i].TeamIDIndex).c_str(), distScale, Settings::bToggleShadowText);
 		}
 
 		return;
@@ -193,6 +203,10 @@ void ESP::DrawPlayers()
 		if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 			continue;
 
+		float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.015f };
+
+		yOffset = 0;
+
 		unsigned int teamIDColor;
 
 		if (Characters[i].STExtraCharacter.bIsAI)
@@ -200,7 +214,6 @@ void ESP::DrawPlayers()
 		else
 			teamIDColor = Characters[i].TeamColor;
 
-		yOffset = 0;
 
 		// Player name
 		if (Settings::PlayerESP::bName)
@@ -236,8 +249,9 @@ void ESP::DrawPlayers()
 			if (str != " ")
 			{
 				// For centered text at the middle of player
-				ImVec2 size{ ImGui::CalcTextSize(str.c_str()) };
-				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, WHITE(255), str, Settings::bToggleShadowText);
+				//ImVec2 size{ ImGui::CalcTextSize(str.c_str()) };
+				ImVec2 size{ g_pD3D->font->CalcTextSizeA(distScale, FLT_MAX, -1.0f, str.c_str(), NULL, NULL) };
+				g_pD3D->DrawString(Characters[i].PositionOnSc.X - floor(size.x / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, WHITE(255), str, distScale, Settings::bToggleShadowText);
 
 				yOffset += 18;
 			}
@@ -246,7 +260,7 @@ void ESP::DrawPlayers()
 		// Knocked check (hp <= 0)
 		if (Characters[i].STExtraCharacter.Health <= 0)
 		{
-			g_pD3D->DrawString(Characters[i].PositionOnSc.X - (float)floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, RED(255), "Knocked", Settings::bToggleShadowText);
+			g_pD3D->DrawString(Characters[i].PositionOnSc.X - (float)floor(53 / 2), Characters[i].PositionOnSc.Y + Characters[i].PositionOnSc.Z + yOffset, RED(255), "Knocked", distScale, Settings::bToggleShadowText);
 
 			yOffset += 18;
 		}
@@ -349,7 +363,7 @@ void ESP::DrawUnsortedActors()
 	{
 		g_pVMM->WorldToScreen(UnsortedActors[i].Position, UnsortedActors[i].PositionOnSc, UnsortedActors[i].distance);
 
-		g_pD3D->DrawString(UnsortedActors[i].PositionOnSc.X, UnsortedActors[i].PositionOnSc.Y, PINK(255), UnsortedActors[i].ActorName, false);
+		g_pD3D->DrawString(UnsortedActors[i].PositionOnSc.X, UnsortedActors[i].PositionOnSc.Y, PINK(255), UnsortedActors[i].ActorName, 18, false);
 	}
 }
 
@@ -360,8 +374,10 @@ void ESP::DrawAirDrop()
 		if (!g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance))
 			continue;
 
+		float distScale{ g_pD3D->max_text_size - Airdrops[i].distance * 0.015f };
+
 		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
-		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(200), txt, true);
+		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(200), txt, distScale, true);
 	}
 
 	for (int i = 0; i < AirDropDatas.size(); ++i)
@@ -369,26 +385,28 @@ void ESP::DrawAirDrop()
 		if (!g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance))
 			continue;
 
+		float distScale{ g_pD3D->max_text_size - AirDropDatas[i].distance * 0.015f };
+
 		if (Settings::bDebugESP)
 		{
 			/*g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);*/
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), distScale, false);
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), distScale, false);
 		}
 
 		// AirDrop items
 		if (AirDropDatas[i].items.size() == 0)
 		{
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, WHITE(200), "Empty", false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, WHITE(200), "Empty", distScale, false);
 		}
 		else
 		{
 			int xOffset = 0;
 			for (auto& itr : AirDropDatas[i].items)
 			{
-				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + xOffset, WHITE(200), itr, false);
+				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + xOffset, WHITE(200), itr, distScale, false);
 				xOffset += 18;
 			}
 		}
@@ -402,26 +420,28 @@ void ESP::DrawLootbox()
 		if (!g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance))
 			continue;
 
+		float distScale{ g_pD3D->max_text_size - Lootboxes[i].distance * 0.015f };
+
 		if (Lootboxes[i].distance > Settings::LootboxESP::drawDistance)
 			continue;	
 
-		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, WHITE(255), "Lootbox", true);
+		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, WHITE(255), "Lootbox", distScale, true);
 
 		if (Settings::bDebugESP)
 		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), distScale, false);
 
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), distScale, false);
 
 			std::string str = std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y);
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18, RED(255), str, true);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18, RED(255), str, distScale, true);
 
 			continue;
 		}
 
 		if (Lootboxes[i].items.size() == 0)
 		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, WHITE(200), "Empty", false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, WHITE(200), "Empty", distScale, false);
 		}
 		else
 		{
@@ -429,7 +449,7 @@ void ESP::DrawLootbox()
 
 			for (auto& itr : Lootboxes[i].items)
 			{
-				g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + xOffset, WHITE(200), itr, false);
+				g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + xOffset, WHITE(200), itr, distScale, false);
 				xOffset += 18;
 			}
 		}

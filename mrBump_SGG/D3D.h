@@ -37,6 +37,9 @@ private:
 
 	ImDrawList* imGuiBackgroundDrawList;
 
+
+	ImGuiIO io{};
+
 public:
 	D3D() {}
 
@@ -45,13 +48,14 @@ public:
 	int screenW = 0, screenH = 0;
 
 	ImFont* font;
-
 	//std::map<byte, LPD3DXFONT> pFontSimSun;
 	LPD3DXFONT pPlayerNameFont;
 
 	LPDIRECT3DDEVICE9 pD3DDevice;
 
 	RECT gameScreenRct{};
+
+	float max_text_size{ 18.0f };
 
 	bool SetupHWND();
 	bool InitD3D();
@@ -69,9 +73,9 @@ public:
 
 	void DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color);
 
-	void DrawString(float x, float y, unsigned int color, std::wstring& txt, bool bShadow);
-	void DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow);
-	void DrawString(float x, float y, unsigned int color, const char* txt, bool bShadow);
+	void DrawString(const float& x, const float& y, unsigned int color, std::wstring& txt, bool bShadow);
+	void DrawString(const float& x, const float& y, unsigned int color, std::string& txt, float size, bool bShadow);
+	void DrawString(float x, float y, unsigned int color, const char* txt, float size, bool bShadow);
 
 	void DrawCircle(const float& x, const float& y, const float& radius, const unsigned int& Color);
 

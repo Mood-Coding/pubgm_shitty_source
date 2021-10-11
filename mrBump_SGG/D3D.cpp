@@ -104,7 +104,7 @@ FOUNDHWND:
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO();
+		io = ImGui::GetIO();
 
 		std::ifstream iFile;
 		iFile.open("msyhl.ttf");
@@ -113,7 +113,8 @@ FOUNDHWND:
 			std::cout << "<!> Can't find font\n";
 			return false;
 		}
-		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 17);
+		//io.Fonts->AddFontFromFileTTF("msyhl.ttf", 17);
+		font = io.Fonts->AddFontFromFileTTF("msyhl.ttf", 45.0f);
 
 		ImGuiStyle* style = &ImGui::GetStyle();
 		style->Colors[ImGuiCol_WindowBg] = ImColor(0, 0, 0, 255);
@@ -168,28 +169,13 @@ bool D3D::InitD3D()
 	}
 
 	// create a device class using this information and the info from the d3dpp stuct
-	if (FAILED(pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, overlayHWND, behaviorFlags, &d3dpp, &pD3DDevice))) {
-		std::cout << "CreateDevice failed" << std::endl;
+	if (FAILED(pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, overlayHWND, behaviorFlags, &d3dpp, &pD3DDevice)))
+	{
+		std::cout << "<D3D> CreateDevice failed!" << std::endl;
 		return 0;
 	}
 
-	//Tạo font chữ
-	/*for (int i = 1; i <= 50; ++i)
-	{
-		D3DXCreateFont(pD3DDevice, i, 0, FW_REGULAR, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Lato"), &pFontSimSun[i]);
-	}*/
-
 	D3DXCreateFont(pD3DDevice, 20, 0, FW_REGULAR, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Microsoft Yahei"), &pPlayerNameFont);
-
-	/*D3DXCreateFontA(pDevice, 10, 0, FW_MEDIUM, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "simsun", &pFont);
-	D3DXCreateFontA(pDevice, 10, 0, FW_MEDIUM, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "simsun", &pFontOutline);
-	D3DXCreateFontA(pDevice, 20, 9, FW_REGULAR, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Comfortaa Regular", &pFontMenu);
-	D3DXCreateFontA(pDevice, 20, 9, FW_REGULAR, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Comfortaa Regular", &pFontMenuOutline);
-	D3DXCreateFontA(pDevice, 20, 0, FW_REGULAR, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, "Verdana", &pFont2);
-	*/
-
-	/*D3DXCreateLine(pD3DDevice, &pD3DLine);
-	D3DXCreateSprite(pD3DDevice, &pSprite);*/
 
 	return 1;
 }
@@ -250,36 +236,36 @@ void D3D::DrawFilledRect(float x, float y, float width, float height, unsigned i
 	DrawRect(x, y, width, height, rectColor);
 }
 
-void D3D::DrawString(float x, float y, unsigned int color, std::string& txt, bool bShadow)
+void D3D::DrawString(const float& x, const float& y, unsigned int color, std::string& txt, float size, bool bShadow)
 {
 	if (bShadow)
 	{
-		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y + 1), BLACK(150), txt.c_str());
-		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y - 1), BLACK(150), txt.c_str());
+		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1, y + 1), BLACK(200), txt.c_str(), NULL, 0.0f, NULL);
+		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1, y - 1), BLACK(200), txt.c_str(), NULL, 0.0f, NULL);
 	}
 
-	imGuiBackgroundDrawList->AddText(ImVec2(x, y), color, txt.c_str());
+	imGuiBackgroundDrawList->AddText(font, size, ImVec2(x, y), color, txt.c_str(), NULL, 0.0f, NULL);
 }
 
-void D3D::DrawString(float x, float y, unsigned int color, const char* txt, bool bShadow)
+void D3D::DrawString(float x, float y, unsigned int color, const char* txt, float size, bool bShadow)
 {
 	if (bShadow)
 	{
-		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y + 1), BLACK(150), txt);
-		imGuiBackgroundDrawList->AddText(ImVec2(x + 1, y - 1), BLACK(150), txt);
+		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1, y + 1), BLACK(200), txt, NULL, 0.0f, NULL);
+		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1, y - 1), BLACK(200), txt, NULL, 0.0f, NULL);
 	}
 
-	imGuiBackgroundDrawList->AddText(ImVec2(x, y), color, txt);
+	imGuiBackgroundDrawList->AddText(font, size, ImVec2(x, y), color, txt, NULL, 0.0f, NULL);
 }
 
-void D3D::DrawString(float x, float y, unsigned int color, std::wstring& txt, bool bShadow)
+void D3D::DrawString(const float& x, const float& y, unsigned int color, std::wstring& txt, bool bShadow)
 {
 	if (bShadow)
 	{
 		RECT rect1{ (LONG)x + 1, (LONG)y + 1, (LONG)x + 80, (LONG)y + 50 };
 		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
 		rect1 = { (LONG)x + 1, (LONG)y - 1, (LONG)x + 80, (LONG)y + 50 };
-		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255));
+		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect1, DT_NOCLIP | DT_LEFT, BLACK(255)); 
 	}
 	
 	RECT rect2 = { (LONG)x, (LONG)y, (LONG)x + 80, (LONG)y + 50 };
