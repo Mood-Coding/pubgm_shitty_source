@@ -29,6 +29,58 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+bool D3D::InitD3D()
+{
+	//create the Direct3D interface
+	pD3D = Direct3DCreate9(D3D_SDK_VERSION);    
+	if (pD3D == nullptr)
+	{
+		std::cout << "Direct3DCreate9 failed" << std::endl;
+		return 0;
+	}
+
+	//create a struct to hold various device information
+	D3DPRESENT_PARAMETERS d3dpp;    	
+	ZeroMemory(&d3dpp, sizeof(d3dpp));    // clear out the struct for use
+	d3dpp.Windowed = TRUE;    // program windowed, not fullscreen
+	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;    // discard old frames
+	d3dpp.hDeviceWindow = overlayHWND;    // set the window to be used by Direct3D
+	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;     // set the back buffer format to 32-bit
+	d3dpp.BackBufferWidth = screenW;    // set the width of the buffer
+	d3dpp.BackBufferHeight = screenH;    // set the height of the buffer
+	d3dpp.EnableAutoDepthStencil = TRUE;
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
+	d3dpp.MultiSampleQuality = 0;
+	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+
+	D3DCAPS9 caps;
+	DWORD behaviorFlags;
+	if (FAILED(pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps))) {
+		std::cout << "GetDeviceCaps failed" << std::endl;
+		return 0;
+	}
+	if (caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
+		behaviorFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING;
+		std::cout << "BehaviorFlags: D3DCREATE_HARDWARE_VERTEXPROCESSING" << std::endl;
+	} else {
+		behaviorFlags = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+		std::cout << "BehaviorFlags: D3DCREATE_SOFTWARE_VERTEXPROCESSING" << std::endl;
+	}
+
+	// create a device class using this information and the info from the d3dpp stuct
+	if (FAILED(pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, overlayHWND, behaviorFlags, &d3dpp, &pD3DDevice)))
+	{
+		std::cout << "<D3D> CreateDevice failed!" << std::endl;
+		return 0;
+	}
+
+	D3DXCreateFont(pD3DDevice, 20, 0, FW_REGULAR, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Microsoft Yahei"), &pPlayerNameFont);
+
+	return 1;
+}
+
 bool D3D::SetupHWND()
 {
 	std::cout << "[D3D]\n";
@@ -114,6 +166,7 @@ FOUNDHWND:
 			return false;
 		}
 		//io.Fonts->AddFontFromFileTTF("msyhl.ttf", 17);
+		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 20.0f);
 		font = io.Fonts->AddFontFromFileTTF("msyhl.ttf", 45.0f);
 
 		ImGuiStyle* style = &ImGui::GetStyle();
@@ -126,58 +179,6 @@ FOUNDHWND:
 	}
 
 	return true;
-}
-
-bool D3D::InitD3D()
-{
-	//create the Direct3D interface
-	pD3D = Direct3DCreate9(D3D_SDK_VERSION);    
-	if (pD3D == nullptr)
-	{
-		std::cout << "Direct3DCreate9 failed" << std::endl;
-		return 0;
-	}
-
-	//create a struct to hold various device information
-	D3DPRESENT_PARAMETERS d3dpp;    	
-	ZeroMemory(&d3dpp, sizeof(d3dpp));    // clear out the struct for use
-	d3dpp.Windowed = TRUE;    // program windowed, not fullscreen
-	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;    // discard old frames
-	d3dpp.hDeviceWindow = overlayHWND;    // set the window to be used by Direct3D
-	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;     // set the back buffer format to 32-bit
-	d3dpp.BackBufferWidth = screenW;    // set the width of the buffer
-	d3dpp.BackBufferHeight = screenH;    // set the height of the buffer
-	d3dpp.EnableAutoDepthStencil = TRUE;
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
-	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
-	d3dpp.MultiSampleQuality = 0;
-	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
-	D3DCAPS9 caps;
-	DWORD behaviorFlags;
-	if (FAILED(pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps))) {
-		std::cout << "GetDeviceCaps failed" << std::endl;
-		return 0;
-	}
-	if (caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
-		behaviorFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING;
-		std::cout << "BehaviorFlags: D3DCREATE_HARDWARE_VERTEXPROCESSING" << std::endl;
-	} else {
-		behaviorFlags = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-		std::cout << "BehaviorFlags: D3DCREATE_SOFTWARE_VERTEXPROCESSING" << std::endl;
-	}
-
-	// create a device class using this information and the info from the d3dpp stuct
-	if (FAILED(pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, overlayHWND, behaviorFlags, &d3dpp, &pD3DDevice)))
-	{
-		std::cout << "<D3D> CreateDevice failed!" << std::endl;
-		return 0;
-	}
-
-	D3DXCreateFont(pD3DDevice, 20, 0, FW_REGULAR, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Microsoft Yahei"), &pPlayerNameFont);
-
-	return 1;
 }
 
 void D3D::CleanupDeviceD3D()
