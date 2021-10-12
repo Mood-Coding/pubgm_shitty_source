@@ -49,7 +49,23 @@ namespace SDK
 		//uint64_t InstanceID; //0x000A
 	}; //Size: 0x0012
 
+	class PickUpListWrapperActor
+	{
+	public:
+		char pad_0000[1600]; //0x0000
+		DWORD PickUpDataList; //0x0640
+		DWORD PickUpItemDataCount; //0x0644
+	}; //Size: 0x0648
 
+	class PickUpItemData
+	{
+	public:
+		DWORD Type; //0x0000
+		DWORD TypeSpecificID; //0x0004
+		char pad_0008[16]; //0x0008
+		DWORD Count; //0x0018
+		char pad_001C[20]; //0x001C
+	}; //Size: 0x0030
 }
 
 #endif // !_SDK_CLASSES_H_

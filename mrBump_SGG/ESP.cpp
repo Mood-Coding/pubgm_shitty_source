@@ -344,7 +344,7 @@ void ESP::DrawAirDrop()
 		if (!g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Airdrops[i].distance * 0.01f };
+		float distScale{ g_pD3D->max_text_size - Airdrops[i].distance * 0.001f };
 
 		// Airdrop indicator + distance
 		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
@@ -357,7 +357,7 @@ void ESP::DrawAirDrop()
 		if (!g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - AirDropDatas[i].distance * 0.01f };
+		float distScale{ g_pD3D->max_text_size - AirDropDatas[i].distance * 0.001f };
 
 		if (Settings::bDebugESP)
 		{
@@ -600,54 +600,25 @@ bool ESP::GetPlayerBonePos(Character* character)
 // TODO reformat void ESP::GetBoxItems(BoxData* boxData)
 void ESP::GetBoxItems(BoxData* boxData)
 {
-	// Class: PickUpListWrapperActor.PickUpWrapperActor.UAENetActor.LuaActor.Actor.Object
-	DWORD PickUpDataList{ g_pMM->read<DWORD>(boxData->address + PICKUPDATALIST) };
-	int itemCount{ g_pMM->read<int>(boxData->address + PICKUPDATALIST + 0x4) }; // It's right before PickUpDataList
+	SDK::PickUpListWrapperActor PickUpList{ g_pMM->read<SDK::PickUpListWrapperActor>(boxData->address) };
 
-	// Copy pasta :D dont know why
-	if (itemCount > 60)
-		itemCount = 60;
-
-	for (DWORD itemAddr = PickUpDataList; itemAddr < PickUpDataList + itemCount * 0x30; itemAddr += 0x30)
+	for (DWORD itemAddr{ PickUpList.PickUpDataList }; itemAddr < PickUpList.PickUpDataList + (int)PickUpList.PickUpItemDataCount * 0x30; itemAddr += 0x30)
 	{
-		//Class: PickUpItemData
-		//Class: ItemDefineID //ItemDefineID ID;//[Offset: 0x0, Size: 24]
-			//int Type;//[Offset: 0x0, Size: 4]
-		int TypeSpecificID{ g_pMM->read<int>(itemAddr + 0x4) }; ///[Offset: 0x4, Size: 4]
-		//bool bValidItem;//(ByteOffset: 0, ByteMask: 1, FieldMask: 255)[Offset: 0x8, Size: 1]
-		//bool bValidInstance;//(ByteOffset: 0, ByteMask: 1, FieldMask: 255)[Offset: 0x9, Size: 1]
-		//uint64 InstanceID;//[Offset: 0x10, Size: 8]
-	//int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
-	//BattleItemAdditionalData[] AdditionalDataList;//[Offset: 0x1c, Size: 12]
-	//int InstanceID;//[Offset: 0x28, Size: 4]
+		SDK::PickUpItemData ItemData{ g_pMM->read<SDK::PickUpItemData>(itemAddr) };
 
-		if (TypeSpecificID > 0)
-		{
-			int Count{ g_pMM->read<int>(itemAddr + 0x18) }; //[Offset: 0x18, Size: 4]
-			if (Count == 0)
-				continue;
+		if (ItemData.Count == 0)
+			continue;
 
-			std::string txt{ BoxItemDisplayName[TypeSpecificID] };
-			if (txt == "")
-			{
-				txt = std::to_string(TypeSpecificID);
-				continue;
-			}
-			// Check if given string is not exist in items vector
-			if (std::find(boxData->items.begin(), boxData->items.end(), txt) == boxData->items.end())
-			{
-				boxData->items.emplace_back(txt);
-			}
+		std::string txt{ BoxItemDisplayName[ItemData.TypeSpecificID] };
 
+		if (txt == "")
+			continue;
 
+		// Check if given string is not exist in items vector
+		if (std::find(boxData->items.begin(), boxData->items.end(), txt) == boxData->items.end())
+			boxData->items.emplace_back(txt);
 
-			/*if (txt != "")
-				boxData->items[txt] = Count + boxData->items[txt];
-			else
-				boxData->items[std::to_string(TypeSpecificID)] = Count + boxData->items[std::to_string(TypeSpecificID)];*/
-
-			++boxData->itemCount;
-		}
+		++boxData->itemCount;
 	}
 }
 
@@ -734,7 +705,3 @@ bool ESP::IsLootbox(const std::string& actorName)
 //////////////////////////
 // END CHECK ACTOR TYPE //
 //////////////////////////
-
-
-
-
