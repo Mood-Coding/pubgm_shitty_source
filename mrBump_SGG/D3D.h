@@ -74,7 +74,7 @@ public:
 	void DrawCrossX(float x1, float y1, float x2, float y2, D3DCOLOR color);
 
 	void DrawString(const float& x, const float& y, unsigned int color, std::wstring& txt, bool bShadow);
-	void DrawString(const float& x, const float& y, unsigned int color, std::string& txt, float size, bool bShadow);
+	void DrawString(const float& x, const float& y, unsigned int color, const std::string& txt, float size, bool bShadow);
 	void DrawString(const float& x, const float& y, unsigned int color, const char* txt, float size, bool bShadow);
 
 	void DrawCircle(const float& x, const float& y, const float& radius, const unsigned int& Color);

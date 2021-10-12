@@ -241,12 +241,12 @@ void D3D::DrawFilledRect(float x, float y, float width, float height, unsigned i
 	DrawRect(x, y, width, height, rectColor);
 }
 
-void D3D::DrawString(const float& x, const float& y, unsigned int color, std::string& txt, float size, bool bShadow)
+void D3D::DrawString(const float& x, const float& y, unsigned int color, const std::string& txt, float size, bool bShadow)
 {
 	if (bShadow)
 	{
-		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1, y + 1), BLACK(200), txt.c_str(), NULL, 0.0f, NULL);
-		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1, y - 1), BLACK(200), txt.c_str(), NULL, 0.0f, NULL);
+		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1.0f, y + 1.0f), BLACK(100), txt.c_str(), NULL, 0.0f, NULL);
+		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1.0f, y - 1.0f), BLACK(100), txt.c_str(), NULL, 0.0f, NULL);
 	}
 
 	imGuiBackgroundDrawList->AddText(font, size, ImVec2(x, y), color, txt.c_str(), NULL, 0.0f, NULL);
@@ -256,8 +256,8 @@ void D3D::DrawString(const float& x, const float& y, unsigned int color, const c
 {
 	if (bShadow)
 	{
-		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1, y + 1), BLACK(200), txt, NULL, 0.0f, NULL);
-		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1, y - 1), BLACK(200), txt, NULL, 0.0f, NULL);
+		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1.0f, y + 1.0f), BLACK(100), txt, NULL, 0.0f, NULL);
+		imGuiBackgroundDrawList->AddText(font, size, ImVec2(x + 1.0f, y - 1.0f), BLACK(100), txt, NULL, 0.0f, NULL);
 	}
 
 	imGuiBackgroundDrawList->AddText(font, size, ImVec2(x, y), color, txt, NULL, 0.0f, NULL);
@@ -270,9 +270,9 @@ void D3D::DrawString(const float& x, const float& y, unsigned int color, std::ws
 	if (bShadow)
 	{
 		rect = { (LONG)x + 1, (LONG)y + 1, (LONG)x + 80, (LONG)y + 50 };
-		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect, DT_NOCLIP | DT_LEFT, BLACK(255));
+		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect, DT_NOCLIP | DT_LEFT, BLACK(170));
 		rect = { (LONG)x + 1, (LONG)y - 1, (LONG)x + 80, (LONG)y + 50 };
-		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect, DT_NOCLIP | DT_LEFT, BLACK(255)); 
+		pPlayerNameFont->DrawText(NULL, txt.c_str(), -1, &rect, DT_NOCLIP | DT_LEFT, BLACK(170)); 
 	}
 	
 	rect = { (LONG)x, (LONG)y, (LONG)x + 80, (LONG)y + 50 };

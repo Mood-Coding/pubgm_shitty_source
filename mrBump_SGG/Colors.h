@@ -29,7 +29,7 @@
 #define DARKRED(alpha)		 IM_COL32(139, 0, 0, alpha)
 
 #define PURPLE(alpha)        IM_COL32(125, 0, 25, alpha)
-#define PINK(alpha)          IM_COL32(255, 20, 14, alpha)
+#define PINK(alpha)          IM_COL32(255, 192, 203, alpha)
 
 extern std::array<unsigned int, 100> TeamIDColor;
 
