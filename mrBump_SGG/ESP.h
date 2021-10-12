@@ -237,10 +237,9 @@ public:
 	void DrawPlayers();
 	void DrawItems();
 	void DrawVehicles();
-	void DrawUnsortedActors();
-
 	void DrawAirDrop();
 	void DrawLootbox();
+	void DrawUnsortedActors();
 
 	void GetBoxItems(BoxData* boxData);
 
@@ -251,7 +250,7 @@ public:
 
 	static int Bones[11];
 
-	void DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ);
+	void DrawHeadBone(const SDK::FVector2D& headScreenPosition, float playerZ);
 	void DrawPlayerBone(Character* character, const unsigned int& color);
 
 	bool IsPlayer(const std::string& actorName);

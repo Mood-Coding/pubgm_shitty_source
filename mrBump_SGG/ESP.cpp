@@ -41,32 +41,13 @@ bool ESP::Init()
 	return true;
 }
 
+//////////////////////////
+// DRAW ACTOR FUNCTIONS //
+//////////////////////////
+
 void ESP::DrawItems()
 {
-	if (Settings::bDebugESP)
-	{
-		for (int i = 0; i < Items.size(); ++i)
-		{
-			if (!g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance))
-				continue;
-
-			float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.012f };
-
-			if (Items[i].distance > Settings::ItemESP::drawDistance)
-				continue;
-
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Items[i].Address).c_str(), distScale, Settings::bToggleShadowText);
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18, WHITE(255), Items[i].actorName, distScale, Settings::bToggleShadowText);
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18, WHITE(255), Items[i].displayName, distScale, Settings::bToggleShadowText);
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18, WHITE(255), std::to_string(Items[i].ItemDefineID.TypeSpecificID).c_str(), distScale, Settings::bToggleShadowText);
-			std::string txt{ std::to_string(Items[i].PositionOnSc.X) + ' ' + std::to_string(Items[i].PositionOnSc.Y) };
-			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18 + 18, WHITE(255), txt.c_str(), distScale, Settings::bToggleShadowText);
-		}
-
-		return;
-	}
-
-	for (int i = 0; i < Items.size(); ++i)
+	for (int i{ 0 }; i < Items.size(); ++i)
 	{	
 		if (!g_pVMM->WorldToScreen(Items[i].Position, Items[i].PositionOnSc, Items[i].distance))
 			continue;
@@ -74,16 +55,28 @@ void ESP::DrawItems()
 		if (Items[i].distance > Settings::ItemESP::drawDistance)
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.012f };
+		float distScale{ g_pD3D->max_text_size - Items[i].distance * 0.01f };
+
+		if (Settings::bDebugESP)
+		{
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Items[i].Address).c_str(), distScale, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18, WHITE(255), Items[i].actorName, distScale, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18, WHITE(255), Items[i].displayName, distScale, Settings::bToggleShadowText);
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18, WHITE(255), std::to_string(Items[i].ItemDefineID.TypeSpecificID).c_str(), distScale, Settings::bToggleShadowText);
+			std::string txt{ std::to_string(Items[i].PositionOnSc.X) + ' ' + std::to_string(Items[i].PositionOnSc.Y) };
+			g_pD3D->DrawString(Items[i].PositionOnSc.X, Items[i].PositionOnSc.Y + 18 + 18 + 18 + 18, WHITE(255), txt.c_str(), distScale, Settings::bToggleShadowText);
+
+			continue;
+		}
 
 		unsigned int itemDisplayColor{ ColorFilter[ActorColorFilterID[Items[i].displayName]] };
-		if (itemDisplayColor == 0)
+		if (!itemDisplayColor)
 			itemDisplayColor = DARKRED(255);
 
 		std::string str;
 
 		if (Settings::ItemESP::bName)
-			str += Items[i].displayName + " ";
+			str += Items[i].displayName + ' ';
 
 		if (Settings::ItemESP::bDistance)
 			str += std::to_string(Items[i].distance) + "m";
@@ -95,43 +88,32 @@ void ESP::DrawItems()
 
 void ESP::DrawVehicles()
 {
-	if (Settings::bDebugESP)
-	{
-		for (int i = 0; i < Vehicles.size(); ++i)
-		{
-			if (!g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance))
-				continue;
-
-			if (Vehicles[i].distance > Settings::VehicleESP::drawDistance)
-				continue;
-
-			float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.012f };
-
-			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), distScale, Settings::bToggleShadowText);
-		}
-
-		return;
-	}
-
-	for (int i = 0; i < Vehicles.size(); ++i)
+	for (int i{ 0 }; i < Vehicles.size(); ++i)
 	{
 		if (!g_pVMM->WorldToScreen(Vehicles[i].Position, Vehicles[i].PositionOnSc, Vehicles[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.012f };
-
-		if (Vehicles[i].displayName == "AirDrop Plane")
+		//TODO move BP_AirDrop_Plane to special actor vector
+		/*if (Vehicles[i].displayName == "AirDrop Plane")
 		{
 			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), "AirDrop Plane", distScale, Settings::bToggleShadowText);
 			continue;
-		}
+		}*/
 
 		if (Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 			continue;
 
+		float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.01f };
+
+		if (Settings::bDebugESP)
+		{
+			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), distScale, Settings::bToggleShadowText);
+			continue;
+		}
+
 		std::string str{};
 
-		// Footer 1st text
+		// vehicle name + distance
 		{
 			if (Settings::VehicleESP::bName)
 				str = Vehicles[i].displayName + ' ';
@@ -143,28 +125,26 @@ void ESP::DrawVehicles()
 				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, LAWNGREEN(255), str, distScale, Settings::bToggleShadowText);
 		}
 
-		// Footer 2nd text
+		// %hp + %fuel
 		{
 			float xOffset = 0;
 
 			if (Settings::VehicleESP::bHp)
 			{
 				int hpPercent{ (int)(Vehicles[i].VehicleCommonComponent.HP / Vehicles[i].VehicleCommonComponent.HPMax * 100) };
-
-				if (hpPercent < 0)
-					continue;
-
 				str = "HP:" + std::to_string(hpPercent) + '%';
+
 				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( (float)hpPercent / 360 , 1.0f, 1.0f), str, distScale, Settings::bToggleShadowText);
 
-				xOffset += g_pD3D->font->CalcTextSizeA(distScale, FLT_MAX, -1.0f, str.c_str(), NULL, NULL).x + 5;
+				// Fuel text will be next to Hp text
+				xOffset += floor(g_pD3D->font->CalcTextSizeA(distScale, FLT_MAX, -1.0f, str.c_str(), NULL, NULL).x) + 5.0f;
 			}
 
 			if (Settings::VehicleESP::bFuel)
 			{
 				int fuelPercent{ (int)(Vehicles[i].VehicleCommonComponent.Fuel / Vehicles[i].VehicleCommonComponent.FuelMax * 100) };
-
 				str = "Fuel:" + std::to_string(fuelPercent) + '%';
+
 				g_pD3D->DrawString(Vehicles[i].PositionOnSc.X + xOffset, Vehicles[i].PositionOnSc.Y + 15, ImColor::HSV( (float)fuelPercent / 360, 1.0f, 1.0f), str, distScale, Settings::bToggleShadowText);
 			}
 		}
@@ -185,7 +165,7 @@ void ESP::DrawPlayers()
 			if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 				continue;
 
-			float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.012f };
+			float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.01f };
 
 			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Characters[i].Address).c_str(), distScale, Settings::bToggleShadowText);
 			g_pD3D->DrawString(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y + 18, WHITE(255), std::to_string(Characters[i].TeamIDIndex).c_str(), distScale, Settings::bToggleShadowText);
@@ -203,7 +183,7 @@ void ESP::DrawPlayers()
 		if (!g_pVMM->WorldToScreenPlayer(Characters[i].Position, Characters[i].PositionOnSc, Characters[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.012f };
+		float distScale{ g_pD3D->max_text_size - Characters[i].distance * 0.01f };
 
 		yOffset = 0;
 
@@ -359,96 +339,104 @@ void ESP::DrawPlayers()
 
 void ESP::DrawAirDrop()
 {
-	for (int i = 0; i < Airdrops.size(); ++i)
+	for (int i{ 0 }; i < Airdrops.size(); ++i)
 	{
 		if (!g_pVMM->WorldToScreen(Airdrops[i].Position, Airdrops[i].PositionOnSc, Airdrops[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Airdrops[i].distance * 0.012f };
+		float distScale{ g_pD3D->max_text_size - Airdrops[i].distance * 0.01f };
 
+		// Airdrop indicator + distance
 		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
-		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(200), txt, distScale, true);
+
+		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(250), txt, distScale, true);
 	}
 
-	for (int i = 0; i < AirDropDatas.size(); ++i)
+	for (int i{ 0 }; i < AirDropDatas.size(); ++i)
 	{
 		if (!g_pVMM->WorldToScreen(AirDropDatas[i].Position, AirDropDatas[i].PositionOnSc, AirDropDatas[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - AirDropDatas[i].distance * 0.012f };
+		float distScale{ g_pD3D->max_text_size - AirDropDatas[i].distance * 0.01f };
 
 		if (Settings::bDebugESP)
 		{
-			/*g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X + 42, AirDropDatas[i].PositionOnSc.Y, RED(255), "Data", false);*/
+			// AirDropData address
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(AirDropDatas[i].address).c_str(), distScale, false);
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), distScale, false);
+			// AirDropDta item count
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(AirDropDatas[i].itemCount).c_str(), distScale, false);
 
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), distScale, false);
+			continue;
 		}
 
 		// AirDrop items
-		if (AirDropDatas[i].items.size() == 0)
+		if (AirDropDatas[i].items.size() > 0)
 		{
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, WHITE(200), "Empty", distScale, false);
+			float yOffset{ 0.0f };
+			for (const auto& itr : AirDropDatas[i].items)
+			{
+				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + yOffset, WHITE(250), itr, distScale, false);
+				yOffset += 18.0f;
+			}
 		}
 		else
 		{
-			int xOffset = 0;
-			for (auto& itr : AirDropDatas[i].items)
-			{
-				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + xOffset, WHITE(200), itr, distScale, false);
-				xOffset += 18;
-			}
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, WHITE(250), "Empty", distScale, false);
 		}
 	}
 }
 
 void ESP::DrawLootbox()
 {
-	for (int i = 0; i < Lootboxes.size(); ++i)
+	for (int i{ 0 }; i < Lootboxes.size(); ++i)
 	{
 		if (!g_pVMM->WorldToScreen(Lootboxes[i].Position, Lootboxes[i].PositionOnSc, Lootboxes[i].distance))
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Lootboxes[i].distance * 0.012f };
-
 		if (Lootboxes[i].distance > Settings::LootboxESP::drawDistance)
 			continue;	
 
-		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, WHITE(255), "Lootbox", distScale, true);
+		float distScale{ g_pD3D->max_text_size - Lootboxes[i].distance * 0.01f };
 
 		if (Settings::bDebugESP)
 		{
+			/// Lootbox address
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), distScale, false);
 
+			// Lootbox item count
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), distScale, false);
 
-			std::string str = std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y);
+			// Lootbox pos
+			std::string str{ std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y) };
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18, RED(255), str, distScale, true);
 
 			continue;
 		}
 
-		if (Lootboxes[i].items.size() == 0)
+		// Lootbox indicator
+		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, WHITE(255), "Lootbox", distScale, true);
+
+		// Lootbox item
+		if (Lootboxes[i].items.size() > 0)
 		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, WHITE(200), "Empty", distScale, false);
+			float yOffset{ 0.0f };
+			for (const auto& itr : Lootboxes[i].items)
+			{
+				g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + yOffset, WHITE(200), itr, distScale, false);
+				yOffset += 18.0f;
+			}
 		}
 		else
 		{
-			int xOffset = 0;
-
-			for (auto& itr : Lootboxes[i].items)
-			{
-				g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + xOffset, WHITE(200), itr, distScale, false);
-				xOffset += 18;
-			}
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, WHITE(200), "Empty", distScale, false);
 		}
 	}
 }
 
 void ESP::DrawUnsortedActors()
 {
-	for (int i = 0; i < UnsortedActors.size(); ++i)
+	for (int i{ 0 }; i < UnsortedActors.size(); ++i)
 	{
 		if (!g_pVMM->WorldToScreen(UnsortedActors[i].Position, UnsortedActors[i].PositionOnSc, UnsortedActors[i].distance))
 			continue;
@@ -456,6 +444,34 @@ void ESP::DrawUnsortedActors()
 		g_pD3D->DrawString(UnsortedActors[i].PositionOnSc.X, UnsortedActors[i].PositionOnSc.Y, PINK(255), UnsortedActors[i].ActorName, g_pD3D->max_text_size, false);
 	}
 }
+
+void ESP::DrawHeadBone(const SDK::FVector2D& headScreenPosition, float playerZ)
+{
+	g_pD3D->DrawCircle(headScreenPosition.X, headScreenPosition.Y, playerZ / 7, RED(255));
+}
+
+void ESP::DrawPlayerBone(Character* character, const unsigned int& color)
+{
+	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z / 2);
+
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, color, 1.2f);
+
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, color, 1.2f);
+	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, color, 1.2f);
+
+	g_pD3D->DrawLine(character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, character->BONE_L_WRIST.X, character->BONE_L_WRIST.Y, color, 1.2f);
+	g_pD3D->DrawLine(character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, character->BONE_R_WRIST.X, character->BONE_R_WRIST.Y, color, 1.2f);
+
+	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, color, 1.2f);
+	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, color, 1.2f);
+
+	g_pD3D->DrawLine(character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, character->BONE_L_FOOT.X, character->BONE_L_FOOT.Y, color, 1.2f);
+	g_pD3D->DrawLine(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, color, 1.2f);
+}
+
+//////////////////////////////
+// END DRAW ACTOR FUNCTIONS //
+//////////////////////////////
 
 std::string ESP::GetActorName(const DWORD& actorID)
 {
@@ -479,30 +495,6 @@ std::wstring ESP::GetPlayerName(const DWORD& nameAddr)
 	return std::wstring(p);
 }
 
-void ESP::DrawHeadBone(SDK::FVector2D headScreenPosition, float playerZ)
-{
-	g_pD3D->DrawCircle(headScreenPosition.X, headScreenPosition.Y, playerZ / 7, RED(255));
-}
-
-void ESP::DrawPlayerBone(Character* character, const unsigned int &color)
-{
-	DrawHeadBone(character->BONE_HEAD, character->PositionOnSc.Z / 2);
-
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_PELVIS.X, character->BONE_PELVIS.Y, color, 1.2f);
-
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, color, 1.2f);
-	g_pD3D->DrawLine(character->BONE_CHEST.X, character->BONE_CHEST.Y, character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, color, 1.2f);
-
-	g_pD3D->DrawLine(character->BONE_L_ELBOW.X, character->BONE_L_ELBOW.Y, character->BONE_L_WRIST.X, character->BONE_L_WRIST.Y, color, 1.2f);
-	g_pD3D->DrawLine(character->BONE_R_ELBOW.X, character->BONE_R_ELBOW.Y, character->BONE_R_WRIST.X, character->BONE_R_WRIST.Y, color, 1.2f);
-
-	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, color, 1.2f);
-	g_pD3D->DrawLine(character->BONE_PELVIS.X, character->BONE_PELVIS.Y, character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, color, 1.2f);
-
-	g_pD3D->DrawLine(character->BONE_L_KNEE.X, character->BONE_L_KNEE.Y, character->BONE_L_FOOT.X, character->BONE_L_FOOT.Y, color, 1.2f);
-	g_pD3D->DrawLine(character->BONE_R_KNEE.X, character->BONE_R_KNEE.Y, character->BONE_R_FOOT.X, character->BONE_R_FOOT.Y, color, 1.2f);
-}
-
 int ESP::Bones[11]
 {
 	BONE_HEAD,
@@ -524,10 +516,8 @@ bool ESP::GetPlayerBonePos(Character* character)
 	DWORD bodyAddr{ SkeletalMeshComponent + 0x150 };
 	DWORD boneAddr{ g_pMM->read<DWORD>(SkeletalMeshComponent + 1456) + 48 };
 
-	bool bBadBonePosition = false;
-
 	// Iterate over BONES
-	for (int curBone = 0; curBone < 11; ++curBone)
+	for (int curBone{ 0 }; curBone < 11; ++curBone)
 	{
 		SDK::FVector curBoneGamePos{ g_pVMM->GetBoneGamePosition(bodyAddr, boneAddr + Bones[curBone] * 48) };
 		switch (Bones[curBone])
@@ -537,74 +527,71 @@ bool ESP::GetPlayerBonePos(Character* character)
 				curBoneGamePos.Z += 5;
 				character->GAME_BONE_HEAD = curBoneGamePos;
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_HEAD))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_CHEST:
 			{
 				character->GAME_BONE_CHEST = curBoneGamePos;
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_CHEST))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_PELVIS:
 			{
 				character->GAME_BONE_PELVIS = curBoneGamePos;
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_PELVIS))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_L_ELBOW:
 			{
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_ELBOW))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_L_WRIST:
 			{
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_WRIST))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_R_ELBOW:
 			{
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_ELBOW))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_R_WRIST:
 			{
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_WRIST))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_L_KNEE:
 			{
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_KNEE))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_L_FOOT:
 			{
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_L_FOOT))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_R_KNEE:
 			{
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_KNEE))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 			case BONE_R_FOOT: {
 				if (!g_pVMM->GameToScreenBone(curBoneGamePos, character->BONE_R_FOOT))
-					bBadBonePosition = true;
+					return false;
 				break;
 			}
 		}
-
-		if (bBadBonePosition)
-			return false;
 	}
 
 	return true;
@@ -664,6 +651,10 @@ void ESP::GetBoxItems(BoxData* boxData)
 	}
 }
 
+//////////////////////
+// CHECK ACTOR TYPE //
+//////////////////////
+
 bool ESP::IsVehicle(const std::string& actorName)
 {
 	if (actorName.find('/') != std::string::npos
@@ -676,7 +667,6 @@ bool ESP::IsVehicle(const std::string& actorName)
 		||actorName.find("water_Plane") != std::string::npos
 		||actorName.find("AquaRail") != std::string::npos
 		||actorName.find("Rony") != std::string::npos
-		||actorName == "BP_AirDropPlane_C"
 		)
 		return true;
 
@@ -732,8 +722,7 @@ bool ESP::IsAirdrop(const std::string& actorName)
 }
 
 // Sometime both LootBox and AirDrop will have actor: PlayerDeadInventoryBox_C
-// So we dont use PlayerDeadInventoryBox_C to find Lootbox
-// Instead, we will use PickUpListWrapperActor
+// Instead using PlayerDeadInventoryBox_C to recognise Lootbox, we use PickUpListWrapperActor
 bool ESP::IsLootbox(const std::string& actorName)
 {
 	if (actorName == "PickUpListWrapperActor" || actorName == "PickUpListWrapperActor_Recycled")
@@ -741,6 +730,11 @@ bool ESP::IsLootbox(const std::string& actorName)
 
 	return false;
 }
+
+//////////////////////////
+// END CHECK ACTOR TYPE //
+//////////////////////////
+
 
 
 
