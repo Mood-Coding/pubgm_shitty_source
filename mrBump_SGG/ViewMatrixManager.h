@@ -17,17 +17,14 @@ public:
 
 	D3DMatrix viewMatrix;
 
-	bool WorldToScreen(SDK::FVector pos, SDK::FVector& screen, int& distance);
-	//bool WorldToScreenPlayer(Vector3f pos, Vector3f& screen, int& distance);
-	bool WorldToScreenPlayer(SDK::FVector pos, SDK::FVector& screen, int& distance);
-	//void WorldToScreenBone(Vector3f pos, SDK::FVector2D& screen);
-	bool GameToScreenBone(SDK::FVector pos, SDK::FVector2D& screen);
+	bool WorldToScreen(const SDK::FVector& pos, SDK::FVector& screen, int& distance);
+	bool WorldToScreenPlayer(const SDK::FVector& pos, SDK::FVector& screen, int& distance);
 
-	Vector3f GetBoneWorldPosition(DWORD bodyAddr, DWORD boneAddr);
+	bool GameToScreenBone(const SDK::FVector& pos, SDK::FVector2D& screen);
 	SDK::FVector GetBoneGamePosition(DWORD bodyAddr, DWORD boneAddr);
+	D3DMatrix ToMatrixWithScale(const Vector3f& translation, const Vector3f& scale, const Vector4f& rot);
+	D3DMatrix MatrixMultiplication(const D3DMatrix& pM1, const D3DMatrix& pM2);
 
-	D3DMatrix ToMatrixWithScale(Vector3f translation, Vector3f scale, Vector4f rot);
-	D3DMatrix MatrixMultiplication(D3DMatrix pM1, D3DMatrix pM2);
 	DWORD GetViewWorld(std::wstring emulator);
 	void GetViewMatrix();
 };

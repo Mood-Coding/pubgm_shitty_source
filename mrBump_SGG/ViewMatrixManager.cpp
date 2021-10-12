@@ -5,7 +5,7 @@
 ViewMatrixManager* g_pVMM = new ViewMatrixManager();
 
 // For item, vehicle, airdrop, lootbox
-bool ViewMatrixManager::WorldToScreen(SDK::FVector pos, SDK::FVector &screen, int& distance)
+bool ViewMatrixManager::WorldToScreen(const SDK::FVector& pos, SDK::FVector &screen, int& distance)
 {
 	float ScreenW{ (viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44) };
 
@@ -24,7 +24,7 @@ bool ViewMatrixManager::WorldToScreen(SDK::FVector pos, SDK::FVector &screen, in
 	return true;
 }
 
-bool ViewMatrixManager::WorldToScreenPlayer(SDK::FVector pos, SDK::FVector& screen, int& distance)
+bool ViewMatrixManager::WorldToScreenPlayer(const SDK::FVector& pos, SDK::FVector& screen, int& distance)
 {
 	float screenW{ (viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44) };
 
@@ -45,22 +45,6 @@ bool ViewMatrixManager::WorldToScreenPlayer(SDK::FVector pos, SDK::FVector& scre
 	return true;
 }
 
-Vector3f ViewMatrixManager::GetBoneWorldPosition(DWORD bodyAddr, DWORD boneAddr)
-{
-	FTransform body = g_pMM->read<FTransform>(bodyAddr);
-	FTransform bone = g_pMM->read<FTransform>(boneAddr);
-	D3DMatrix boneMatrix = ToMatrixWithScale(bone.Translation, bone.Scale3D, bone.Rotation);
-	D3DMatrix componentToWorldMatrix = ToMatrixWithScale(body.Translation, body.Scale3D, body.Rotation);
-	D3DMatrix newMatrix = MatrixMultiplication(boneMatrix, componentToWorldMatrix);
-
-	Vector3f boneWorldPosition;
-	boneWorldPosition.x = newMatrix._41;
-	boneWorldPosition.y = newMatrix._42;
-	boneWorldPosition.z = newMatrix._43;
-
-	return boneWorldPosition;
-}
-
 SDK::FVector ViewMatrixManager::GetBoneGamePosition(DWORD bodyAddr, DWORD boneAddr)
 {
 	FTransform body{ g_pMM->read<FTransform>(bodyAddr) };
@@ -77,7 +61,7 @@ SDK::FVector ViewMatrixManager::GetBoneGamePosition(DWORD bodyAddr, DWORD boneAd
 	return boneWorldPosition;
 }
 
-D3DMatrix ViewMatrixManager::ToMatrixWithScale(Vector3f translation, Vector3f scale, Vector4f rot)
+D3DMatrix ViewMatrixManager::ToMatrixWithScale(const Vector3f& translation, const Vector3f& scale, const Vector4f& rot)
 {
 	D3DMatrix m;
 	m._41 = translation.x;
@@ -118,7 +102,7 @@ D3DMatrix ViewMatrixManager::ToMatrixWithScale(Vector3f translation, Vector3f sc
 	return m;
 }
 
-bool ViewMatrixManager::GameToScreenBone(SDK::FVector pos, SDK::FVector2D& screen)
+bool ViewMatrixManager::GameToScreenBone(const SDK::FVector& pos, SDK::FVector2D& screen)
 {
 	float screenW{ ((viewMatrix._14 * pos.X) + (viewMatrix._24 * pos.Y) + (viewMatrix._34 * pos.Z + viewMatrix._44)) };
 
@@ -133,7 +117,7 @@ bool ViewMatrixManager::GameToScreenBone(SDK::FVector pos, SDK::FVector2D& scree
 	return true;
 }
 
-D3DMatrix ViewMatrixManager::MatrixMultiplication(D3DMatrix pM1, D3DMatrix pM2) {
+D3DMatrix ViewMatrixManager::MatrixMultiplication(const D3DMatrix& pM1, const D3DMatrix& pM2) {
 	D3DMatrix pOut 
 	{
 		pM1._11 * pM2._11 + pM1._12 * pM2._21 + pM1._13 * pM2._31 + pM1._14 * pM2._41,
