@@ -45,7 +45,7 @@ bool ViewMatrixManager::WorldToScreenPlayer(const SDK::FVector& pos, SDK::FVecto
 	return true;
 }
 
-SDK::FVector ViewMatrixManager::GetBoneGamePosition(DWORD bodyAddr, DWORD boneAddr)
+SDK::FVector ViewMatrixManager::GetBoneGamePosition(const DWORD& bodyAddr, const DWORD& boneAddr)
 {
 	FTransform body{ g_pMM->read<FTransform>(bodyAddr) };
 	FTransform bone{ g_pMM->read<FTransform>(boneAddr) };
