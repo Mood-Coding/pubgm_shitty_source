@@ -175,7 +175,7 @@ void UpdateValue()
 
 		// Read all ActorAddr
 		// multiply 4: because size of 1 address is 4 bytes.
-		g_pMM->readMemory((PVOID)g_pESP->ActorList, &ActorArray, static_cast<SIZE_T>(g_pESP->maxActorCount)*4);
+		g_pMM->readMemory((PVOID)g_pESP->ActorList, &ActorArray, (SIZE_T) g_pESP->maxActorCount *4);
 
 		/*std::cout << "UWorld " << g_pESP->UWorld << '\n';
 		std::cout << "NetDriver " << NetDriver << '\n';
@@ -187,15 +187,14 @@ void UpdateValue()
 		std::cout << "maxActorCount " << g_pESP->maxActorCount << '\n';*/
 
 		// Loop through ActorArray
-		for (int i = 0; i < (int)g_pESP->maxActorCount; ++i)
+		for (int i{ 0 }; i < (int)g_pESP->maxActorCount; ++i)
 		{
-			DWORD currActorAddr = ActorArray[i];
-			if (currActorAddr == NULL)
-				continue;
+			//DWORD currActorAddr = ActorArray[i];
+			if (ActorArray[i] == NULL) continue;
 
 			std::string currActorName{};
 
-			DWORD currActorID{ g_pMM->read<DWORD>(currActorAddr + 0x10) };
+			DWORD currActorID{ g_pMM->read<DWORD>(ActorArray[i] + 0x10) };
 			// If current actorID is exist in ActorNameCache
 			if (g_pESP->ActorNameCache.find(currActorID) != g_pESP->ActorNameCache.end())
 			{
@@ -209,49 +208,49 @@ void UpdateValue()
 				g_pESP->ActorNameCache.insert( std::make_pair(currActorID, currActorName) );
 			}
 
-			DWORD SceneComponent{ g_pMM->read<DWORD>(currActorAddr + ROOTCOMPONENT) };
+			DWORD SceneComponent{ g_pMM->read<DWORD>(ActorArray[i] + ROOTCOMPONENT) };
 			SDK::FVector currActorPos{ g_pMM->read<SDK::FVector>(SceneComponent + ACTORPOSITION) };
 
-			if (g_pESP->IsItem(currActorName) && (Settings::ItemESP::bToggle || Settings::bDebugESP) && !Settings::bFightMode)
+			if (g_pESP->IsItem(currActorName) && Settings::ItemESP::bToggle && !Settings::bFightMode)
 			{
-				AddToItems(currActorName, currActorAddr, currActorPos);
+				AddToItems(currActorName, ActorArray[i], currActorPos);
 				continue;
 			}
 
-			if (g_pESP->IsVehicle(currActorName) && (Settings::VehicleESP::bToggle || Settings::bDebugESP) && !Settings::bFightMode)
+			if (g_pESP->IsVehicle(currActorName) && Settings::VehicleESP::bToggle && !Settings::bFightMode)
 			{
-				AddToVehicles(currActorName, currActorAddr, currActorPos);
+				AddToVehicles(currActorName, ActorArray[i], currActorPos);
 				continue;
 			}
 
-			if (g_pESP->IsPlayer(currActorName) && (Settings::PlayerESP::bToggle || Settings::bDebugESP))
+			if (g_pESP->IsPlayer(currActorName) && Settings::PlayerESP::bToggle)
 			{
-				AddToCharacters(currActorAddr, currActorPos);
+				AddToCharacters(ActorArray[i], currActorPos);
 
 				continue;
 			}
 
-			if (g_pESP->IsAirdrop(currActorName) && (Settings::AirDropESP::bToggle || Settings::bDebugESP) && !Settings::bFightMode)
+			if (g_pESP->IsAirdrop(currActorName) && Settings::AirDropESP::bToggle && !Settings::bFightMode)
 			{
-				Airdrop airdrop(currActorAddr, currActorPos);
+				Airdrop airdrop(ActorArray[i], currActorPos);
 
 				tmpAirDrops.emplace_back(airdrop);
 
 				continue;
 			}
 
-			if (g_pESP->IsAirDropData(currActorName) && (Settings::AirDropESP::bToggle || Settings::bDebugESP) &&Settings::bFightMode)
+			if (g_pESP->IsAirDropData(currActorName) && Settings::AirDropESP::bToggle && !Settings::bFightMode)
 			{	
-				BoxData airDropData{ currActorName, currActorAddr, currActorPos };
+				BoxData airDropData{ currActorName, ActorArray[i], currActorPos };
 				g_pESP->GetBoxItems(&airDropData);
 
 				tmpAirDropDatas.emplace_back(airDropData);
 				continue;
 			}
 
-			if (g_pESP->IsLootbox(currActorName) && (Settings::LootboxESP::bToggle || Settings::bDebugESP))
+			if (g_pESP->IsLootbox(currActorName) && Settings::LootboxESP::bToggle && !Settings::bFightMode)
 			{
-				BoxData lootboxData(currActorName, currActorAddr, currActorPos);
+				BoxData lootboxData(currActorName, ActorArray[i], currActorPos);
 				g_pESP->GetBoxItems(&lootboxData);
 
 				tmpLootboxes.emplace_back(lootboxData);
