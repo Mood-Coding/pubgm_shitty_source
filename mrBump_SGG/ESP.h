@@ -143,7 +143,7 @@ public:
 
 	//std::unordered_map<std::string, int> items;
 	std::vector<std::string> items;
-	int itemCount = 0;
+	//int itemCount = 0;
 };
 
 class Airdrop : public Actor

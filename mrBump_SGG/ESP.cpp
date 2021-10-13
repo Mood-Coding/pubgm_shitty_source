@@ -313,7 +313,7 @@ void ESP::DrawPlayers()
 			}
 			else
 			{
-				PredictedEnemyGamePos.Z *= zAssist;
+				//PredictedEnemyGamePos.Z *= zAssist;
 			}
 
 			// Get predicted enemy bone position on screen
@@ -365,9 +365,9 @@ void ESP::DrawAirDrop()
 			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(AirDropDatas[i].address).c_str(), distScale, false);
 
 			// AirDropDta item count
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(AirDropDatas[i].itemCount).c_str(), distScale, false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(AirDropDatas[i].items.size()).c_str(), distScale, false);
 
-			continue;
+			//continue;
 		}
 
 		// AirDrop items
@@ -405,7 +405,7 @@ void ESP::DrawLootbox()
 			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), distScale, false);
 
 			// Lootbox item count
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].itemCount).c_str(), distScale, false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].items.size()).c_str(), distScale, false);
 
 			// Lootbox pos
 			std::string str{ std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y) };
@@ -597,28 +597,25 @@ bool ESP::GetPlayerBonePos(Character* character)
 	return true;
 }
 
-// TODO reformat void ESP::GetBoxItems(BoxData* boxData)
 void ESP::GetBoxItems(BoxData* boxData)
 {
 	SDK::PickUpListWrapperActor PickUpList{ g_pMM->read<SDK::PickUpListWrapperActor>(boxData->address) };
 
-	for (DWORD itemAddr{ PickUpList.PickUpDataList }; itemAddr < PickUpList.PickUpDataList + (int)PickUpList.PickUpItemDataCount * 0x30; itemAddr += 0x30)
+	for (DWORD itemAddr{ PickUpList.PickUpDataList }; itemAddr < PickUpList.PickUpDataList + (int)PickUpList.PickUpItemDataCount * sizeof(SDK::PickUpItemData); itemAddr += sizeof(SDK::PickUpItemData))
 	{
 		SDK::PickUpItemData ItemData{ g_pMM->read<SDK::PickUpItemData>(itemAddr) };
 
 		if (ItemData.Count == 0)
 			continue;
 
-		std::string txt{ BoxItemDisplayName[ItemData.TypeSpecificID] };
+		std::string item_display_name = BoxItemDisplayName[ItemData.TypeSpecificID];
+		
+		// Current item isn't exist in the list of desired items to appear
+		if (item_display_name == "") continue;
 
-		if (txt == "")
-			continue;
-
-		// Check if given string is not exist in items vector
-		if (std::find(boxData->items.begin(), boxData->items.end(), txt) == boxData->items.end())
-			boxData->items.emplace_back(txt);
-
-		++boxData->itemCount;
+		// If Item display name is not exist in Item display name list so add it
+		if (std::find(boxData->items.begin(), boxData->items.end(), item_display_name) == boxData->items.end())
+			boxData->items.emplace_back(item_display_name);
 	}
 }
 
