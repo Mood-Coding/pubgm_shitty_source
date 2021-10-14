@@ -94,6 +94,9 @@
     <Filter Include="Header Files\ImGui\Font">
       <UniqueIdentifier>{6aa663bd-3786-4bdf-9274-992d76de6547}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\mINI">
+      <UniqueIdentifier>{2158c35b-bc43-4b53-9d80-780d3c6f924e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D.cpp">
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="Offset.h">
       <Filter>Header Files\Offset</Filter>
+    </ClInclude>
+    <ClInclude Include="mini\ini.h">
+      <Filter>Header Files\mINI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

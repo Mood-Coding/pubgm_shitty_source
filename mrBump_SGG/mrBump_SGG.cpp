@@ -65,7 +65,6 @@ void inline AddToVehicles(const std::string& currActorName, const DWORD& currAct
 	if (vehicle.displayName == "")
 		vehicle.displayName = currActorName;
 
-
 	tmpVehicles.emplace_back(vehicle);
 }
 

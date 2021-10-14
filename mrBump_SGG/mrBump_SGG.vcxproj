@@ -215,6 +215,7 @@
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="MemoryManager.h" />
+    <ClInclude Include="mini\ini.h" />
     <ClInclude Include="mrBump_SGG.h" />
     <ClInclude Include="Offset.h" />
     <ClInclude Include="pch.h" />
