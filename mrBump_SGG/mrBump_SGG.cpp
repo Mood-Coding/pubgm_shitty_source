@@ -55,15 +55,16 @@ void inline AddToVehicles(const std::string& currActorName, const DWORD& currAct
 {
 	Vehicle vehicle(currActorAddr, currActorPos);
 
-	if (currActorName != "BP_AirDropPlane_C")
-	{
-		DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
-		vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
-	}
+	DWORD VehicleCommonComponent = g_pMM->read<DWORD>(currActorAddr + VEHICLECOMMON);
+	vehicle.VehicleCommonComponent = g_pMM->read<SDK::VehicleCommonComponent>(VehicleCommonComponent);
+
+	if (vehicle.VehicleCommonComponent.HPMax == 0.0f || vehicle.VehicleCommonComponent.FuelMax == 0.0f)
+		return;
 
 	vehicle.displayName = ActorDisplayName[currActorName];
 	if (vehicle.displayName == "")
 		vehicle.displayName = currActorName;
+
 
 	tmpVehicles.emplace_back(vehicle);
 }

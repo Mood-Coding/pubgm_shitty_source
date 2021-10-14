@@ -107,7 +107,17 @@ void ESP::DrawVehicles()
 
 		if (Settings::bDebugESP)
 		{
+			// Address
 			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y, WHITE(255), Utils::DecToHex<DWORD>(Vehicles[i].Address).c_str(), distScale, Settings::bToggleShadowText);
+
+			// HP
+			std::string str{ std::to_string((int)Vehicles[i].VehicleCommonComponent.HP) + '/' + std::to_string((int)Vehicles[i].VehicleCommonComponent.HPMax) };
+			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y + 18, WHITE(255), str.c_str(), distScale, Settings::bToggleShadowText);
+
+			// Fuel
+			str = std::to_string((int)Vehicles[i].VehicleCommonComponent.Fuel) + '/' + std::to_string((int)Vehicles[i].VehicleCommonComponent.FuelMax);
+			g_pD3D->DrawString(Vehicles[i].PositionOnSc.X, Vehicles[i].PositionOnSc.Y + 18 + 18, WHITE(255), str.c_str(), distScale, Settings::bToggleShadowText);
+
 			continue;
 		}
 
