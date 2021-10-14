@@ -82,5 +82,5 @@ namespace Settings
 
 	extern bool bToggleShadowText;
 
-	extern int tab;
+	extern int activeTabID;
 }

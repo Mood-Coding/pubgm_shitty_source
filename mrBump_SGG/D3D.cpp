@@ -162,8 +162,11 @@ bool D3D::SetupHWND()
 			std::cout << "<!> Can't find font\n";
 			return false;
 		}
-		//io.Fonts->AddFontFromFileTTF("msyhl.ttf", 17);
+		
+		// First font will be used by menu text
 		io.Fonts->AddFontFromFileTTF("msyhl.ttf", 20.0f);
+
+		// Second font is for ESP text
 		font = io.Fonts->AddFontFromFileTTF("msyhl.ttf", 45.0f);
 
 		ImGuiStyle* style = &ImGui::GetStyle();
@@ -349,128 +352,134 @@ void D3D::MenuTheme()
 
 void D3D::MenuRender()
 {
-	ImGui::Columns(2);
-	ImGui::SetColumnOffset(1, 160);
-
-	// Left side
 	{
-		ImU32 activeBtnColor = IM_COL32(47, 47, 60, 255);
-		ImU32 inactiveBtnColor = IM_COL32(21, 21, 21, 255);
+		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false);
 
-		ImGui::PushStyleColor(ImGuiCol_Button, Settings::tab == ESP_TAB_ID ? activeBtnColor : inactiveBtnColor);
-
-		if (ImGui::Button("ESP", ImVec2(150 - 15, 41)))
+		// Left panel
 		{
-			Settings::tab = ESP_TAB_ID;
+			ImGui::BeginChild("left panel", ImVec2(150, 0), true);
+
+			ImU32 activeBtnColor = IM_COL32(47, 47, 60, 255);
+			ImU32 inactiveBtnColor = IM_COL32(21, 21, 21, 255);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, Settings::activeTabID == ESP_TAB_ID ? activeBtnColor : inactiveBtnColor);
+			if (ImGui::Button("ESP", ImVec2(150 - 9, 41)))
+				Settings::activeTabID = ESP_TAB_ID;
+
+			ImGui::PushStyleColor(ImGuiCol_Button, Settings::activeTabID == AIMBOT_TAB_ID ? activeBtnColor : inactiveBtnColor);
+			if (ImGui::Button("Aimbot", ImVec2(150 - 9, 41)))
+				Settings::activeTabID = AIMBOT_TAB_ID;
+
+			ImGui::PushStyleColor(ImGuiCol_Button, Settings::activeTabID == SETTINGS_TAB_ID ? activeBtnColor : inactiveBtnColor);
+			if (ImGui::Button("Settings", ImVec2(150 - 9, 41)))
+				Settings::activeTabID = SETTINGS_TAB_ID;
+
+			ImGui::PushStyleColor(ImGuiCol_Button, Settings::activeTabID == DEBUG_TAB_ID ? activeBtnColor : inactiveBtnColor);
+			if (ImGui::Button("Debug", ImVec2(150 - 9, 41)))
+				Settings::activeTabID = DEBUG_TAB_ID;
+
+			ImGui::PopStyleColor(4);
+
+			ImGui::EndChild();
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_Button, Settings::tab == AIMBOT_TAB_ID ? activeBtnColor : inactiveBtnColor);
+		ImGui::SameLine();
 
-		if (ImGui::Button("Aimbot", ImVec2(150 - 15, 41)))
+		// Right panel
 		{
-			Settings::tab = AIMBOT_TAB_ID;
-		}
+			ImGui::BeginGroup();
+			ImGui::BeginChild("right panel", ImVec2(0, 0));
 
-		ImGui::PushStyleColor(ImGuiCol_Button, Settings::tab == SETTINGS_TAB_ID ? activeBtnColor : inactiveBtnColor);
-
-		if (ImGui::Button("Settings", ImVec2(150 - 15, 41)))
-		{
-			Settings::tab = SETTINGS_TAB_ID;
-		}
-
-		ImGui::PushStyleColor(ImGuiCol_Button, Settings::tab == DEBUG_TAB_ID ? activeBtnColor : inactiveBtnColor);
-
-		if (ImGui::Button("Debug", ImVec2(150 - 15, 41)))
-		{
-			Settings::tab = DEBUG_TAB_ID;
-		}
-
-		ImGui::PopStyleColor(4);
-	}
-
-	ImGui::NextColumn();
-
-	// Right side
-	{
-		if (Settings::tab == ESP_TAB_ID)
-		{
-			if (ImGui::CollapsingHeader("Player ESP"))
+			if (Settings::activeTabID == ESP_TAB_ID)
 			{
-				ImGui::BeginChild("00", ImVec2(275, 25), false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Toggle", &Settings::PlayerESP::bToggle);
-				ImGui::EndChild();
+				if (ImGui::CollapsingHeader("Player ESP"))
+				{
+					ImGui::BeginGroup();
 
-				ImGui::LabelText("", "Player Information");
-				ImGui::BeginChild("1", ImVec2(275, 35), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Distance", &Settings::PlayerESP::bDistance);
-				ImGui::SameLine();
-				ImGui::Checkbox("Hp", &Settings::PlayerESP::bHp);
-				ImGui::SameLine();
-				ImGui::Checkbox("Name", &Settings::PlayerESP::bName);
-				ImGui::EndChild();
+					ImGui::Checkbox("Toggle", &Settings::PlayerESP::bToggle);
 
-				ImGui::LabelText("", "Bone ESP");
-				ImGui::BeginChild("2", ImVec2(275, 35), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Toggle", &Settings::PlayerESP::BoneESP::bToggle);
-				ImGui::EndChild();
+					ImGui::LabelText("", "Player Information");
+					ImGui::Checkbox("Distance", &Settings::PlayerESP::bDistance);
+					ImGui::SameLine();
+					ImGui::Checkbox("Hp", &Settings::PlayerESP::bHp);
+					ImGui::SameLine();
+					ImGui::Checkbox("Name", &Settings::PlayerESP::bName);
 
-				ImGui::LabelText("", "Line ESP");
-				ImGui::BeginChild("3", ImVec2(275, 35), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Toggle", &Settings::PlayerESP::LineESP::bToggle);
-				ImGui::EndChild();
+					ImGui::LabelText("", "Bone ESP");
+					ImGui::Checkbox("Toggle", &Settings::PlayerESP::BoneESP::bToggle);
+
+					ImGui::LabelText("", "Line ESP");
+					ImGui::Checkbox("Toggle", &Settings::PlayerESP::LineESP::bToggle);
+
+					ImGui::EndGroup();
+				}
+
+				if (ImGui::CollapsingHeader("Vehicle ESP"))
+				{
+					ImGui::BeginGroup();
+
+					ImGui::Checkbox("Toggle", &Settings::VehicleESP::bToggle);
+					ImGui::SameLine();
+					ImGui::Checkbox("Distance", &Settings::VehicleESP::bDistance);
+					ImGui::SameLine();
+					ImGui::Checkbox("Hp", &Settings::VehicleESP::bHp);
+					ImGui::SameLine();
+					ImGui::Checkbox("Name", &Settings::VehicleESP::bName);
+
+					ImGui::SliderInt("Draw distance", &Settings::VehicleESP::drawDistance, 1, 1000);
+
+					ImGui::EndGroup();
+				}
+
+				if (ImGui::CollapsingHeader("Item ESP"))
+				{
+					ImGui::BeginGroup();
+
+					ImGui::Checkbox("Toggle", &Settings::ItemESP::bToggle);
+					ImGui::SameLine();
+					ImGui::Checkbox("Distance", &Settings::ItemESP::bDistance);
+					ImGui::SameLine();
+					ImGui::Checkbox("Name", &Settings::ItemESP::bName);
+
+					ImGui::SliderInt("Draw distance", &Settings::ItemESP::drawDistance, 1, 100);
+
+					ImGui::EndGroup();
+				}
+
+				if (ImGui::CollapsingHeader("AirDrop ESP"))
+				{
+					ImGui::BeginGroup();
+
+					ImGui::Checkbox("Toggle", &Settings::AirDropESP::bToggle);
+
+					ImGui::EndGroup();
+				}
+
+				if (ImGui::CollapsingHeader("LootBox ESP"))
+				{
+					ImGui::BeginGroup();
+
+					ImGui::Checkbox("Toggle", &Settings::LootboxESP::bToggle);
+
+					ImGui::SliderInt("Draw distance", &Settings::LootboxESP::drawDistance, 1, 200);
+
+					ImGui::EndGroup();
+				}
 			}
 
-			if (ImGui::CollapsingHeader("Vehicle ESP"))
+			if (Settings::activeTabID == AIMBOT_TAB_ID)
 			{
-				ImGui::BeginChild("", ImVec2(330, 65), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Toggle", &Settings::VehicleESP::bToggle);
-				ImGui::SameLine();
-				ImGui::Checkbox("Distance", &Settings::VehicleESP::bDistance);
-				ImGui::SameLine();
-				ImGui::Checkbox("Hp", &Settings::VehicleESP::bHp);
-				ImGui::SameLine();
-				ImGui::Checkbox("Name", &Settings::VehicleESP::bName);
-				ImGui::SliderInt("Draw distance", &Settings::VehicleESP::drawDistance, 1, 1000);
-				ImGui::EndChild();
-			}
+				ImGui::Checkbox("Toggle", &Settings::Aimbot::bToggle);
 
-			if (ImGui::CollapsingHeader("Item ESP"))
-			{
-				ImGui::BeginChild("", ImVec2(325, 65), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Toggle", &Settings::ItemESP::bToggle);
-				ImGui::SameLine();
-				ImGui::Checkbox("Distance", &Settings::ItemESP::bDistance);
-				ImGui::SameLine();
-				ImGui::Checkbox("Name", &Settings::ItemESP::bName);
-				ImGui::SliderInt("Draw distance", &Settings::ItemESP::drawDistance, 1, 100);
-				ImGui::EndChild();
-			}
+				ImGui::SliderInt("Sensitivity", &Settings::Aimbot::sensitivity, 2, 30);
 
-			if (ImGui::CollapsingHeader("AirDrop ESP"))
-			{
-				ImGui::BeginChild("", ImVec2(325, 65), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Toggle", &Settings::AirDropESP::bToggle);
-				ImGui::EndChild();
-			}
+				ImGui::SliderInt("Delay between every mouse_event time ", &Settings::Aimbot::delayBetweenEveryAimbotTime, 1, 100);
 
-			if (ImGui::CollapsingHeader("LootBox ESP"))
-			{
-				ImGui::BeginChild("", ImVec2(325, 65), false, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
-				ImGui::Checkbox("Toggle", &Settings::LootboxESP::bToggle);
-				ImGui::SliderInt("Draw distance", &Settings::LootboxESP::drawDistance, 1, 200);
-				ImGui::EndChild();
-			}
-		}
+				ImGui::Combo("Bone", &Settings::Aimbot::selectedBone, Settings::Aimbot::bone);
 
-		if (Settings::tab == AIMBOT_TAB_ID)
-		{
-			ImGui::Checkbox("Toggle", &Settings::Aimbot::bToggle);
-			ImGui::SliderInt("Sensitivity", &Settings::Aimbot::sensitivity, 2, 30);
-			ImGui::SliderInt("Delay between every mouse_event time ", &Settings::Aimbot::delayBetweenEveryAimbotTime, 1, 100);
-			ImGui::Combo("Bone", &Settings::Aimbot::selectedBone, Settings::Aimbot::bone);
-
-			switch (Settings::Aimbot::selectedBone)
-			{
+				switch (Settings::Aimbot::selectedBone)
+				{
 				case(0):
 				{
 					Settings::Aimbot::targetBone = BONE_HEAD;
@@ -486,27 +495,46 @@ void D3D::MenuRender()
 					Settings::Aimbot::targetBone = BONE_PELVIS;
 					break;
 				}
+				}
 			}
+
+			if (Settings::activeTabID == SETTINGS_TAB_ID)
+			{
+				ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+				ImGui::SliderInt("Draw loop delay", &Settings::drawLoopDelay, 0, 40);
+
+				ImGui::SliderInt("Read mem delay", &Settings::readMemloopDelay, 0, 100);
+
+				ImGui::Text("Read mem loop delay = Read mem delay + Draw loop delay");
+				ImGui::Text("= %d", Settings::drawLoopDelay + Settings::readMemloopDelay);
+
+				ImGui::Checkbox("Toogle global text shadow effect", &Settings::bToggleShadowText);
+			}
+
+			if (Settings::activeTabID == DEBUG_TAB_ID)
+			{
+				ImGui::Checkbox("Debug ESP", &Settings::bDebugESP);
+
+				ImGui::Checkbox("ESP unsorted actor", &Settings::bUnsortedActorESP);
+
+				ImGui::Checkbox("Self ESP", &Settings::bSelfESP);
+
+				ImGui::Text("Cached %d actorID <-> actorName", g_pESP->ActorNameCache.size());
+			}
+
+			ImGui::EndChild();
+			ImGui::EndGroup();
 		}
 
-		if (Settings::tab == SETTINGS_TAB_ID)
-		{
-			ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::SliderInt("Draw loop delay", &Settings::drawLoopDelay, 0, 40);
-			ImGui::SliderInt("Read mem delay", &Settings::readMemloopDelay, 0, 100);
-			ImGui::Text("Read mem loop delay = Read mem delay + Draw loop delay");
-			ImGui::Text("= %d", Settings::drawLoopDelay + Settings::readMemloopDelay);
-			ImGui::Checkbox("Toogle global text shadow effect", &Settings::bToggleShadowText);
-		}
-
-		if (Settings::tab == DEBUG_TAB_ID)
-		{
-			ImGui::Checkbox("Debug ESP", &Settings::bDebugESP);
-			ImGui::Checkbox("ESP unsorted actor", &Settings::bUnsortedActorESP);
-			ImGui::Checkbox("Self ESP", &Settings::bSelfESP);
-			ImGui::Text("Cached %d actorID <-> actorName", g_pESP->ActorNameCache.size());
-		}
+		ImGui::EndChild();
 	}
+	
+	ImGui::Separator();
+
+	ImGui::Button("Save config", ImVec2(100, 0));
+	ImGui::SameLine();
+	ImGui::Button("Load config", ImVec2(100, 0));
 }
 
 void ChangeClickability(bool canclick, HWND hwnd)

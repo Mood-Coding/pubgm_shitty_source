@@ -77,5 +77,5 @@ namespace Settings
 
 	bool bToggleShadowText = true;
 
-	int tab = 1;
+	int activeTabID = 1;
 }
