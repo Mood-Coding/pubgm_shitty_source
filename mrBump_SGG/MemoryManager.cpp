@@ -7,10 +7,47 @@ bool MemoryManager::Init()
 {
 	std::cout << "[MM]\n";
 
+	// Get SeDebugPrivilege
+	bool bStatus{ SetPrivilege(L"SeDebugPrivilege", TRUE) };
+	if (bStatus)
+	{
+		std::cout << "The SeDebugPrivilege was enabled!" << std::endl;
+	}
+	else
+	{
+		std::cout << "<SetPrivilege> Can't get SeDebugPrivilege! Error: " << GetLastError() << '\n';
+		return false;
+	}
+
+	// Get emulator PID
+	PID = GetPID(emuProcName);
+	if (PID)
+	{
+		std::cout << "Emulator PID: " << std::dec << PID << std::endl;
+	}
+	else
+	{
+		std::wcout << L"Not found process: " << emuProcName.c_str() << std::endl;
+		return false;
+	}
+
+	// Get handle of emulator process to read/ write memory
+	hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE, FALSE, PID);
+
+	if (hProcess)
+	{
+		std::cout << "Opened emulator process handle:" << std::hex << hProcess << '\n';
+	}
+	else
+	{
+		std::cout << "<OpenProcess> Couldn't open process. Please Run as administrator permission. Error: " << GetLastError() << '\n';
+		return false;
+	}
+
 	/*if (!(LoadDriver() && StartDriver()))
 		return false;*/
 	
-	bool bStatus{ ConnectToDriver("\\Device\\KProcessHacker2") };
+	bStatus = ConnectToDriver("\\Device\\KProcessHacker2");
 	if (m_hDriver && bStatus)
 	{
 		std::cout << "Connected to driver 0x" << std::hex << m_hDriver << '\n';
@@ -20,8 +57,9 @@ bool MemoryManager::Init()
 		std::cout << "<ConnectToDriver> Can't connect to driver" << std::endl;
 		return false;
 	}
-	
-	processHandle = g_pPM->hProcess;
+
+	// Turn off SeDebugPrivilege
+	SetPrivilege(L"SeDebugPrivilege", FALSE);
 
 	return true;
 }
@@ -60,7 +98,7 @@ void MemoryManager::readMemory(PVOID BaseAddress, PVOID Buffer, SIZE_T BufferSiz
 		PVOID Buffer;
 		SIZE_T BufferSize;
 		PSIZE_T NumberOfBytesRead;
-	} input { processHandle, BaseAddress, Buffer, BufferSize, NumberOfBytes };
+	} input { hProcess, BaseAddress, Buffer, BufferSize, NumberOfBytes };
 
 	IO_STATUS_BLOCK ioStatusBlock{ 0 };
 
@@ -77,7 +115,7 @@ bool MemoryManager::search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStart
 	MEMORY_REGION memSectorList[1000];
 
 	int memSectorIndex = 0;
-	while (VirtualQueryEx(processHandle, (LPCVOID)dwAddress, &mbi, sizeof(mbi)) && (dwAddress < dwEndAddr) && ((dwAddress + mbi.RegionSize) > dwAddress)) {
+	while (VirtualQueryEx(hProcess, (LPCVOID)dwAddress, &mbi, sizeof(mbi)) && (dwAddress < dwEndAddr) && ((dwAddress + mbi.RegionSize) > dwAddress)) {
 		if ((mbi.State == MEM_COMMIT) &&
 			((mbi.Protect & PAGE_GUARD) == 0) &&
 			(mbi.Protect != PAGE_NOACCESS) &&
@@ -98,7 +136,7 @@ bool MemoryManager::search(BYTE* bSearchData, int nSearchSize, DWORD_PTR dwStart
 	memSectorIndex = 0;
 	DWORD_PTR curAddr = dwStartAddr;
 	while (curAddr < dwEndAddr) {
-		VirtualQueryEx(processHandle, (LPCVOID)curAddr, &mbi, sizeof(mbi));
+		VirtualQueryEx(hProcess, (LPCVOID)curAddr, &mbi, sizeof(mbi));
 		long regionSizeOrg = mbi.RegionSize;
 		long regionSize = mbi.RegionSize;
 		if (regionSize > 10) {
@@ -365,4 +403,55 @@ CLEANUP:
 
 	if (m_hDriver)
 		CloseHandle(m_hDriver);
+}
+
+// Enable/disable privilege routine
+bool MemoryManager::SetPrivilege(LPCWSTR lpszPrivilege, BOOL bEnablePrivilege)
+{
+	TOKEN_PRIVILEGES priv = { 0,0,0,0 };
+	HANDLE hToken = NULL;
+	LUID luid = { 0,0 };
+	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken)) {
+		if (hToken)
+			CloseHandle(hToken);
+		return false;
+	}
+	if (!LookupPrivilegeValueW(0, lpszPrivilege, &luid)) {
+		if (hToken)
+			CloseHandle(hToken);
+		return false;
+	}
+	priv.PrivilegeCount = 1;
+	priv.Privileges[0].Luid = luid;
+	priv.Privileges[0].Attributes = bEnablePrivilege ? SE_PRIVILEGE_ENABLED : SE_PRIVILEGE_REMOVED;
+	if (!AdjustTokenPrivileges(hToken, false, &priv, 0, 0, 0)) {
+		if (hToken)
+			CloseHandle(hToken);
+		return false;
+	}
+	if (hToken)
+		CloseHandle(hToken);
+	return true;
+}
+
+DWORD MemoryManager::GetPID(const std::wstring& processName)
+{
+	DWORD pidWithHighestThreadCount = 0;
+	DWORD highestThreadCount = 0;
+
+	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	PROCESSENTRY32 pe;
+	pe.dwSize = sizeof(PROCESSENTRY32);
+	Process32First(hSnap, &pe);
+
+	while (Process32Next(hSnap, &pe))
+	{
+		if ((_tcsicmp(pe.szExeFile, processName.c_str()) == 0) && (pe.cntThreads > highestThreadCount))
+		{
+			highestThreadCount = pe.cntThreads;
+			pidWithHighestThreadCount = pe.th32ProcessID;
+		}
+	}
+
+	return pidWithHighestThreadCount;
 }

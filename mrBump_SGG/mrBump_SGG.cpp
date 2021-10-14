@@ -279,16 +279,10 @@ void UpdateValue()
 
 bool InitCheat()
 {
-	if (!g_pPM->Init())
-	{
-		system("pause");
-		return false;
-	}
-
 	if (!g_pMM->Init())
 	{
-		g_pMM->StopDriver();
-		g_pMM->UnloadDriver();
+		/*g_pMM->StopDriver();
+		g_pMM->UnloadDriver();*/
 
 		system("pause");
 		return false;
@@ -319,9 +313,9 @@ int main()
 {
 	int idBtn{ MessageBox(NULL, L"Smartgaga?\nIf NO then Gameloop", L"Choose emulator", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON1 | MB_TOPMOST) };
 	if (idBtn == IDYES)
-		g_pPM->emuProcessName = L"AndroidProcess.exe";
+		g_pMM->emuProcName = L"AndroidProcess.exe";
 	else if (idBtn == IDNO)
-		g_pPM->emuProcessName = L"aow_exe.exe";
+		g_pMM->emuProcName = L"aow_exe.exe";
 
 	if (!InitCheat())
 		return false;

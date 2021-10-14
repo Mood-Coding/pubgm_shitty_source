@@ -55,12 +55,6 @@
     <Filter Include="Source Files\MemoryManager">
       <UniqueIdentifier>{940c797a-aeb2-4fb1-9374-2cbf9faed954}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ProcessManager">
-      <UniqueIdentifier>{a1fcc21c-346e-4331-81e5-c2f7f4998b4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ProcessManager">
-      <UniqueIdentifier>{45db4f28-14fa-4395-a349-8f087898ff78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\ActorName">
       <UniqueIdentifier>{31218e3a-b8f6-4b2e-9af5-9906ee1a566b}</UniqueIdentifier>
     </Filter>
@@ -110,9 +104,6 @@
     </ClCompile>
     <ClCompile Include="MemoryManager.cpp">
       <Filter>Source Files\MemoryManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ProcessManager.cpp">
-      <Filter>Source Files\ProcessManager</Filter>
     </ClCompile>
     <ClCompile Include="ViewMatrixManager.cpp">
       <Filter>Source Files\ViewMatrixManager</Filter>
@@ -214,9 +205,6 @@
     </ClInclude>
     <ClInclude Include="MemoryManager.h">
       <Filter>Header Files\MemoryManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessManager.h">
-      <Filter>Header Files\ProcessManager</Filter>
     </ClInclude>
     <ClInclude Include="Colors.h">
       <Filter>Header Files\D3D</Filter>

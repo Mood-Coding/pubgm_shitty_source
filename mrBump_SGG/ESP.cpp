@@ -9,7 +9,7 @@ bool ESP::Init()
 {
 	std::cout << "[ESP]\n";
 
-	viewWorld = g_pVMM->GetViewWorld(g_pPM->emuProcessName);
+	viewWorld = g_pVMM->GetViewWorld(g_pMM->emuProcName);
 	if (viewWorld)
 	{
 		std::cout << "Viewworld base found at: 0x" << std::hex << viewWorld << '\n';
@@ -103,7 +103,7 @@ void ESP::DrawVehicles()
 		if (Vehicles[i].distance > Settings::VehicleESP::drawDistance)
 			continue;
 
-		float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.01f };
+		float distScale{ g_pD3D->max_text_size - Vehicles[i].distance * 0.0012f };
 
 		if (Settings::bDebugESP)
 		{
@@ -346,7 +346,7 @@ void ESP::DrawAirDrop()
 
 		float distScale{ g_pD3D->max_text_size - Airdrops[i].distance * 0.001f };
 
-		// Airdrop indicator + distance
+		// Airdrop text + distance
 		std::string txt{ "AirDrop " + std::to_string(Airdrops[i].distance) + 'm' };
 
 		g_pD3D->DrawString(Airdrops[i].PositionOnSc.X, Airdrops[i].PositionOnSc.Y, RED(250), txt, distScale, true);
@@ -364,10 +364,10 @@ void ESP::DrawAirDrop()
 			// AirDropData address
 			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(AirDropDatas[i].address).c_str(), distScale, false);
 
-			// AirDropDta item count
+			// AirDropData item count
 			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(AirDropDatas[i].items.size()).c_str(), distScale, false);
 
-			//continue;
+			continue;
 		}
 
 		// AirDrop items
@@ -376,13 +376,13 @@ void ESP::DrawAirDrop()
 			float yOffset{ 0.0f };
 			for (const auto& itr : AirDropDatas[i].items)
 			{
-				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + yOffset, WHITE(250), itr, distScale, false);
+				g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18 + yOffset, WHITE(255), itr, distScale, false);
 				yOffset += 18.0f;
 			}
 		}
 		else
 		{
-			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, WHITE(250), "Empty", distScale, false);
+			g_pD3D->DrawString(AirDropDatas[i].PositionOnSc.X, AirDropDatas[i].PositionOnSc.Y + 18, WHITE(255), "Empty", distScale, false);
 		}
 	}
 }
@@ -401,20 +401,20 @@ void ESP::DrawLootbox()
 
 		if (Settings::bDebugESP)
 		{
-			/// Lootbox address
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, RED(255), Utils::DecToHex(Lootboxes[i].address).c_str(), distScale, false);
+			// Lootbox address
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, WHITE(255), Utils::DecToHex(Lootboxes[i].address).c_str(), distScale, false);
 
 			// Lootbox item count
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, RED(255), std::to_string(Lootboxes[i].items.size()).c_str(), distScale, false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18, WHITE(255), std::to_string(Lootboxes[i].items.size()).c_str(), distScale, false);
 
 			// Lootbox pos
 			std::string str{ std::to_string(Lootboxes[i].PositionOnSc.X) + ' ' + std::to_string(Lootboxes[i].PositionOnSc.Y) };
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18, RED(255), str, distScale, true);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + 18 + 18, WHITE(255), str, distScale, false);
 
 			continue;
 		}
 
-		// Lootbox indicator
+		// Lootbox text
 		g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y, WHITE(255), "Lootbox", distScale, true);
 
 		// Lootbox item
@@ -423,13 +423,13 @@ void ESP::DrawLootbox()
 			float yOffset{ 0.0f };
 			for (const auto& itr : Lootboxes[i].items)
 			{
-				g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + yOffset, WHITE(200), itr, distScale, false);
+				g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18 + yOffset, WHITE(255), itr, distScale, false);
 				yOffset += 18.0f;
 			}
 		}
 		else
 		{
-			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, WHITE(200), "Empty", distScale, false);
+			g_pD3D->DrawString(Lootboxes[i].PositionOnSc.X, Lootboxes[i].PositionOnSc.Y + 18, WHITE(255), "Empty", distScale, false);
 		}
 	}
 }

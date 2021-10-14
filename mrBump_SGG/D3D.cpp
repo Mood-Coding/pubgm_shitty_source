@@ -85,31 +85,28 @@ bool D3D::SetupHWND()
 {
 	std::cout << "[D3D]\n";
 
-	// Find Smartgaga HWND
-	HWND processHWND = FindWindow(L"TitanRenderWindowClass", NULL);
-	processHWND = FindWindowEx(processHWND, 0, L"TitanOpenglWindowClass", NULL);
-	if (processHWND)
+	if (g_pMM->emuProcName == L"AndroidProcess.exe")
 	{
-		g_pPM->emuProcessName = L"AndroidProcess.exe";
-		goto FOUNDHWND;
+		// Find Smartgaga HWND
+		emulatorHWND = FindWindow(L"TitanRenderWindowClass", NULL);
+		emulatorHWND = FindWindowEx(emulatorHWND, 0, L"TitanOpenglWindowClass", NULL);
 	}
-	
-	// Find Gameloop HWND
-	processHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
-	processHWND = FindWindowEx(processHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
-	if (processHWND)
+	else if (g_pMM->emuProcName == L"aow_exe.exe")
 	{
-		g_pPM->emuProcessName = L"aow_exe.exe";
-		goto FOUNDHWND;
+		// Find Gameloop HWND
+		emulatorHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
+		emulatorHWND = FindWindowEx(emulatorHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
 	}
 
-	std::cout << "<!> Invalid HWND. Can't find emulator window\n";
-	return false;
-
-FOUNDHWND:
-
-	emulatorHWND = processHWND;
-	std::cout << "Target process window HWND: " << std::hex << emulatorHWND << '\n';
+	if (emulatorHWND)
+	{
+		std::cout << "Emulator HWND: " << std::hex << emulatorHWND << '\n';
+	}
+	else
+	{
+		std::cout << "<!> Invalid HWND. Can't find emulator window\n";
+		return false;
+	}
 
 	GetWindowRect(emulatorHWND, &gameScreenRct);
 	screenW = gameScreenRct.right - gameScreenRct.left;
@@ -532,18 +529,18 @@ void D3D::HandleWindow()
 {
 	// When we minimized emulator window, its current hwnd will be invalid
 	// So we need to get the new emulator hwnd
-	if (g_pPM->emuProcessName == L"aow_exe.exe")
+	if (g_pMM->emuProcName == L"aow_exe.exe")
 	{
-		g_pD3D->emulatorHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
-		g_pD3D->emulatorHWND = FindWindowEx(g_pD3D->emulatorHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
+		emulatorHWND = FindWindow(L"TXGuiFoundation", L"Gameloop");
+		emulatorHWND = FindWindowEx(emulatorHWND, NULL, L"AEngineRenderWindowClass", L"AEngineRenderWindow");
 	}
 	else
 	{
-		g_pD3D->emulatorHWND = FindWindow(L"TitanRenderWindowClass", NULL);
-		g_pD3D->emulatorHWND = FindWindowEx(g_pD3D->emulatorHWND, 0, L"TitanOpenglWindowClass", NULL);
+		emulatorHWND = FindWindow(L"TitanRenderWindowClass", NULL);
+		emulatorHWND = FindWindowEx(emulatorHWND, 0, L"TitanOpenglWindowClass", NULL);
 	}
 
-	GetWindowRect(g_pD3D->emulatorHWND, &g_pD3D->gameScreenRct);
+	GetWindowRect(emulatorHWND, &g_pD3D->gameScreenRct);
 
 	// Emulator screen w and h
 	g_pD3D->screenW = g_pD3D->gameScreenRct.right - g_pD3D->gameScreenRct.left;

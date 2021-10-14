@@ -26,16 +26,24 @@ private:
 	bool m_bStoppedService{ false };
 	bool m_bUsingAnotherService{ false };
 
+	DWORD PID{ 0 };
+
+	HANDLE hProcess;
+
+	bool SetPrivilege(LPCWSTR lpszPrivilege, BOOL bEnablePrivilege);
+	DWORD GetPID(const std::wstring& processName);
+
+
 public:
 	MemoryManager() { };
 
 	HANDLE m_hDriver = nullptr;
 
-	HANDLE processHandle = NULL;
-
 	PSIZE_T NumberOfBytes = nullptr;
 
 	FTransform _ft;
+
+	std::wstring emuProcName;
 
 	bool Init();
 

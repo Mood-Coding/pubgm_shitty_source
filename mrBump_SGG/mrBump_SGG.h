@@ -8,7 +8,6 @@
 #include "Aimbot.h"
 #include "Settings.h"
 #include "MemoryManager.h"
-#include "ProcessManager.h"
 
 std::array<DWORD, MAX_ACTORS> ActorArray;
 
