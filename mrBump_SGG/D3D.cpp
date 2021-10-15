@@ -283,6 +283,191 @@ void D3D::DrawString(const float& x, const float& y, unsigned int color, std::ws
 // END DRAW FUNCTION //
 ///////////////////////
 
+inline void LoadConfig()
+{
+	// Create a file instance
+	mINI::INIFile file("config.ini");
+
+	// Create a data structure
+	mINI::INIStructure ini;
+
+	bool readSuccess = file.read(ini);
+
+	if (!readSuccess)
+	{
+		std::cout << "<Read> Can't read config file!\n";
+		return;
+	}
+
+	// Player
+	{
+		Settings::PlayerESP::bToggle	 = std::stoi(ini.get("playeresp").get("btoggle"));
+
+		Settings::PlayerESP::bBoneToggle = std::stoi(ini.get("playeresp").get("bbonetoggle"));
+
+		Settings::PlayerESP::bLineToggle = std::stoi(ini.get("playeresp").get("blinetoggle"));
+
+		Settings::PlayerESP::bDistance   = std::stoi(ini.get("playeresp").get("bdistance"));
+		Settings::PlayerESP::bName		 = std::stoi(ini.get("playeresp").get("bname"));
+		Settings::PlayerESP::bHp		 = std::stoi(ini.get("playeresp").get("bhp"));
+	}
+	
+	//Vehicle
+	{
+		Settings::VehicleESP::bToggle      = std::stoi(ini.get("vehicleesp").get("btoggle"));
+
+		Settings::VehicleESP::bDistance	   = std::stoi(ini.get("vehicleesp").get("bdistance"));
+		Settings::VehicleESP::bFuel		   = std::stoi(ini.get("vehicleesp").get("bfuel"));
+		Settings::VehicleESP::bHp          = std::stoi(ini.get("vehicleesp").get("bhp"));
+		Settings::VehicleESP::bName        = std::stoi(ini.get("vehicleesp").get("bname"));
+
+		Settings::VehicleESP::drawDistance = std::stoi(ini.get("vehicleesp").get("drawdistance"));
+	}
+
+	// Item
+	{
+		Settings::ItemESP::bToggle      = std::stoi(ini.get("itemesp").get("btoggle"));
+
+		Settings::ItemESP::bDistance    = std::stoi(ini.get("itemesp").get("bdistance"));
+		Settings::ItemESP::bName	    = std::stoi(ini.get("itemesp").get("bname"));
+
+		Settings::ItemESP::drawDistance = std::stoi(ini.get("itemesp").get("drawdistance"));
+	}
+
+	// Lootbox
+	{
+		Settings::LootboxESP::bToggle	   = std::stoi(ini.get("lootboxesp").get("btoggle"));
+
+		Settings::LootboxESP::drawDistance = std::stoi(ini.get("lootboxesp").get("drawdistance"));
+	}
+
+	// AirDrop
+	{
+		Settings::AirDropESP::bToggle = std::stoi(ini.get("airdropesp").get("btoggle"));
+	}
+
+	// Aimbot
+	{
+		Settings::Aimbot::bToggle					  = std::stoi(ini.get("aimbot").get("btoggle"));
+
+		Settings::Aimbot::selectedBone                = std::stoi(ini.get("aimbot").get("selectedbone"));
+		Settings::Aimbot::sensitivity				  = std::stoi(ini.get("aimbot").get("sensitivity"));
+		Settings::Aimbot::delayBetweenEveryAimbotTime = std::stoi(ini.get("aimbot").get("delaybetweeneveryaimbottime"));
+
+		// Upper code just update the bone target on the menu
+		// So I have to update the targetBone in Settings too
+		switch (Settings::Aimbot::selectedBone)
+		{
+		case(0):
+		{
+			Settings::Aimbot::targetBone = BONE_HEAD;
+			break;
+		}
+		case(1):
+		{
+			Settings::Aimbot::targetBone = BONE_CHEST;
+			break;
+		}
+		case(2):
+		{
+			Settings::Aimbot::targetBone = BONE_PELVIS;
+			break;
+		}
+		}
+	}
+
+	// Others
+	{
+		Settings::readMemloopDelay  = std::stoi(ini["other"]["readmemloopdelay"]);
+		Settings::drawLoopDelay     = std::stoi(ini["other"]["drawloopdelay"]);
+		Settings::bToggleShadowText = std::stoi(ini["other"]["btoggleshadowtext"]);
+	}
+
+	std::cout << "Loaded config\n";
+}
+
+inline void SaveConfig()
+{
+	// Create a file instance
+	mINI::INIFile file("config.ini");
+
+	// Create a data structure
+	mINI::INIStructure ini;
+
+	// Player
+	{
+		// Toggle
+		ini["playeresp"]["btoggle"] = std::to_string(Settings::PlayerESP::bToggle);
+
+		// Bone
+		ini["playeresp"]["bbonetoggle"] = std::to_string(Settings::PlayerESP::bBoneToggle);
+
+		// Line
+		ini["playeresp"]["blinetoggle"] = std::to_string(Settings::PlayerESP::bLineToggle);
+
+		// Others
+		ini["playeresp"]["bdistance"] = std::to_string(Settings::PlayerESP::bDistance);
+		ini["playeresp"]["bname"] = std::to_string(Settings::PlayerESP::bName);
+		ini["playeresp"]["bhp"] = std::to_string(Settings::PlayerESP::bHp);
+	}
+
+	// Vehicle
+	{
+		ini["vehicleesp"]["btoggle"]	  =	std::to_string(Settings::VehicleESP::bToggle);
+
+		ini["vehicleesp"]["bdistance"]    =	std::to_string(Settings::VehicleESP::bDistance);
+		ini["vehicleesp"]["bfuel"]        =	std::to_string(Settings::VehicleESP::bFuel);
+		ini["vehicleesp"]["bhp"]          =	std::to_string(Settings::VehicleESP::bHp);
+		ini["vehicleesp"]["bname"]        =	std::to_string(Settings::VehicleESP::bName);
+
+		ini["vehicleesp"]["drawdistance"] =	std::to_string(Settings::VehicleESP::drawDistance);
+	}
+
+	// Items
+	{
+		ini["itemesp"]["btoggle"]	   = std::to_string(Settings::ItemESP::bToggle);
+
+		ini["itemesp"]["bdistance"]	   = std::to_string(Settings::ItemESP::bDistance);
+		ini["itemesp"]["bname"]		   = std::to_string(Settings::ItemESP::bName);
+
+		ini["itemesp"]["drawdistance"] = std::to_string(Settings::ItemESP::drawDistance);
+	}
+
+	// Lootbox
+	{
+		ini["lootboxesp"]["btoggle"]	  = std::to_string(Settings::LootboxESP::bToggle);
+
+		ini["lootboxesp"]["drawdistance"] = std::to_string(Settings::LootboxESP::drawDistance);
+	}
+
+	// AirDrop
+	{
+		ini["airdropesp"]["btoggle"] = std::to_string(Settings::AirDropESP::bToggle);
+	}
+
+	// Aimbot
+	{
+		ini["aimbot"]["btoggle"]					 = std::to_string(Settings::Aimbot::bToggle);
+
+		ini["aimbot"]["selectedbone"]				 = std::to_string(Settings::Aimbot::selectedBone);
+		ini["aimbot"]["sensitivity"]				 = std::to_string(Settings::Aimbot::sensitivity);
+		ini["aimbot"]["delaybetweeneveryaimbottime"] = std::to_string(Settings::Aimbot::delayBetweenEveryAimbotTime);
+	}
+
+	// Other settings
+	{
+		ini["other"]["readmemloopdelay"]  = std::to_string(Settings::readMemloopDelay);
+		ini["other"]["drawloopdelay"]	  = std::to_string(Settings::drawLoopDelay);
+		ini["other"]["btoggleshadowtext"] = std::to_string(Settings::bToggleShadowText);
+	}
+
+	// Generate an INI file (overwrites any previous file)
+	if (file.generate(ini, true))
+		std::cout << "Saved config!\n";
+	else
+		std::cout << "<Generate> Can't create config!\n";
+}
+
 void D3D::MenuTheme()
 {
 	ImGuiStyle* style = &ImGui::GetStyle();
@@ -352,6 +537,7 @@ void D3D::MenuTheme()
 
 void D3D::MenuRender()
 {
+	// Main panel
 	{
 		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false);
@@ -397,7 +583,7 @@ void D3D::MenuRender()
 				{
 					ImGui::BeginGroup();
 
-					ImGui::Checkbox("Toggle", &Settings::PlayerESP::bToggle);
+					ImGui::Checkbox("Player ESP Toggle", &Settings::PlayerESP::bToggle);
 
 					ImGui::LabelText("", "Player Information");
 					ImGui::Checkbox("Distance", &Settings::PlayerESP::bDistance);
@@ -407,10 +593,10 @@ void D3D::MenuRender()
 					ImGui::Checkbox("Name", &Settings::PlayerESP::bName);
 
 					ImGui::LabelText("", "Bone ESP");
-					ImGui::Checkbox("Toggle", &Settings::PlayerESP::BoneESP::bToggle);
+					ImGui::Checkbox("Toggle bone", &Settings::PlayerESP::bBoneToggle);
 
 					ImGui::LabelText("", "Line ESP");
-					ImGui::Checkbox("Toggle", &Settings::PlayerESP::LineESP::bToggle);
+					ImGui::Checkbox("Toggle line", &Settings::PlayerESP::bLineToggle);
 
 					ImGui::EndGroup();
 				}
@@ -419,13 +605,13 @@ void D3D::MenuRender()
 				{
 					ImGui::BeginGroup();
 
-					ImGui::Checkbox("Toggle", &Settings::VehicleESP::bToggle);
+					ImGui::Checkbox("Vehicle ESP Toggle", &Settings::VehicleESP::bToggle);
+
+					ImGui::Checkbox("Distance ", &Settings::VehicleESP::bDistance);
 					ImGui::SameLine();
-					ImGui::Checkbox("Distance", &Settings::VehicleESP::bDistance);
+					ImGui::Checkbox("Hp ", &Settings::VehicleESP::bHp);
 					ImGui::SameLine();
-					ImGui::Checkbox("Hp", &Settings::VehicleESP::bHp);
-					ImGui::SameLine();
-					ImGui::Checkbox("Name", &Settings::VehicleESP::bName);
+					ImGui::Checkbox("Name ", &Settings::VehicleESP::bName);
 
 					ImGui::SliderInt("Draw distance", &Settings::VehicleESP::drawDistance, 1, 1000);
 
@@ -436,13 +622,13 @@ void D3D::MenuRender()
 				{
 					ImGui::BeginGroup();
 
-					ImGui::Checkbox("Toggle", &Settings::ItemESP::bToggle);
+					ImGui::Checkbox("Toggle Item ESP", &Settings::ItemESP::bToggle);
+					
+					ImGui::Checkbox("Distance  ", &Settings::ItemESP::bDistance);
 					ImGui::SameLine();
-					ImGui::Checkbox("Distance", &Settings::ItemESP::bDistance);
-					ImGui::SameLine();
-					ImGui::Checkbox("Name", &Settings::ItemESP::bName);
+					ImGui::Checkbox("Name  ", &Settings::ItemESP::bName);
 
-					ImGui::SliderInt("Draw distance", &Settings::ItemESP::drawDistance, 1, 100);
+					ImGui::SliderInt("Drawdistance  ", &Settings::ItemESP::drawDistance, 1, 100);
 
 					ImGui::EndGroup();
 				}
@@ -451,7 +637,7 @@ void D3D::MenuRender()
 				{
 					ImGui::BeginGroup();
 
-					ImGui::Checkbox("Toggle", &Settings::AirDropESP::bToggle);
+					ImGui::Checkbox("Toggle AirDrop ESP", &Settings::AirDropESP::bToggle);
 
 					ImGui::EndGroup();
 				}
@@ -460,9 +646,9 @@ void D3D::MenuRender()
 				{
 					ImGui::BeginGroup();
 
-					ImGui::Checkbox("Toggle", &Settings::LootboxESP::bToggle);
+					ImGui::Checkbox("Toggle LootBox ESP", &Settings::LootboxESP::bToggle);
 
-					ImGui::SliderInt("Draw distance", &Settings::LootboxESP::drawDistance, 1, 200);
+					ImGui::SliderInt("Draw distance   ", &Settings::LootboxESP::drawDistance, 1, 200);
 
 					ImGui::EndGroup();
 				}
@@ -532,9 +718,16 @@ void D3D::MenuRender()
 	
 	ImGui::Separator();
 
-	ImGui::Button("Save config", ImVec2(100, 0));
-	ImGui::SameLine();
-	ImGui::Button("Load config", ImVec2(100, 0));
+	// Foot bar
+	{
+		if (ImGui::Button("Save config", ImVec2(100, 0)))
+			SaveConfig();
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Load config", ImVec2(100, 0)))
+			LoadConfig();
+	}
 }
 
 void ChangeClickability(bool canclick, HWND hwnd)

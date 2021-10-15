@@ -5,6 +5,7 @@
 #include "Colors.h"
 #include "Settings.h"
 #include "ProcessManager.h"
+#include "mini/ini.h"
 
 #pragma warning( push )
 #pragma warning( disable : 4820)
