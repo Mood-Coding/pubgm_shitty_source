@@ -14,15 +14,9 @@ namespace Settings
 	{
 		extern bool bToggle;
 
-		namespace BoneESP
-		{
-			extern bool bToggle;
-		}
-
-		namespace LineESP
-		{
-			extern bool bToggle;
-		}
+		extern bool bBoneToggle;
+		
+		extern bool bLineToggle;
 
 		extern bool bDistance;
 		extern bool bName;
@@ -60,10 +54,6 @@ namespace Settings
 
 	extern bool bOnlyShowBoxDataWhenMouseNearby;
 
-	extern bool bUnsortedActorESP;
-	extern bool bDebugESP;
-	extern bool bSelfESP;
-
 	namespace Aimbot
 	{
 		extern bool bToggle;
@@ -76,11 +66,15 @@ namespace Settings
 
 	extern bool bFightMode;
 
-
+	// Other
 	extern int readMemloopDelay;
 	extern int drawLoopDelay;
-
 	extern bool bToggleShadowText;
+
+	// Debug
+	extern bool bUnsortedActorESP;
+	extern bool bDebugESP;
+	extern bool bSelfESP;
 
 	extern int activeTabID;
 }

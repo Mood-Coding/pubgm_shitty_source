@@ -9,15 +9,9 @@ namespace Settings
 	{
 		bool bToggle = true;
 
-		namespace BoneESP
-		{
-			bool bToggle = true;
-		}
+		bool bBoneToggle = true;
 
-		namespace LineESP
-		{
-			bool bToggle = false;
-		}
+		bool bLineToggle = false;
 
 		bool bDistance = true;
 		bool bName = true;
@@ -65,6 +59,8 @@ namespace Settings
 		int targetBone = BONE_HEAD;
 		int sensitivity = 2;
 		int delayBetweenEveryAimbotTime = 15;
+
+		// Won't be saved in config
 		const char* bone { "Head\0Chest\0Pelvis" };
 		int selectedBone{ 0 };
 	}

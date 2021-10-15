@@ -256,11 +256,11 @@ void ESP::DrawPlayers()
 		}
 
 		// Line ESP
-		if (Settings::PlayerESP::LineESP::bToggle)
+		if (Settings::PlayerESP::bLineToggle)
 			g_pD3D->DrawLine(Characters[i].PositionOnSc.X, Characters[i].PositionOnSc.Y - 29, (float)g_pD3D->screenW / 2, 0, Characters[i].TeamColor);
 
 		// Bone ESP
-		if (Settings::PlayerESP::BoneESP::bToggle || Settings::Aimbot::bToggle)
+		if (Settings::PlayerESP::bBoneToggle || Settings::Aimbot::bToggle)
 		{
 			// Because read mem loop has higher delay than draw loop, BoneESP will be smoother at here
 			if (GetPlayerBonePos(&Characters[i]))
@@ -268,7 +268,7 @@ void ESP::DrawPlayers()
 				if (Settings::Aimbot::bToggle)
 					g_pAim->FindBestTarget(&Characters[i]);
 
-				if (Settings::PlayerESP::BoneESP::bToggle)
+				if (Settings::PlayerESP::bBoneToggle)
 					DrawPlayerBone(&Characters[i], teamIDColor);
 			}
 		}		
