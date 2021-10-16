@@ -56,13 +56,14 @@ namespace Settings
 	namespace Aimbot
 	{
 		bool bToggle = true;
-		int targetBone = BONE_HEAD;
 		int sensitivity = 2;
 		int delayBetweenEveryAimbotTime = 15;
+		int fov = 1;
+		int selectedBone{ 0 };
 
 		// Won't be saved in config
 		const char* bone { "Head\0Chest\0Pelvis" };
-		int selectedBone{ 0 };
+		int targetBone = BONE_HEAD;
 	}
 
 	bool bFightMode = false;

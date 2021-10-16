@@ -343,8 +343,13 @@ void ESP::DrawPlayers()
 		//Class: ShootWeaponEntity.WeaponEntity.WeaponLogicBaseComponent.ActorComponent.Object
 	}
 
+	// Aimbot FOV circle
+	g_pD3D->DrawCircle(g_pD3D->screenW / 2, g_pD3D->screenH / 2, Settings::Aimbot::fov, WHITE(255));
+	
 	g_pAim->GetTmpBestTarget();
+
 	g_pAim->ResetTmpNearestTargetDist2Cross();
+
 }
 
 void ESP::DrawAirDrop()

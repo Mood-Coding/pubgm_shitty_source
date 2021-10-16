@@ -14,8 +14,12 @@ class Aimbot
 public:
 	SDK::FVector TargetGamePos;
 	SDK::FVector2D TargetScPos;
-	SDK::FVector2D TargetScPredictedPos;
+
 	Character TargetCharacter;
+
+	// Final value for aimbot
+	SDK::FVector2D TargetScPredictedPos;
+	float TargetDist2Cross;
 
 	SDK::FVector2D AimPos{};
 

@@ -57,11 +57,13 @@ namespace Settings
 	namespace Aimbot
 	{
 		extern bool bToggle;
-		extern int targetBone;
 		extern int sensitivity;
 		extern int delayBetweenEveryAimbotTime;
-		extern const char* bone;
+		extern int fov;
 		extern int selectedBone;
+
+		extern int targetBone;
+		extern const char* bone;
 	}
 
 	extern bool bFightMode;

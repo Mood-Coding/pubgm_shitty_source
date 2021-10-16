@@ -350,10 +350,11 @@ inline void LoadConfig()
 	{
 		Settings::Aimbot::bToggle					  = std::stoi(ini.get("aimbot").get("btoggle"));
 
-		Settings::Aimbot::selectedBone                = std::stoi(ini.get("aimbot").get("selectedbone"));
 		Settings::Aimbot::sensitivity				  = std::stoi(ini.get("aimbot").get("sensitivity"));
 		Settings::Aimbot::delayBetweenEveryAimbotTime = std::stoi(ini.get("aimbot").get("delaybetweeneveryaimbottime"));
-
+		Settings::Aimbot::fov						  = std::stoi(ini.get("aimbot").get("fov"));
+		Settings::Aimbot::selectedBone                = std::stoi(ini.get("aimbot").get("selectedbone"));
+		 
 		// Upper code just update the bone target on the menu
 		// So I have to update the targetBone in Settings too
 		switch (Settings::Aimbot::selectedBone)
@@ -452,6 +453,7 @@ inline void SaveConfig()
 		ini["aimbot"]["selectedbone"]				 = std::to_string(Settings::Aimbot::selectedBone);
 		ini["aimbot"]["sensitivity"]				 = std::to_string(Settings::Aimbot::sensitivity);
 		ini["aimbot"]["delaybetweeneveryaimbottime"] = std::to_string(Settings::Aimbot::delayBetweenEveryAimbotTime);
+		ini["aimbot"]["fov"]						 = std::to_string(Settings::Aimbot::fov);
 	}
 
 	// Other settings
@@ -666,22 +668,24 @@ void D3D::MenuRender()
 
 				switch (Settings::Aimbot::selectedBone)
 				{
-				case(0):
-				{
-					Settings::Aimbot::targetBone = BONE_HEAD;
-					break;
+					case(0):
+					{
+						Settings::Aimbot::targetBone = BONE_HEAD;
+						break;
+					}
+					case(1):
+					{
+						Settings::Aimbot::targetBone = BONE_CHEST;
+						break;
+					}
+					case(2):
+					{
+						Settings::Aimbot::targetBone = BONE_PELVIS;
+						break;
+					}
 				}
-				case(1):
-				{
-					Settings::Aimbot::targetBone = BONE_CHEST;
-					break;
-				}
-				case(2):
-				{
-					Settings::Aimbot::targetBone = BONE_PELVIS;
-					break;
-				}
-				}
+
+				ImGui::SliderInt("FOV", &Settings::Aimbot::fov, 1, 180);
 			}
 
 			if (Settings::activeTabID == SETTINGS_TAB_ID)

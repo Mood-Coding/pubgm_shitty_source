@@ -93,6 +93,7 @@ void Aimbot::FindBestTarget(Character* curTarget)
 void Aimbot::GetTmpBestTarget()
 {
 	AimPos = TargetScPredictedPos;
+	TargetDist2Cross = NearestDist2Cross;
 }
 
 void Aimbot::ResetTmpNearestTargetDist2Cross()
@@ -108,14 +109,18 @@ void AimbotLoop(bool* g_bActive)
 	{
 		if (!(GetAsyncKeyState(VK_XBUTTON2) & 0x8000))
 		{
-			half_width = static_cast<float>(g_pD3D->screenW) / 2;
-			half_height = static_cast<float>(g_pD3D->screenH) / 2;
+			half_width = (float)g_pD3D->screenW / 2.0f;
+			half_height = (float)g_pD3D->screenH / 2.0f;
 
 			Sleep(1);
 			continue;
 		}
 
-//		std::cout << g_pAim->targetPos.X << ' ' << g_pAim->targetPos.Y << '\n';
+		if (g_pAim->TargetDist2Cross > Settings::Aimbot::fov)
+		{
+			Sleep(1);
+			continue;
+		}
 
 		float aimX{ 0.0f };
 		float aimY{ 0.0f };
@@ -125,6 +130,7 @@ void AimbotLoop(bool* g_bActive)
 			if (g_pAim->AimPos.X > half_width)
 			{
 				aimX = -(half_width - g_pAim->AimPos.X);
+
 				aimX /= Settings::Aimbot::sensitivity;
 
 				if (aimX + half_width > half_width * 2)
@@ -133,6 +139,7 @@ void AimbotLoop(bool* g_bActive)
 			else if (g_pAim->AimPos.X < half_width)
 			{
 				aimX = g_pAim->AimPos.X - half_width;
+
 				aimX /= Settings::Aimbot::sensitivity;
 
 				if (aimX + half_width < 0.0f)
@@ -145,6 +152,7 @@ void AimbotLoop(bool* g_bActive)
 			if (g_pAim->AimPos.Y > half_height)
 			{
 				aimY = -(half_height - g_pAim->AimPos.Y);
+
 				aimY /= Settings::Aimbot::sensitivity;
 
 				if (aimY + half_height > half_height * 2)
@@ -153,14 +161,13 @@ void AimbotLoop(bool* g_bActive)
 			else if (g_pAim->AimPos.Y < half_height)
 			{
 				aimY = g_pAim->AimPos.Y - half_height;
+
 				aimY /= Settings::Aimbot::sensitivity;
 
 				if (aimY + half_height < 0.0f)
 					aimY = 0.0f;
 			}
 		}
-
-		// TODO FOV check
 
 		if (aimX == 0.0f && aimY == 0.0f)
 			continue;
