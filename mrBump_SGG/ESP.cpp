@@ -197,14 +197,6 @@ void ESP::DrawPlayers()
 
 		yOffset = 0;
 
-		unsigned int teamIDColor;
-
-		if (Characters[i].STExtraCharacter.bIsAI)
-			teamIDColor = CYAN(255);
-		else
-			teamIDColor = Characters[i].TeamColor;
-
-
 		// Player name
 		if (Settings::PlayerESP::bName)
 		{
@@ -269,7 +261,7 @@ void ESP::DrawPlayers()
 					g_pAim->FindBestTarget(&Characters[i]);
 
 				if (Settings::PlayerESP::bBoneToggle)
-					DrawPlayerBone(&Characters[i], teamIDColor);
+					DrawPlayerBone(&Characters[i], Characters[i].TeamColor);
 			}
 		}		
 	}
