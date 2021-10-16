@@ -23,6 +23,12 @@ void inline AddToCharacters(const DWORD& currActorAddr, const SDK::FVector& curr
 		if (!(character.Address == g_pESP->Pawn && Settings::bSelfESP))
 			return;
 
+	// Bot will have CYAN color for bone, name
+	if (character.STExtraCharacter.bIsAI)
+	{
+		character.TeamColor = CYAN(255);
+	}
+	else
 	// Get TeamColor from TeamID ( TeamID -> TeamIDIndex -> TeamColor)
 	{
 		auto itr{ std::find(g_pESP->TeamIDIndex.begin(), g_pESP->TeamIDIndex.end(), character.STExtraCharacter.TeamID)};
@@ -31,11 +37,13 @@ void inline AddToCharacters(const DWORD& currActorAddr, const SDK::FVector& curr
 		if (itr == g_pESP->TeamIDIndex.end())
 		{
 			g_pESP->TeamIDIndex.push_back(character.STExtraCharacter.TeamID);
+
 			// Now it must return a valid itr
 			itr = std::find(g_pESP->TeamIDIndex.begin(), g_pESP->TeamIDIndex.end(), character.STExtraCharacter.TeamID);
 		}
 
 		character.TeamIDIndex = itr - g_pESP->TeamIDIndex.begin();
+
 		character.TeamColor = TeamIDColor[character.TeamIDIndex];
 	}
 
@@ -110,6 +118,8 @@ void UpdateValue()
 		else
 		{
 			bInGame = false;
+			
+			g_pESP->TeamIDIndex.clear();
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(5));
 			continue;
