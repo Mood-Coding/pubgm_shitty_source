@@ -1,6 +1,3 @@
-# mrBump
+# For pubgm 1.6
 ### ToDo
 - [ ] Internal draw
-
-### Known issues
-- [ ] mouse_event aimbot is so trash and less accuracy
