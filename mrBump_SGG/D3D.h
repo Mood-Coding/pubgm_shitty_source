@@ -4,7 +4,6 @@
 #include "Utils.h"
 #include "Colors.h"
 #include "Settings.h"
-#include "ProcessManager.h"
 #include "mini/ini.h"
 
 #pragma warning( push )
