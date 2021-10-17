@@ -4,7 +4,6 @@
 #include "Offset.h"	
 
 #include "MemoryManager.h"
-#include "Entity.h"
 #include "ViewMatrixManager.h"
 #include "SDK_classes.h"
 #include "SDK_structs.h"
