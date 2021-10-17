@@ -87,6 +87,10 @@ bool D3D::SetupHWND()
 
 	if (g_pMM->emuProcName == L"AndroidProcess.exe")
 	{
+		// Show the emulator window
+		HWND emulatorMainHWND = FindWindow(L"TitanMainWindowClass0", NULL);
+		SetForegroundWindow(emulatorMainHWND);
+
 		// Find Smartgaga HWND
 		emulatorHWND = FindWindow(L"TitanRenderWindowClass", NULL);
 		emulatorHWND = FindWindowEx(emulatorHWND, 0, L"TitanOpenglWindowClass", NULL);
